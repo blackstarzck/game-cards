@@ -1,14 +1,9 @@
 import './app.css';
-import { Page } from './components/Global.element';
-import Navbar from './components/Navbar/Navbar';
-import Section from './components/Section/Section';
+import Home from './pages/Home/Home';
 
 function App() {
   return (
-    <Page>
-      <Navbar />
-      <Section />
-    </Page>
+    <Home/>
   );
 }
 

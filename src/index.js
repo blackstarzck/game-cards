@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './app';
+import App from './App';
 import { ThemeProvider } from 'styled-components';
-import GlobalStyle from './global';
-import theme from './theme';
+import GlobalStyle from './assets/styles/global';
+import theme from './assets/styles/theme';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
