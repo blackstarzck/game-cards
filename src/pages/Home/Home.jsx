@@ -1,10 +1,11 @@
 import React from 'react'
-import { HomePage } from './Home.style'
+import { Section } from '../../components/cointainer/Section/Section'
+import { HomePage } from './Home.elements'
 
 const Home = () => {
   return (
     <HomePage>
-        Home
+      <Section.Main />
     </HomePage>
   )
 }

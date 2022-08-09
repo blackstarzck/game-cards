@@ -1,14 +1,17 @@
+import styled, { css } from "styled-components"
+
 // 컬러 시스템 정의
 const colors = {
     lightBlack: "#666666",
     commonBlack: "#444444",
+    realBlack: "#000000",
 
     // 메인 컬러1
     primaryColor: `linear-gradient(to right, rgba(0, 133, 255, 0.6), #9671FF);`,
 
     // 메인 컬러2 
     realWhite: "#FFFFFF",
-    lightRed: "#FF6060",
+    lightRed: "#FF6060", 
     realRed: "#FF3333",
 
     // 1회성 텍스트 컬러
@@ -42,7 +45,21 @@ const buttons = {
     buttonRadiusLG: "5px",
 }
 
+// 버튼 음영
+const boxShadow = {
+    default: "2px 7px 10px 0 rgba(0, 0, 0, .1)"
+}
+
+// 레이아웃
+const flexCenter = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
 const theme = {
+    boxShadow,
+    flexCenter,
     colors, size, buttons
 }
 

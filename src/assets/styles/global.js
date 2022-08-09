@@ -18,6 +18,7 @@ const GlobalStyle = createGlobalStyle`
   body { font-size: 16px;color: #444444; font-family: 'Noto Sans KR', sans-serif;-webkit-font-smoothing: antialiased;-webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; user-select:none; }
   select { appearance:none;}
   select::-ms-expand { display:none;}
+  input { outline: none; }
   input[type="search"]::-webkit-search-decoration,
   input[type="search"]::-webkit-search-cancel-button,
   input[type="search"]::-webkit-search-results-button,
