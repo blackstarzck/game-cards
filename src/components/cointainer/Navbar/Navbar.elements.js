@@ -3,6 +3,7 @@ import styled from "styled-components"
  
 export const NavContainer = styled.nav`
     max-width: ${ ({ theme }) => theme.size.desktop };
+    margin: 0 auto;
     display: flex;
     justify-content: space-between;
 `;

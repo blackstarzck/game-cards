@@ -5,6 +5,7 @@ import Home from './pages/Home/Home';
 function App() {
   return (
     <>
+      <div className="blur-img"></div>
       <Navbar/>
       <Home/>
     </>

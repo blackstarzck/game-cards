@@ -8,7 +8,7 @@ const UploadButtons = () => {
             <Button.Upload />
             <Wrapper className="inner-wrapper">
                 <Button.Recruit />
-                <Button.LevelUp />
+                <Button.GetPrev />
             </Wrapper>
         </Wrapper>
     )

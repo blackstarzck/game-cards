@@ -4,6 +4,10 @@ import App from './App';
 import { ThemeProvider } from 'styled-components';
 import GlobalStyle from './assets/styles/global';
 import theme from './assets/styles/theme';
+import Database from './service/database';
+
+const data = new Database();
+const job = data.getData("JOB_INFO");
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

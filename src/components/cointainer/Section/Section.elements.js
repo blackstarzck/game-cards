@@ -1,14 +1,20 @@
 import styled from "styled-components";
+import theme from "../../../assets/styles/theme";
 
 // Section
 export const DefaultSection = styled.section`
-
+    max-width: ${ ({ theme }) => theme.size.desktop };
+    margin: 0 auto;
 `;
 
 export const MainSection = styled(DefaultSection)`
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 85px;
+
     & .left-container, .right-container {
-        width: calc(100% / 2);
+        /* width: calc(100% / 2); */
     }
 `;
 

@@ -4,20 +4,25 @@ import styled, { css } from "styled-components"
 const colors = {
     lightBlack: "#666666",
     commonBlack: "#444444",
+    commonBlack02: "#5F5F5F",
     realBlack: "#000000",
 
     // 메인 컬러1
-    primaryColor: `linear-gradient(to right, rgba(0, 133, 255, 0.6), #9671FF);`,
+    primaryColor: "linear-gradient(to right, rgba(0, 133, 255, 0.6), #9671FF);",
 
     // 메인 컬러2 
     realWhite: "#FFFFFF",
     lightRed: "#FF6060", 
     realRed: "#FF3333",
 
+    // 셀렉트박스 리스트 HOVER 컬러
+    highLight: "rgba(150, 113, 255, 0.1)",
+
     // 1회성 텍스트 컬러
     purple: "#9E00FF",
     border: "#D9D9D9",
-    lightBlue: "#rgba(0, 133, 255, 0.6)",
+    border02: "#EFEFEF",
+    lightBlue: "rgba(0, 133, 255, 0.6)",
 
     // 비활성화 버튼 배경
     inActiveButtonBg: "#E2E2E2",

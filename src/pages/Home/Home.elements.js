@@ -1,5 +1,6 @@
 import styled from "styled-components"
 
-export const HomePage = styled.div`
 
+export const HomePage = styled.div`
+    
 `;
