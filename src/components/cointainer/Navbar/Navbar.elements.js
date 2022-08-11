@@ -29,11 +29,10 @@ export const NavMenuItem = styled.li`
         border-radius: 5px;
         background-color: ${ ({ theme }) => theme.colors.border };
     }
-`;
-
-export const Link = styled.a`
-    display: block;
-    font-size: 1rem;
-    line-height: 1;
-    color: ${ ({ theme }) => theme.colors.commonBlack };
+    a {
+        display: block;
+        font-size: 1rem;
+        line-height: 1;
+        color: ${ ({ theme }) => theme.colors.commonBlack };
+    }
 `;

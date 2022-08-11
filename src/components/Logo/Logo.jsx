@@ -1,20 +1,17 @@
 import React from 'react'
-import { LogoImg, Default, Sub, Nav } from './Logo.elements'
+import styled from "styled-components"
 import logoSrc from "../../assets/images/logo.png";
 
-export const Logo = ({ children, ...props }) => {
+const LogoNav = styled.h1`
+    display: block;
+    width: 75px;
+    img { width: 100%; }
+`;
+
+export const Logo = () => {
     return(
-        <Default {...props}>
-            <LogoImg src={logoSrc} />
-        </Default>
+        <LogoNav>
+            <img src={logoSrc} />
+        </LogoNav>
     );
-};
-
-Logo.Nav = ({ children, ...props }) => {
-    return <Nav {...props}><LogoImg src={logoSrc} /></Nav>
 }
-
-Logo.Sub = ({ children, ...props }) => {
-    return <Sub {...props}><LogoImg src={logoSrc} /></Sub>
-}
-  

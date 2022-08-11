@@ -5,7 +5,7 @@ class Database {
     constructor(){ this.db = getFirestore(firebaseApp); }
 
     async getData(tableName){
-        const jobRef = collection(this.db, tableName);
+        const jobRef = collection(getFirestore(firebaseApp), tableName);
         const jobSnapshot = await getDocs(jobRef);
         const jobList = jobSnapshot.docs.map(doc => doc.data());
         return jobList;

@@ -1,17 +1,15 @@
 import React from 'react'
 import { Description } from '../../Texts/Texts'
-import CardSetting from '../CardSetting/CardSetting'
+import MainView from '../MainView/MainView'
 import UploadButtons from '../UploadButtons/UploadButtons'
-import {
-    DefaultSection, MainSection, FrdSearchSection, Wrapper, Container
-} from './Section.elements'
-import styles from "./Section.module.css"
+import { MainSection, FrdSearchSection, Wrapper, Container } from './Section.elements'
 
-export const Section = ({ Children, ...props }) => <DefaultSection {...props}>{Children}</DefaultSection>
+export const SectionMain = ({card, addCard}) => {
 
-Section.Main = ({ Children, ...props }) => {
+    // console.log("1. SectionMain", addCard);
+
     return (
-        <MainSection {...props}>
+        <MainSection>
             {/* LEFT */}
             <Container className='left-container'>
                 <UploadButtons />
@@ -27,14 +25,14 @@ Section.Main = ({ Children, ...props }) => {
 
             {/* RIGHTT */}
             <Container className='right-container'>
-                <CardSetting />
+                <MainView card={card} addCard={addCard}/>
             </Container>
         </MainSection>
     )
 }
 
-Section.FrdSearch = ({ Children, ...props }) => {
+export const SectionFrdSearch = () => {
     return (
-        <FrdSearchSection {...props}>{Children}</FrdSearchSection>
+        <FrdSearchSection></FrdSearchSection>
     )
 }

@@ -7,7 +7,7 @@ function App() {
     <>
       <div className="blur-img"></div>
       <Navbar/>
-      <Home/>
+      <Home />
     </>
   );
 }

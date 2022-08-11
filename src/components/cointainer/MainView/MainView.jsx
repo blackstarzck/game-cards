@@ -1,26 +1,30 @@
-import React from 'react'
-import { Button } from '../../Button/Button'
-import { Input, Select } from '../../Input/Input'
+import React, { useEffect, useState } from 'react'
+import { ButtonStat, ButtonSkill, ButtonReset, ButtonSave, ButtonViewInfo, ButtonKeepCard, ButtonLevelUp, ButtonSaveTitle, ButtonStatAdd, ButtonStatRemove, ButtonEditTitle } from '../../Button/Button'
+import { InputNickName, SelectJob } from '../../Input/Input'
 import { Title } from '../../Texts/Texts'
-import { BookMark, CardImg, StatItem, Wrapper } from './CardSetting.elements'
+import { BookMark, CardImg, StatItem, Wrapper } from './MainView.elements'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBookmark } from '@fortawesome/pro-solid-svg-icons'
 
-const CardSetting = () => {
+
+const MainView = ({card, addCard}) => {
+    const [ jobSelected, setJobSelected ] = useState(null);
+
     return (
         <Wrapper className="main-view">
             {/* SWITCH */}
             <Wrapper className="ability-btns">
-                <Button.Stat />
-                <Button.Skill />
+                <ButtonStat />
+                <ButtonSkill />
             </Wrapper>
 
-            <CardSetting.Name />
-            <CardSetting.EditName />
+            {/* NAME EDIT */}
+            <MainViewName />
+            <MainViewEditName card={card} addCard={addCard}/>
 
             <Wrapper className="body">
                 {/* STAT CTRL */}
-                <CardSetting.StatContainer />
+                <MainViewStatContainer />
 
                 {/* CARD VIEW */}
                 <Wrapper className="view-wrapper">
@@ -50,59 +54,59 @@ const CardSetting = () => {
 
                     {/* EXPERIENCE */}
                     <Wrapper className="exp-wrapper">
-                        <Button.LevelUp />
+                        <ButtonLevelUp />
                         <div className="outer">
                             <div className="inner"></div>
                         </div>
                     </Wrapper>
-
                 </Wrapper> 
             </Wrapper>
             <Wrapper className="btn-handlers">
-                    <Button.Reset />
-                    <Button.Save />
-                    <Button.ViewInfo />
-                    <Button.KeepCard />
+                    <ButtonReset />
+                    <ButtonSave />
+                    <ButtonViewInfo />
+                    <ButtonKeepCard />
                 </Wrapper>
         </Wrapper>
     )
 }
 
-export default CardSetting;
+export default MainView;
 
-CardSetting.StatContainer = (props) => {
+
+export const MainViewStatContainer = (props) => {
     return(
         <Wrapper className="stat-wrapper">
             <span className="total-points">5</span>
             <Wrapper className="list-wrapper">
-                <CardSetting.Stat heading={"STR"} points={0}/> 
-                <CardSetting.Stat heading={"AGI"} points={0}/> 
-                <CardSetting.Stat heading={"DEX"} points={0}/> 
-                <CardSetting.Stat heading={"VIT"} points={0}/> 
-                <CardSetting.Stat heading={"INT"} points={0}/> 
-                <CardSetting.Stat heading={"LUCK"} points={0}/> 
+                <MainViewStat heading={"STR"} points={0}/> 
+                <MainViewStat heading={"AGI"} points={0}/> 
+                <MainViewStat heading={"DEX"} points={0}/> 
+                <MainViewStat heading={"VIT"} points={0}/> 
+                <MainViewStat heading={"INT"} points={0}/> 
+                <MainViewStat heading={"LUCK"} points={0}/> 
             </Wrapper>
         </Wrapper>
     );
 }
 
-CardSetting.Stat = (props) => {
+export const MainViewStat = (props) => {
     return(
         <StatItem>
             <span className="heading">{props.heading}</span>
             <span className="points">{props.points}</span>
             <Wrapper className="btn-wrapper">
-                <Button.StatAdd />
-                <Button.StatRemove />
+                <ButtonStatAdd />
+                <ButtonStatRemove />
             </Wrapper>
         </StatItem>
     );
 }
 
-CardSetting.Name = () => {
+export const MainViewName = () => {
     return(
         <Wrapper className='edit-wrapper'>
-            <Button.EditTitle />
+            <ButtonEditTitle />
             <Wrapper className='input-wrapper'>
                 <Title.NickName>작렬하는 어둠의 파수꾼</Title.NickName>
                 <Title.Job>Frontend Developer</Title.Job>
@@ -111,28 +115,16 @@ CardSetting.Name = () => {
     );
 };
 
-CardSetting.EditName = () => {
-    const list = { 
-        job: {
-            item: [
-                { key: 1, KR: "소프트웨어 엔지니어", EN: "Software Engineer" },
-                { key: 2, KR: "프론트앤드 개발자", EN: "Frontend Developer" },
-                { key: 3, KR: "백앤드 개발자", EN: "Backend Developer" },
-                { key: 4, KR: "기획자", EN: "Planner" },
-                { key: 5, KR: "디자이너", EN: "Designer" }
-            ]
-        },
-        etc: {
-            item: [ "1" , "2", "3", "4" ]
-        }
-    };
+export const MainViewEditName = ({card, addCard}) => {
+
+    // console.log("3. MainViewEditName", addCard);
 
     return(
         <Wrapper className='select-wrapper'>
-            <Button.SaveTitle />
+            <ButtonSaveTitle />
             <Wrapper className='custom-wrapper'>
-                <Input.NickName />
-                <Select.Job list={list.job.item}>웹 개발자</Select.Job>
+                <InputNickName />
+                <SelectJob card={card} addCard={addCard}>웹 개발자</SelectJob>
             </Wrapper>
         </Wrapper>
     );
