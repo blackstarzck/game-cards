@@ -6,27 +6,35 @@ export const DefaultButton = styled.button`
 `;
 
 export const UploadButton = styled(DefaultButton)`
-    font-size: 24px;
-    font-weight: 500;
-    line-height: 75px;
-    color: ${ ({ theme }) => theme.colors.realWhite };
     width: 248px;
     height: 75px;
     background: ${ ({ theme }) => theme.colors.primaryColor };
-    
-    & > svg, i {
-        margin-left: 26px;
+
+    label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        font-size: 24px;
+        font-weight: 500;
+        line-height: 75px;
+        color: ${ ({ theme }) => theme.colors.realWhite };
+        cursor: pointer;
+        
+        svg, i { width: 26px; height: auto; margin-left: 26px; }
     }
 `;
 
 export const RecruitButton = styled(DefaultButton)`
     font-size: 20px;
     font-weight: 500;
-    color: ${ (prop) => prop.defChecked ? prop.theme.colors.realWhite : prop.theme.colors.lightBlack };
-    background-color: ${ (prop) => prop.defChecked ? prop.theme.colors.lightRed : prop.theme.colors.realWhite };
+    color: ${ (prop) => prop.state == "active" ? prop.theme.colors.realWhite : prop.theme.colors.lightBlack };
+    background-color: ${ (prop) => prop.state == "active" ? prop.theme.colors.lightRed : prop.theme.colors.realWhite };
     width: 114px;
     height: 46px;
     line-height: 46px;
+    transition: .2s;
 
     & > svg, i {
         margin-left: 5px;

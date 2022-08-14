@@ -5,31 +5,42 @@ import { SectionMain, SectionFrdSearch } from '../../components/cointainer/Secti
 const HomePage = styled.div``;
 
 const Home = () => {
+  const [ newCard, setNewCard ] = useState(false);
   const [ card, setCard ] = useState({
-    "nick-name": "",
-    "job": "", 
+    nickName: "",
+    job: "", 
   });
 
   const nickNameRef = useRef();
   const jobRef = useRef();
 
-  const addCard = (data) => {
-    console.log("input: ", data);
-    console.log("result: ", data);
+  const { nickName, job } = card; // 비구조화 할당을 통해 값 추출
 
-    setCard(card => {
-      const updated = {...card};
-      updated[data.key] = data.value;
-      return updated;
-    });
+  const selectNewOrPrev = () => {
+    setNewCard(!newCard);
+  }
+
+  const onChange = (e) => { // input change 이벤트
+    const { value, name } = e.target;
+    setCard({ ...card, [name]: value });
+  }
+
+  const updateCard = (data) => { // 클릭에 이벤트
+    setCard({ ...card, [data.key]: data.value });
   }
 
   return (
     <HomePage>
-      <input ref={nickNameRef} name="nick-name" placeholder="nick-name" type="text"  value={card["nick-name"]}/>
-      <input ref={jobRef} name="job" placeholder="job" type="text"  value={card["job"]}/>
+      <input readOnly ref={nickNameRef} name="nickName" placeholder="nickName" type="text"  value={card.nickName}/>
+      <input readOnly ref={jobRef} name="job" placeholder="job" type="text"  value={card.job}/>
 
-      <SectionMain card={card} addCard={addCard} />
+      <SectionMain 
+        card={card}
+        newCard={newCard}
+        updateCard={updateCard}
+        onChange={onChange}
+        selectNewOrPrev={selectNewOrPrev}
+      />
       <SectionFrdSearch />
     </HomePage>
   )

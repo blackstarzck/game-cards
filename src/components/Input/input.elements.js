@@ -1,11 +1,5 @@
 import styled from "styled-components";
 
-export const InputDefault = styled.input`
-    position: relative;
-    width: 100%;
-    border-radius: 5px;
-`;
-
 export const SelectDefault = styled.div`
     position: relative;
     width: 100%;
@@ -18,19 +12,28 @@ export const Wrapper = styled.div`
     &.job-wrapper { width: 100%;position: relative; }
     &.input-wrapper { width: 100%; }
     &.show-selected {
+        width: 100%;
         border: 1px solid ${ ({ theme }) => theme.colors.commonBlack };
         border-radius: 5px;    
     }
 `;
 
-export const NickNameInput = styled(InputDefault)`
+export const NickNameInput = styled.input`
     height: 38px;
     font-size: 18px;
     font-weight: 500;
     color: ${ ({ theme }) => theme.colors.commonBlack };
     text-indent: 10px;
     border: 1px solid ${ ({ theme }) => theme.colors.commonBlack };
-
+    position: relative;
+    width: 100%;
+    border-radius: 5px;
+    
+    &::placeholder {
+        font-family: "Inter", sans-serif;
+        font-weight: 300;
+        color: ${ ({ theme }) => theme.colors.inActiveButtonBg };
+    }
     & + button {
         right: 11px;
     }
@@ -52,7 +55,7 @@ export const JobSelect = styled(SelectDefault)`
 export const ContainerSelect = styled.ul`
     width: 100%;
     visibility: hidden;
-    position: absolute;top: 0; left: 0;z-index: 3; 
+    position: absolute;top: 0; left: 0;z-index: -1;
     border: 1px solid ${ ({theme}) => theme.colors.commonBlack };
     border-radius: 5px;
     padding: 10px 0;

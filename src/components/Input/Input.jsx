@@ -4,16 +4,25 @@ import { Wrapper, NickNameInput, JobSelect, ContainerSelect } from './input.elem
 import Database from '../../service/database'
 import { gsap } from "gsap"
 
-export const InputNickName = () => {
+export const InputNickName = ({...props}) => {
+    const target = props.card["nickName"];
+    const inputRef = useRef();
+
     return(
         <Wrapper className="input-wrapper">
-            <NickNameInput></NickNameInput>
-            <ButtonTextClear />
+            <NickNameInput 
+                ref={inputRef}
+                name="nickName" 
+                placeholder="원하는 이름을 입력하세요" 
+                onChange={props.onChange}
+                value={target || ""}
+            />
+            { target && <ButtonTextClear target={"nickName"} updateCard={props.updateCard} /> }
         </Wrapper>
     );
 }
 
-export const SelectJob = ({card, addCard}) => {
+export const SelectJob = ({card, updateCard}) => {
     const init = [
         { KR: '소프트웨어 엔지니어', key: 1, EN: 'Software Engineer' },
         { key: 2, EN: 'Frontend Developer', KR: '프론트엔드 개발자' },
@@ -42,6 +51,7 @@ export const SelectJob = ({card, addCard}) => {
     }
 
     if(jobLists === null){
+        // 로딩화면
         return <h1>받아오는중...</h1>;
     }else{
         // consoe.log(jobLists);
@@ -50,23 +60,23 @@ export const SelectJob = ({card, addCard}) => {
     return(
         <Wrapper className="job-wrapper">
             <Wrapper className="show-selected" onClick={ () => handleDropDown(!clicked) }>
-                <JobSelect>{card["job"] || jobLists[0].KR}</JobSelect>
-                <ButtonArrowDown />
+                <JobSelect>{card.job || jobLists[0].KR}</JobSelect>
+                <ButtonArrowDown clickState={clicked}/>
             </Wrapper>
             <JobLists
                 clickState={clicked}
                 list={jobLists}
                 cardKey={"job"}
-                addCard={addCard}
+                updateCard={updateCard}
                 handleDropDown={handleDropDown}
             />
         </Wrapper>
     );
 }
 
-export const JobLists = ({ list, cardKey, addCard, clickState, handleDropDown }) => {
+export const JobLists = ({ list, cardKey, updateCard, clickState, handleDropDown }) => {
     const el = useRef(null);
-    const tl = useRef();
+    const tl = useRef(null);
     const toggle = clickState;
     let pos = 0;
 
@@ -76,20 +86,30 @@ export const JobLists = ({ list, cardKey, addCard, clickState, handleDropDown })
         tl.current = gsap.timeline({ pause: true });
         tl.current.fromTo(el.current, { y: pos, opacity: 0 },{
             y: (pos + 5), opacity: 1, duration: .3,
-            onStart: function(){ el.current.style.visibility = "visible" }
+            onStart: function(){
+                el.current.style.visibility = "visible"
+                el.current.style.zIndex = 3;
+            }
         });
     }, []);
 
     useEffect(() => {
-        toggle ? tl.current.play() : tl.current.reverse() ;
+        toggle ? tl.current.play() : reverseFun();
     },[toggle]);
 
     const onClick = name => {
-        addCard({ key: cardKey, value: name });
-        tl.current.reverse() ;
+        reverseFun();
+        updateCard({ key: cardKey, value: name });
         handleDropDown(!clickState);
     }
 
+    const reverseFun = () => {
+        tl.current.reverse();
+        setTimeout(() => {
+            el.current.style.visibility = "hidden";
+            el.current.style.zIndex = -1;
+        }, 400)
+    }
 
     return(
         <ContainerSelect ref={el}>

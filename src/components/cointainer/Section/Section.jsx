@@ -4,15 +4,13 @@ import MainView from '../MainView/MainView'
 import UploadButtons from '../UploadButtons/UploadButtons'
 import { MainSection, FrdSearchSection, Wrapper, Container } from './Section.elements'
 
-export const SectionMain = ({card, addCard}) => {
-
-    // console.log("1. SectionMain", addCard);
+export const SectionMain = ({...props}) => {
 
     return (
         <MainSection>
             {/* LEFT */}
             <Container className='left-container'>
-                <UploadButtons />
+                <UploadButtons newCard={props.newCard} selectNewOrPrev={props.selectNewOrPrev} />
                 <Wrapper className='descr-wrapper'>
                     <Description.li>※ 얼굴이 보이는 사진으로 업로드해주세요.</Description.li>
                     <Description.li>※ 하루에 최대 5개만 업로드할 수 있십니다.</Description.li>
@@ -25,7 +23,11 @@ export const SectionMain = ({card, addCard}) => {
 
             {/* RIGHTT */}
             <Container className='right-container'>
-                <MainView card={card} addCard={addCard}/>
+                <MainView
+                    card={props.card}
+                    updateCard={props.updateCard}
+                    onChange={props.onChange}
+                />
             </Container>
         </MainSection>
     )

@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBookmark } from '@fortawesome/pro-solid-svg-icons'
 
 
-const MainView = ({card, addCard}) => {
+const MainView = ({...props}) => {
     const [ jobSelected, setJobSelected ] = useState(null);
 
     return (
@@ -20,7 +20,7 @@ const MainView = ({card, addCard}) => {
 
             {/* NAME EDIT */}
             <MainViewName />
-            <MainViewEditName card={card} addCard={addCard}/>
+            <MainViewEditName card={props.card} updateCard={props.updateCard} onChange={props.onChange} />
 
             <Wrapper className="body">
                 {/* STAT CTRL */}
@@ -115,16 +115,16 @@ export const MainViewName = () => {
     );
 };
 
-export const MainViewEditName = ({card, addCard}) => {
+export const MainViewEditName = ({...props}) => {
 
-    // console.log("3. MainViewEditName", addCard);
+    // console.log("3. MainViewEditName", updateCard);
 
     return(
         <Wrapper className='select-wrapper'>
             <ButtonSaveTitle />
             <Wrapper className='custom-wrapper'>
-                <InputNickName />
-                <SelectJob card={card} addCard={addCard}>웹 개발자</SelectJob>
+                <InputNickName card={props.card} onChange={props.onChange} updateCard={props.updateCard}/>
+                <SelectJob card={props.card} updateCard={props.updateCard}>웹 개발자</SelectJob>
             </Wrapper>
         </Wrapper>
     );
