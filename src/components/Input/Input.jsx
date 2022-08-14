@@ -5,7 +5,7 @@ import Database from '../../service/database'
 import { gsap } from "gsap"
 
 export const InputNickName = ({...props}) => {
-    const target = props.card["nickName"];
+    const target = props.mainCard["nickName"];
     const inputRef = useRef();
 
     return(
@@ -22,7 +22,7 @@ export const InputNickName = ({...props}) => {
     );
 }
 
-export const SelectJob = ({card, updateCard}) => {
+export const SelectJob = ({mainCard, updateCard}) => {
     const init = [
         { KR: '소프트웨어 엔지니어', key: 1, EN: 'Software Engineer' },
         { key: 2, EN: 'Frontend Developer', KR: '프론트엔드 개발자' },
@@ -60,7 +60,7 @@ export const SelectJob = ({card, updateCard}) => {
     return(
         <Wrapper className="job-wrapper">
             <Wrapper className="show-selected" onClick={ () => handleDropDown(!clicked) }>
-                <JobSelect>{card.job || jobLists[0].KR}</JobSelect>
+                <JobSelect>{mainCard.job || jobLists[0].KR}</JobSelect>
                 <ButtonArrowDown clickState={clicked}/>
             </Wrapper>
             <JobLists

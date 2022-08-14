@@ -4,8 +4,7 @@ import { DescriptionLi, DescriptionSpan, TitleDefault, CardMainTitle, CardSubTit
 export const Description = ({ children, ...props }) => <DescriptionSpan {...props}>{children}</DescriptionSpan>
 
 export const Title = ({ children, ...props }) => <TitleDefault {...props}>{children}</TitleDefault>
+export const TitleNickName = ({ children, ...props }) => <CardMainTitle {...props}>{children}</CardMainTitle>
+export const TitleJob = ({ children, ...props }) => <CardSubTitle {...props}>{children}</CardSubTitle>
 
-Title.NickName = ({ children, ...props }) => <CardMainTitle {...props}>{children}</CardMainTitle>
-Title.Job = ({ children, ...props }) => <CardSubTitle {...props}>{children}</CardSubTitle>
-
-Description.li = ({ children, ...props }) => <DescriptionLi {...props}>{children}</DescriptionLi>
+export const DescriptionLI = ({ children, ...props }) => <DescriptionLi {...props}>{children}</DescriptionLi>

@@ -6,8 +6,6 @@ import * as faceapi from 'face-api.js';
 const UploadButtons = ({...props}) => {
     const [ loading, setLoading ] = useState(false);
     const [ imgSrc, setImgSrc ] = useState("");
-    const [ expression, setExpression ] = useState({ });
-    const keyNames = [ "angry", "disgusted", "fearful", "happy", "neutral", "sad", "surprised"  ];
 
     useEffect(() => {
         const loadModels = async () => {
@@ -20,17 +18,20 @@ const UploadButtons = ({...props}) => {
             ])
             .then(() => {
                 detect()
-                .then( (result) => {
-                    setExpression(result);
-                    console.log(expression, result);
+                .catch((error) => {
+                    console.log("얼굴/표정 감지 실패", error);
+                })
+                .then((result) => {
+                    console.log("얼굴/표정 감지 성공", result);
+                    result && props.getFaceResult(result);
                 });
             });
         }
         imgSrc && loadModels();
     }, [imgSrc]);
 
-    const onChange = async evt => {
-        let src = await URL.createObjectURL(evt.target.files[0]);
+    const onChange = evt => {
+        let src = URL.createObjectURL(evt.target.files[0]);
     
         // const reader = new FileReader();
         // reader.readAsDataURL(evt.target.files[0]);
@@ -43,37 +44,41 @@ const UploadButtons = ({...props}) => {
      }
 
      const detect = async () => {
+        const keyNames = [ "angry", "disgusted", "fearful", "happy", "neutral", "sad", "surprised"  ];
         const img = document.createElement("img");
         img.src = imgSrc;
         const detections = await faceapi.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
             .withFaceLandmarks()
             .withFaceExpressions()
             .withAgeAndGender();
-    
-        const genderResult = detections[0].gender;
-        const ageResult = Math.round(detections[0].age);
-        const expResult = detections[0].expressions;
-        const resultArray = [];
-        let value;
+        if(detections.length > 0){
+            const genderResult = detections[0].gender;
+            const ageResult = Math.round(detections[0].age);
+            const expResult = detections[0].expressions;
+            const resultArray = [];
+            let value;
 
-        keyNames.map((key) => {
-          value = Math.round(expResult[`${key}`] * 100);
-          resultArray.push({ key, value });
-        });
-    
-        resultArray.sort(function(a, b) { // 오름차순
-          return a.value > b.value ? -1 : a.value < b.value ? 1 : 0;
-        });
-    
-        let key = resultArray[0].key;
-        let val = resultArray[0].value;
-        let obj = { 
-            age: ageResult,
-            gender: genderResult,
-            expression : { name: key, value: val }
-        };
-        console.log(detections);
-        return obj;
+            keyNames.map((key) => {
+                value = Math.round(expResult[`${key}`] * 100);
+                resultArray.push({ key, value });
+            });
+        
+            resultArray.sort(function(a, b) { // 오름차순
+                return a.value > b.value ? -1 : a.value < b.value ? 1 : 0;
+            });
+        
+            let key = resultArray[0].key;
+            let val = resultArray[0].value;
+            let obj = { 
+                age: ageResult,
+                gender: genderResult,
+                expression : { name: key, value: val }
+            };
+            // console.log(detections);
+            return obj;
+        }else{
+            console.log("감지된 얼굴/표정이 없습니다.");
+        }
     }
 
     return (

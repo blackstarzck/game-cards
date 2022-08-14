@@ -1,14 +1,20 @@
 import { firebaseApp } from "./firebase"
-import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
+import { getFirestore, collection, doc, getDoc , getDocs, setDoc } from 'firebase/firestore';
 
 class Database {
     constructor(){ this.db = getFirestore(firebaseApp); }
 
-    async getData(tableName){
-        const jobRef = collection(getFirestore(firebaseApp), tableName);
-        const jobSnapshot = await getDocs(jobRef);
-        const jobList = jobSnapshot.docs.map(doc => doc.data());
-        return jobList;
+    async getDatas(tableName){
+        const docRef = collection(this.db, tableName);
+        const docSnapshot = await getDocs(docRef);
+        const result = docSnapshot.docs.map(doc => doc.data());
+        return result;
+    }
+
+    async getSingleData(tableName, docName){
+        const docRef = doc(this.db, tableName, docName);
+        const result = await getDoc(docRef);
+        return result.data();
     }
 }
 

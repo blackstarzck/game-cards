@@ -18,14 +18,8 @@ export const MainSection = styled(DefaultSection)`
     }
 `;
 
-export const FrdSearchSection = styled(DefaultSection)`
-
-`;
-
-// Container
-export const Container = styled.article`
-
-`;
+export const FrdSearchSection = styled(DefaultSection)``;
+export const Container = styled.article``;
 
 // Wrapper
 export const Wrapper = styled.ul`
@@ -36,3 +30,4 @@ export const Wrapper = styled.ul`
         margin-bottom: 7px;
     }
 `;
+

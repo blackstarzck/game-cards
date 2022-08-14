@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { ButtonStat, ButtonSkill, ButtonReset, ButtonSave, ButtonViewInfo, ButtonKeepCard, ButtonLevelUp, ButtonSaveTitle, ButtonStatAdd, ButtonStatRemove, ButtonEditTitle } from '../../Button/Button'
 import { InputNickName, SelectJob } from '../../Input/Input'
-import { Title } from '../../Texts/Texts'
+import { TitleJob, TitleNickName } from '../../Texts/Texts'
 import { BookMark, CardImg, StatItem, Wrapper } from './MainView.elements'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBookmark } from '@fortawesome/pro-solid-svg-icons'
@@ -20,7 +20,7 @@ const MainView = ({...props}) => {
 
             {/* NAME EDIT */}
             <MainViewName />
-            <MainViewEditName card={props.card} updateCard={props.updateCard} onChange={props.onChange} />
+            <MainViewEditName mainCard={props.mainCard} updateCard={props.updateCard} onChange={props.onChange} />
 
             <Wrapper className="body">
                 {/* STAT CTRL */}
@@ -108,8 +108,8 @@ export const MainViewName = () => {
         <Wrapper className='edit-wrapper'>
             <ButtonEditTitle />
             <Wrapper className='input-wrapper'>
-                <Title.NickName>작렬하는 어둠의 파수꾼</Title.NickName>
-                <Title.Job>Frontend Developer</Title.Job>
+                <TitleNickName>작렬하는 어둠의 파수꾼</TitleNickName>
+                <TitleJob>Frontend Developer</TitleJob>
             </Wrapper>
         </Wrapper>
     );
@@ -123,8 +123,8 @@ export const MainViewEditName = ({...props}) => {
         <Wrapper className='select-wrapper'>
             <ButtonSaveTitle />
             <Wrapper className='custom-wrapper'>
-                <InputNickName card={props.card} onChange={props.onChange} updateCard={props.updateCard}/>
-                <SelectJob card={props.card} updateCard={props.updateCard}>웹 개발자</SelectJob>
+                <InputNickName mainCard={props.mainCard} onChange={props.onChange} updateCard={props.updateCard}/>
+                <SelectJob mainCard={props.mainCard} updateCard={props.updateCard}>웹 개발자</SelectJob>
             </Wrapper>
         </Wrapper>
     );
