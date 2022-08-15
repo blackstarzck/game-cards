@@ -48,6 +48,7 @@ export const GetButton = styled(RecruitButton)`
 export const EditTitleButton = styled.button`
     width: 35px;
     height: 35px;
+    color: ${ props =>  props.imgLoaded ? props.theme.colors.commonBlack : props.theme.colors.inActive };
 
     & svg, i {
         width: 100%;
@@ -104,16 +105,14 @@ export const RemoveButton = styled(AddButton)`
 `;
 
 export const ResetButton = styled.button`
-    width: 90px;
+    width: 95px;
     height: 40px;
-    background-color: ${ ({ theme }) => theme.colors.inActiveButtonBg };
-    /* background-color: ${ ({ theme }) => theme.colors.realRed }; // active */
+    background-color: ${ props => props.imgLoaded ? props.theme.colors.realRed : props.theme.colors.inActiveButtonBg };
     border-radius: 25px;
     box-shadow: ${ ({ theme }) => theme.boxShadow.default };
 
     & svg, i {
         color: ${ ({ theme }) => theme.colors.realWhite };
-        /* color: ${ ({ theme }) => theme.colors.realWhite }; // active */
         width: 20px;
         height: 20px;
     }
@@ -132,8 +131,7 @@ export const ViewButton = styled.button`
     font-weight: 400;
     border-radius: 25px;
     color: ${ ({ theme }) => theme.colors.realWhite };
-    background-color: ${ ({ theme }) => theme.colors.inActiveButtonBg };
-    /* background-color: ${ ({ theme }) => theme.colors.realWhite }; // active */
+    background-color: ${ props => props.imgLoaded ? props.theme.colors.realRed : props.theme.colors.inActiveButtonBg };
     box-shadow: ${ ({ theme }) => theme.boxShadow.default };
 `;
 export const KeepButton = styled(ViewButton)`
@@ -159,8 +157,7 @@ export const StatButton = styled.button`
     font-size: 18px;
     line-height: 22px;
     font-weight: 700;
-    color: ${ ({ theme }) => theme.colors.inActiveButtonBg };
-    /* color: ${ ({ theme }) => theme.colors.commonBlack }; // active */
+    color: ${ props =>  props.imgLoaded ? props.theme.colors.commonBlack : props.theme.colors.inActiveButtonBg };
     background-color: ${ ({ theme }) => theme.colors.realWhite };;
     position: relative;
     display: flex;
@@ -178,5 +175,5 @@ export const StatButton = styled.button`
 `;
 
 export const SkillButton = styled(StatButton)`
-
+    color: ${ props => props.disable && props.theme.colors.inActive };
 `;

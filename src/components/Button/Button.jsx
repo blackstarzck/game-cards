@@ -41,16 +41,44 @@ export const ButtonGetPrev = ({...props}) => {
   );
 }
 
-export const ButtonEditTitle = () => <EditTitleButton ><FontAwesomeIcon icon={faPenToSquare} /></EditTitleButton>
+export const ButtonEditTitle = ({handleEditState, imgLoaded}) => {
 
-export const ButtonSaveTitle = () => <SaveTitleButton ><FontAwesomeIcon icon={faFloppyDiskPen} /></SaveTitleButton>
-
-export const ButtonTextClear = ({...props}) => {
   const onClick = () => {
-    props.updateCard({ key: props.target, value: "" });
+    imgLoaded && handleEditState();
+  }
+
+  console.log("ButtonEditTitle:", imgLoaded);
+
+  return(
+    <EditTitleButton onClick={onClick} imgLoaded={imgLoaded}>
+      <FontAwesomeIcon icon={faPenToSquare} />
+    </EditTitleButton>
+  );
+}
+
+export const ButtonSaveTitle = ({handleEditState, updateCard, names, mainCard }) => {
+  const onClick = () => {
+    updateCard({ key: "nickName", value: names["nickName"] || mainCard.nickName });
+    updateCard({ key: "jobKR", value: names["jobKR"] });
+    updateCard({ key: "jobEN", value: names["jobEN"] });
+    handleEditState();
+    console.log("ButtonSaveTitle:", { nickName: names["nickName"], jobKR: names["jobKR"], jobEN: names["jobEN"] });
+  }
+
+  return(
+    <SaveTitleButton onClick={onClick} >
+      <FontAwesomeIcon icon={faFloppyDiskPen} />
+    </SaveTitleButton>
+  );
+}
+
+export const ButtonTextClear = ({setInputVal, target, handleNames}) => {
+  const onClick = () => {
+    setInputVal("");
+    handleNames({ key: "nickName", value: "" });
   }
   return(
-    <ClearButton name={props.target} onClick={onClick} >
+    <ClearButton name={target} onClick={onClick} >
       <FontAwesomeIcon icon={faCircleXmark} />
     </ClearButton>
   );
@@ -79,16 +107,23 @@ export const ButtonStatAdd = () => <AddButton ><FontAwesomeIcon icon={faPlus} />
 
 export const ButtonStatRemove = () => <RemoveButton ><FontAwesomeIcon icon={faMinus} /></RemoveButton>
 
-export const ButtonReset = () => <ResetButton ><FontAwesomeIcon icon={faArrowRotateLeft} /></ResetButton>
+export const ButtonReset = ({imgLoaded}) => <ResetButton imgLoaded={imgLoaded}><FontAwesomeIcon icon={faArrowRotateLeft} /></ResetButton>
 
-export const ButtonSave = () => <SaveButton ><FontAwesomeIcon icon={faFloppyDiskCircleArrowRight} /></SaveButton>
+export const ButtonSave = ({imgLoaded}) => <SaveButton imgLoaded={imgLoaded}><FontAwesomeIcon icon={faFloppyDiskCircleArrowRight} /></SaveButton>
 
-export const ButtonViewInfo = () => <ViewButton >설명보기</ViewButton>
+export const ButtonViewInfo = ({imgLoaded, viewCardInfo}) => {
+  const onClick = () => {
+    imgLoaded && viewCardInfo();
+  }
+  return(
+    <ViewButton onClick={onClick} imgLoaded={imgLoaded}>설명보기</ViewButton>
+  );
+}
 
-export const ButtonKeepCard = () => <KeepButton >보관하기</KeepButton>
+export const ButtonKeepCard = ({imgLoaded}) => <KeepButton imgLoaded={imgLoaded}>보관하기</KeepButton>
 
 export const ButtonLevelUp = () => <LevelUpButton ><FontAwesomeIcon icon={faCircleArrowUp} /></LevelUpButton>
 
-export const ButtonStat = () => <StatButton><b>능</b><b>력</b><b>치</b><FontAwesomeIcon icon={faSparkles} /></StatButton>
+export const ButtonStat = ({imgLoaded}) => <StatButton imgLoaded={imgLoaded}><b>능</b><b>력</b><b>치</b><FontAwesomeIcon icon={faSparkles} /></StatButton>
 
-export const ButtonSkill = () => <SkillButton><b>스</b><b>킬</b><FontAwesomeIcon icon={faSparkles} /></SkillButton>
+export const ButtonSkill = ({imgLoaded, disable}) => <SkillButton disable imgLoaded={imgLoaded}><b>스</b><b>킬</b><FontAwesomeIcon icon={faSparkles} /></SkillButton>

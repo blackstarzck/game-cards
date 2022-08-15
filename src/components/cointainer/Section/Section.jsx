@@ -5,23 +5,26 @@ import MainViewer from '../MainViewer/MainViewer'
 import UploadButtons from '../UploadButtons/UploadButtons'
 import { MainSection, FrdSearchSection, Wrapper, Container } from './Section.elements'
 import Database from '../../../service/database'
+import { randomName } from '../../../assets/random-generator/random-generator'
 
 
 const data = new Database();
 
-export const SectionMain = ({...props}) => {
+export const SectionMain = ({login}) => {
     const [ mainCard, setMainCard ] = useState({
-        nickName: "",
-        job: "",
+        nickName: randomName(),
+        jobKR: "",
+        jobEN: "",
         level: 1,
         exp: 0,
         groupNo: 0,
         stats: { STR: 0, AGI: 0, DEX: 0, VIT: 0, INT: 0, LUCK: 0 },
+        remain: 0,
         code: "",
         descr: "",
         quote: "",
-        selected: "",
-        imgURL: ""
+        selected: 0,
+        imgURL: "",
     });
     const [ expression, setExpression ] = useState({
         age: 0,
@@ -31,6 +34,8 @@ export const SectionMain = ({...props}) => {
             value: 0
         }
     });
+    const [ imgLoaded, setImgLoaded ] = useState(false);
+
     const [ newCard, setNewCard ] = useState(false);
           
     const selectNewOrPrev = () => setNewCard(!newCard);
@@ -41,26 +46,40 @@ export const SectionMain = ({...props}) => {
     }
   
     const updateCard = (data) => { // 클릭에 이벤트
-        console.log(data)
-        setMainCard({ ...mainCard, [data.key]: data.value });
+        console.log("업데이트: ", data);
+        setMainCard(mainCard => (
+            { ...mainCard, [data.key]: data.value }
+        ));
     }
 
     const getFaceResult = (result) => setExpression(result);
 
     useEffect(() => {
+        console.log("SectionMain:", login);
+    }, [login]);
+
+    useEffect(() => {
         if(expression.age !== 0 && expression.gender !== ""){
             const resultCardCode = getCardCode(expression);
-            
+            console.log("resultCardCode: ", resultCardCode);
             data.getSingleData("CARDS_INFO", resultCardCode.code)
             .then((result) => {
-                console.log(result)
+                console.log("card-info", result);
+                setImgLoaded(true);
                 setMainCard((mainCard) => {
+                    const keyArray = [ "STR", "AGI", "DEX", "VIT", "INT", "LUCK" ];
+                    const max = 5;
                     const updated = {...mainCard};
                     updated["code"] = resultCardCode.code;
                     updated["imgURL"] = resultCardCode.imgURL;
                     updated["quote"] = result.QUOTE;
                     updated["descr"] = result.DESCR;
                     updated["selected"] = result.SELECTED;
+
+                    for(let i = 0; i < keyArray.length; i++){
+                        let key = keyArray[i];
+                        updated["stats"][key] = Math.floor((Math.random() * ((max) - 1)) + 1);
+                    }
                     return updated
                 });
             });
@@ -127,7 +146,10 @@ export const SectionMain = ({...props}) => {
 
             {/* LEFT */}
             <Container className='left-container'>
-                <UploadButtons newCard={newCard} selectNewOrPrev={selectNewOrPrev} getFaceResult={getFaceResult} />
+                <UploadButtons 
+                    newCard={newCard}
+                    selectNewOrPrev={selectNewOrPrev}
+                    getFaceResult={getFaceResult}/>
                 <Wrapper className='descr-wrapper'>
                     <DescriptionLI>※ 얼굴이 보이는 사진으로 업로드해주세요.</DescriptionLI>
                     <DescriptionLI>※ 하루에 최대 5개만 업로드할 수 있십니다.</DescriptionLI>
@@ -141,6 +163,7 @@ export const SectionMain = ({...props}) => {
             {/* RIGHTT */}
             <Container className='right-container'>
                 <MainView
+                    imgLoaded={imgLoaded}
                     mainCard={mainCard}
                     updateCard={updateCard}
                     onChange={onChange}

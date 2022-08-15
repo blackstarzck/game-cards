@@ -20,7 +20,8 @@ const MainViewer = ({...props}) => {
     <MainCardInputs>
         <ul>
             <li><span>nickName:</span><input readOnly name="nickName" placeholder="" type="text"  value={props.mainCard.nickName || ""} /></li>
-            <li><span>job:</span><input readOnly name="job" placeholder="" type="text"  value={props.mainCard.job || ""} /></li>
+            <li><span>jobKR:</span><input readOnly name="jobKR" placeholder="" type="text"  value={props.mainCard.jobKR || ""} /></li>
+            <li><span>jobEN:</span><input readOnly name="jobEN" placeholder="" type="text"  value={props.mainCard.jobEN || ""} /></li>
             <li><span>level: </span><input readOnly name="level: " placeholder="" type="text"  value={props.mainCard.level  || ""} /></li>
             <li><span>exp:</span><input readOnly name="exp" placeholder="" type="text"  value={props.mainCard.exp || ""} /></li>
             <li><span>groupNo:</span><input readOnly name="groupNo" placeholder="" type="text"  value={props.mainCard.groupNo || ""} /></li>

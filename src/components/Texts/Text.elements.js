@@ -23,16 +23,20 @@ export const TitleDefault = styled.h2`
 export const CardMainTitle = styled.h3`
     font-size: 34px;
     font-weight: 900;
-    line-height: 41px;
+    line-height: 44px;
     letter-spacing: -1.5px;
-    color: ${ ({ theme }) => theme.colors.realBlack };
+    color: ${ props =>  props.imgLoaded ? props.theme.colors.realBlack : props.theme.colors.inActive };
+    /* overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%; */
 `;
 
 export const CardSubTitle = styled.h4`
     font-family: 'Inter', sans-serif;
     font-size: 24px;
     font-weight: 400;
-    line-height: 29px;
+    line-height: 30px;
     letter-spacing: -1.5px;
-    color: ${ ({ theme }) => theme.colors.realBlack }
+    color: ${ props =>  props.imgLoaded ? props.theme.colors.realBlack : props.theme.colors.inActive };
 `;

@@ -1,15 +1,26 @@
 import styled from "styled-components";
-import theme from "../../../assets/styles/theme";
 
 export const Wrapper = styled.div`
+    &.main-view {
+        width: 472px;
+        padding: 21px 15px 20px;
+        background-color: ${ ({theme}) => theme.colors.realWhite };
+        border-radius: 5px;
+        position: relative;
+    }
     &.edit-wrapper, &.select-wrapper {
-        display: flex;
+        /* display: flex; */
+        display: ${ props => props.active ? "flex" : "none" };
         align-items: center;
         padding-left: 15px;
         
         button {
             margin-right: 12px;
         }
+        .input-wrapper { width: 100%; }
+    }
+    &.edit-wrapper {
+        
     }
     &.body {
         display: flex;
@@ -48,7 +59,7 @@ export const Wrapper = styled.div`
             button:first-child { margin-right: 6px; }
         }
     }
-    &.view-wrapper { width: 232px; position: relative; }
+    &.view-wrapper { width: 243px; position: relative; }
     &.custom-wrapper {
         width: 100%;
         
@@ -83,13 +94,6 @@ export const Wrapper = styled.div`
             font-weight: 700;
         }
     }
-    &.main-view {
-        width: 452px;
-        padding: 21px 15px 20px;
-        background-color: ${ ({theme}) => theme.colors.realWhite };
-        border-radius: 5px;
-        position: relative;
-    }
     &.view-box {
         width: 100%;
         position: relative;
@@ -108,7 +112,7 @@ export const Wrapper = styled.div`
             padding: 3px;
             
             .inner {
-                width: 100%;
+                width: ${ prop => `${prop.exp}%` };
                 height: 100%;
                 background-color: ${ ({theme}) => theme.colors.lightBlue };
                 border-radius: 15px;
@@ -123,6 +127,7 @@ export const Wrapper = styled.div`
         button:not(:last-child) { margin-bottom: 7px; }
     }
     &.story-box {
+        visibility: hidden;
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, .7);
@@ -131,7 +136,7 @@ export const Wrapper = styled.div`
         position: absolute; left: 0; top: 0;
         border-radius: 5px;
 
-        h4 { width: 100%; font-size: 18px; font-weight: 700; line-height: 22px; text-align: center;padding: 37px 0 70px; }
+        h4 { width: 95%; font-size: 18px; font-weight: 700; line-height: 22px; text-align: center;padding: 37px 0 70px;margin: auto; }
         p { display: block; width: calc(100% - 20px); font-size: 16px; font-weight: 200; line-height: 24px; padding: 0 10px; }
     }
 `;
@@ -147,26 +152,25 @@ export const StatItem = styled.li`
         font-size: 18px;
         font-weight: 700;
     }
-    span.heading {
-        width: 51px;
-        text-align: left;
-        font-family: "Montserrat", sans-serif;
-        color: ${ ({ theme }) => theme.colors.inActive };
-        /* color: ${ ({ theme }) => theme.colors.commonBlack }; // active */
-        line-height: 24px;
-    }
-    span.points {
-        text-align: center;
-        letter-spacing: -1px;
-        width: 56px;
-        height: 22px;
-        line-height: 22px;
-        border-radius: 5px;
-        border: 1px solid ${ ({ theme }) => theme.colors.border02 };
-        color: ${ ({ theme }) => theme.colors.inActiveInputTxt };
-        /* color: ${ ({ theme }) => theme.colors.commonBlack02 }; // active */
-        background-color: ${ ({ theme }) => theme.colors.inActiveInputBG };
-    }
+`;
+
+export const StatHeading = styled.span`
+    width: 51px;
+    text-align: left;
+    font-family: "Montserrat", sans-serif;
+    color: ${ props =>  props.imgLoaded ? props.theme.colors.commonBlack : props.theme.colors.inActive };
+    line-height: 24px;
+`;
+export const StatPoints = styled.span`
+    text-align: center;
+    letter-spacing: -1px;
+    width: 56px;
+    height: 22px;
+    line-height: 22px;
+    border-radius: 5px;
+    border: 1px solid ${ ({ theme }) => theme.colors.border02 };
+    color: ${ props => props.imgLoaded ? props.theme.colors.commonBlack2 : props.theme.colors.inActiveInputTxt };
+    background-color: ${ ({ theme }) => theme.colors.inActiveInputBG };
 `;
 
 export const BookMark = styled.div`
@@ -199,5 +203,6 @@ export const CardImg = styled.div`
     align-items: center;
     width: 100%;
     height: 262px;
-    img { width: 100%; }
+    img { max-width: 100%; };
+    .stand-by { font-size: 14px; color: ${ ({theme}) => theme.colors.commonBlack } };
 `;

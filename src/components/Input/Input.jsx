@@ -1,28 +1,33 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { ButtonTextClear, ButtonArrowDown } from '../Button/Button'
 import { Wrapper, NickNameInput, JobSelect, ContainerSelect } from './input.elements'
-import Database from '../../service/database'
 import { gsap } from "gsap"
 
-export const InputNickName = ({...props}) => {
-    const target = props.mainCard["nickName"];
+export const InputNickName = ({names, handleNames}) => {
+    const [ inputVal, setInputVal ] = useState("");
     const inputRef = useRef();
 
+    const onChnage = (evt) => {
+        const { value } = evt.target;
+        setInputVal(value);
+        handleNames({ key: "nickName", value });
+    }
+    
     return(
         <Wrapper className="input-wrapper">
             <NickNameInput 
                 ref={inputRef}
                 name="nickName" 
+                value={names.nickName}
                 placeholder="원하는 이름을 입력하세요" 
-                onChange={props.onChange}
-                value={target || ""}
+                onChange={onChnage}
             />
-            { target && <ButtonTextClear target={"nickName"} updateCard={props.updateCard} /> }
+            { inputVal && <ButtonTextClear target={"nickName"} setInputVal={setInputVal} names={names} handleNames={handleNames} /> }
         </Wrapper>
     );
 }
 
-export const SelectJob = ({mainCard, updateCard}) => {
+export const SelectJob = ({names, updateCard, handleNames, imgLoaded}) => {
     const init = [
         { KR: '소프트웨어 엔지니어', key: 1, EN: 'Software Engineer' },
         { key: 2, EN: 'Frontend Developer', KR: '프론트엔드 개발자' },
@@ -46,6 +51,13 @@ export const SelectJob = ({mainCard, updateCard}) => {
     //     });
     // }, []);
 
+    useEffect(() => {
+        updateCard({ key: "jobKR", value: jobLists[0].KR }); // 초기값 세팅
+        updateCard({ key: "jobEN", value: jobLists[0].EN }); // 초기값 세팅
+        handleNames({ key: "jobKR", value: jobLists[0].KR });
+        handleNames({ key: "jobEN", value: jobLists[0].EN });
+    }, [jobLists]);
+
     const handleDropDown = (state) => {
         setClicked(state);
     }
@@ -60,29 +72,29 @@ export const SelectJob = ({mainCard, updateCard}) => {
     return(
         <Wrapper className="job-wrapper">
             <Wrapper className="show-selected" onClick={ () => handleDropDown(!clicked) }>
-                <JobSelect>{mainCard.job || jobLists[0].KR}</JobSelect>
+                <JobSelect>{names.jobKR || jobLists[0].KR}</JobSelect>
                 <ButtonArrowDown clickState={clicked}/>
             </Wrapper>
             <JobLists
                 clickState={clicked}
+                imgLoaded={imgLoaded}
                 list={jobLists}
-                cardKey={"job"}
-                updateCard={updateCard}
+                jobKR={"jobKR"}
                 handleDropDown={handleDropDown}
+                handleNames={handleNames}
             />
         </Wrapper>
     );
 }
 
-export const JobLists = ({ list, cardKey, updateCard, clickState, handleDropDown }) => {
+export const JobLists = ({ list, clickState, handleDropDown, handleNames }) => {
     const el = useRef(null);
     const tl = useRef(null);
     const toggle = clickState;
     let pos = 0;
 
     useEffect(() => {
-        pos = el.current.parentNode.offsetHeight;
-
+        pos = 34;
         tl.current = gsap.timeline({ pause: true });
         tl.current.fromTo(el.current, { y: pos, opacity: 0 },{
             y: (pos + 5), opacity: 1, duration: .3,
@@ -97,10 +109,12 @@ export const JobLists = ({ list, cardKey, updateCard, clickState, handleDropDown
         toggle ? tl.current.play() : reverseFun();
     },[toggle]);
 
-    const onClick = name => {
+    const onClick = (kr, en) => {
         reverseFun();
-        updateCard({ key: cardKey, value: name });
-        handleDropDown(!clickState);
+        handleDropDown(clickState);
+        handleNames({ key: "jobEN", value: en });
+        handleNames({ key: "jobKR", value: kr });
+        console.log(kr, en)
     }
 
     const reverseFun = () => {
@@ -114,7 +128,7 @@ export const JobLists = ({ list, cardKey, updateCard, clickState, handleDropDown
     return(
         <ContainerSelect ref={el}>
             {list.map(list => (
-                <li ref={el} key={list.key} onClick={ () => onClick(list.KR) }>
+                <li ref={el} key={list.key} onClick={ () => onClick(list.KR, list.EN) }>
                     <span>{list.KR}</span>
                     <span>{list.EN}</span>
                 </li>

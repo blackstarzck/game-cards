@@ -1,100 +1,151 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { ButtonStat, ButtonSkill, ButtonReset, ButtonSave, ButtonViewInfo, ButtonKeepCard, ButtonLevelUp, ButtonSaveTitle, ButtonStatAdd, ButtonStatRemove, ButtonEditTitle } from '../../Button/Button'
 import { InputNickName, SelectJob } from '../../Input/Input'
 import { TitleJob, TitleNickName } from '../../Texts/Texts'
-import { BookMark, CardImg, StatItem, Wrapper } from './MainView.elements'
+import { BookMark, CardImg, StatHeading, StatItem, StatPoints, Wrapper } from './MainView.elements'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBookmark } from '@fortawesome/pro-solid-svg-icons'
-
+import { gsap } from "gsap"
 
 const MainView = ({...props}) => {
-    const [ jobSelected, setJobSelected ] = useState(null);
+    const [ editState, setEditState ] = useState(true);
+    const [ view, setView] = useState(false);
+
+    const handleEditState = () => setEditState(!editState);
+    const viewCardInfo = () => setView(!view);
 
     return (
         <Wrapper className="main-view">
             {/* SWITCH */}
             <Wrapper className="ability-btns">
-                <ButtonStat />
-                <ButtonSkill />
+                <ButtonStat imgLoaded={props.imgLoaded} />
+                <ButtonSkill disable imgLoaded={props.imgLoaded} />
             </Wrapper>
 
             {/* NAME EDIT */}
-            <MainViewName />
-            <MainViewEditName mainCard={props.mainCard} updateCard={props.updateCard} onChange={props.onChange} />
+            <MainViewName
+                imgLoaded={props.imgLoaded}
+                active={editState} 
+                mainCard={props.mainCard} 
+                handleEditState={handleEditState} />
+            <MainViewEditName
+                imgLoaded={props.imgLoaded}
+                active={!editState} 
+                mainCard={props.mainCard} 
+                updateCard={props.updateCard} 
+                onChange={props.onChange} 
+                handleEditState={handleEditState} />
 
             <Wrapper className="body">
                 {/* STAT CTRL */}
-                <MainViewStatContainer />
+                <MainViewStatContainer
+                    mainCard={props.mainCard}
+                    imgLoaded={props.imgLoaded} />
 
                 {/* CARD VIEW */}
                 <Wrapper className="view-wrapper">
                     
                     <Wrapper className="view-box">
                         {/* BOOKMARK */}
-                        <BookMark>
+                        {props.mainCard.imgURL && <BookMark>
                             <FontAwesomeIcon icon={faBookmark} />
-                            <span className="group-no">01</span>
-                        </BookMark>
+                            <span className="group-no">{props.mainCard.groupNo || "-"}</span>
+                        </BookMark>}
 
-                        {/* IMG */}
-                        <CardImg><img src="https://firebasestorage.googleapis.com/v0/b/card-maker-89016.appspot.com/o/HP2%2FF-HP2-2.gif?alt=media" alt="카드 이미지" /></CardImg>
+                        <CardImg>
+                            { props.mainCard.imgURL ? 
+                                <img src={props.mainCard.imgURL}/> :
+                                <span>이미지를 업로드하세요</span> }
+                        </CardImg>
                         
                         {/* RANK */}
-                        <Wrapper className="text-wrapper">
-                            <span className="level"><b>Lv.</b>1</span>
-                            <span className="pref-rank">선호순위 9위</span>
-                        </Wrapper>
+                        {props.mainCard.imgURL && <Wrapper className="text-wrapper">
+                            <span className="level"><b>Lv.</b>{props.mainCard.level}</span>
+                            <span className="pref-rank">선호순위 {props.mainCard.selected || "-"}위</span>
+                        </Wrapper>}
                     </Wrapper>
 
                     {/* STORY */}
-                    <Wrapper className="story-box">
-                        <h4>"내 키보드 소리가 어떻다구?"</h4>
-                        <p>나는 기계식 키보드가 좋아. 기계식 키보드는 역시 청축키를 써야 제맛 이지. 나에게 적축키를 강요하지할 라구!</p>
-                    </Wrapper>
+                    <MainViewStoryBox mainCard={props.mainCard} view={view}/>
 
                     {/* EXPERIENCE */}
-                    <Wrapper className="exp-wrapper">
+                    <Wrapper className="exp-wrapper" exp={props.mainCard.exp}>
                         <ButtonLevelUp />
                         <div className="outer">
-                            <div className="inner"></div>
+                            <div className="inner" ></div>
                         </div>
                     </Wrapper>
                 </Wrapper> 
             </Wrapper>
             <Wrapper className="btn-handlers">
-                    <ButtonReset />
-                    <ButtonSave />
-                    <ButtonViewInfo />
-                    <ButtonKeepCard />
-                </Wrapper>
+                <ButtonReset imgLoaded={props.imgLoaded} />
+                <ButtonSave imgLoaded={props.imgLoaded} />
+                <ButtonViewInfo imgLoaded={props.imgLoaded} viewCardInfo={viewCardInfo}/>
+                <ButtonKeepCard imgLoaded={props.imgLoaded} />
+            </Wrapper>
         </Wrapper>
     )
 }
 
 export default MainView;
 
+export const MainViewStoryBox = ({mainCard, view}) => {
+    const el = useRef(null);
+    const tl = useRef(null);
 
-export const MainViewStatContainer = (props) => {
+    useEffect(() => {
+        tl.current = gsap.timeline({ pause: true });
+        tl.current.fromTo(el.current, { y: -3, opacity: 0 },{
+            y: 0, opacity: 1, duration: .3,
+            onStart: function(){
+                el.current.style.visibility = "visible"
+                el.current.style.zIndex = 3;
+            }
+        });
+    }, []);
+
+    useEffect(() => {
+        view ? tl.current.play() : reverseFun();
+    },[view]);
+
+    const reverseFun = () => {
+        tl.current.reverse();
+        setTimeout(() => {
+            el.current.style.visibility = "hidden";
+            el.current.style.zIndex = -1;
+        }, 400)
+    }
+
+    return(
+        <Wrapper ref={el} className="story-box">
+            <h4>{mainCard.quote || "..."}</h4>
+            <p>{mainCard.descr || "..."}</p>
+        </Wrapper>
+    );
+}
+
+export const MainViewStatContainer = ({mainCard, imgLoaded}) => {
+    const keyArray = [ "STR", "AGI", "DEX", "VIT", "INT", "LUCK" ];
+
     return(
         <Wrapper className="stat-wrapper">
-            <span className="total-points">5</span>
+            <span className="total-points">{mainCard.remain}</span>
             <Wrapper className="list-wrapper">
-                <MainViewStat heading={"STR"} points={0}/> 
-                <MainViewStat heading={"AGI"} points={0}/> 
-                <MainViewStat heading={"DEX"} points={0}/> 
-                <MainViewStat heading={"VIT"} points={0}/> 
-                <MainViewStat heading={"INT"} points={0}/> 
-                <MainViewStat heading={"LUCK"} points={0}/> 
+                {keyArray.map((list, i) => <MainViewStat 
+                    imgLoaded={imgLoaded}
+                    key={i}
+                    heading={list}
+                    points={mainCard.stats[list]} /> )}
             </Wrapper>
         </Wrapper>
     );
 }
 
-export const MainViewStat = (props) => {
+export const MainViewStat = ({imgLoaded, heading, points}) => {
     return(
         <StatItem>
-            <span className="heading">{props.heading}</span>
-            <span className="points">{props.points}</span>
+            <StatHeading className="heading" imgLoaded={imgLoaded} >{heading}</StatHeading>
+            <StatPoints className="points" imgLoaded={imgLoaded} >{points}</StatPoints>
             <Wrapper className="btn-wrapper">
                 <ButtonStatAdd />
                 <ButtonStatRemove />
@@ -103,28 +154,63 @@ export const MainViewStat = (props) => {
     );
 }
 
-export const MainViewName = () => {
+export const MainViewName = ({imgLoaded, mainCard, active, handleEditState}) => {
+    useEffect(() => {
+        console.log(imgLoaded);
+    });
     return(
-        <Wrapper className='edit-wrapper'>
-            <ButtonEditTitle />
+        <Wrapper className='edit-wrapper' active={active}>
+            <ButtonEditTitle
+                active={active} 
+                imgLoaded={imgLoaded} 
+                handleEditState={handleEditState} />
             <Wrapper className='input-wrapper'>
-                <TitleNickName>작렬하는 어둠의 파수꾼</TitleNickName>
-                <TitleJob>Frontend Developer</TitleJob>
+                <TitleNickName imgLoaded={imgLoaded}>{ imgLoaded ? mainCard.nickName : "-" }</TitleNickName>
+                <TitleJob imgLoaded={imgLoaded}>{ imgLoaded ? mainCard.jobEN : "-" }</TitleJob>
             </Wrapper>
         </Wrapper>
     );
 };
 
-export const MainViewEditName = ({...props}) => {
+export const MainViewEditName = ({handleEditState, updateCard, mainCard, active, imgLoaded}) => {
+    const [ names, setNames ] = useState({
+        nickName: "", jobKR: "", jobEN: ""
+    });
 
-    // console.log("3. MainViewEditName", updateCard);
+    const handleNames = obj => {
+        console.log("handleNames:", obj);
+        setNames((names) => {
+            const updated = {...names};
+            updated[obj.key] = obj.value;
+            return updated;
+        });
+    }
+
+    useEffect(() => {
+        // console.log("MainViewEditName:", names);
+        // console.log(mainCard);
+    }, [names]);
 
     return(
-        <Wrapper className='select-wrapper'>
-            <ButtonSaveTitle />
+        <Wrapper className='select-wrapper' active={active} >
+            <ButtonSaveTitle
+                imgLoaded={imgLoaded}
+                handleEditState={handleEditState}
+                updateCard={updateCard} 
+                mainCard={mainCard}
+                names={names} />
             <Wrapper className='custom-wrapper'>
-                <InputNickName mainCard={props.mainCard} onChange={props.onChange} updateCard={props.updateCard}/>
-                <SelectJob mainCard={props.mainCard} updateCard={props.updateCard}>웹 개발자</SelectJob>
+                <InputNickName
+                    mainCard={mainCard}
+                    names={names}
+                    handleNames={handleNames}
+                />
+                <SelectJob
+                    updateCard={updateCard} 
+                    names={names} 
+                    handleNames={handleNames}
+                >
+                </SelectJob>
             </Wrapper>
         </Wrapper>
     );

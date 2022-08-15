@@ -19,9 +19,10 @@ export const Wrapper = styled.div`
 `;
 
 export const NickNameInput = styled.input`
-    height: 38px;
+    height: 32px;
+    font-family: "inter",sans-serif;
     font-size: 18px;
-    font-weight: 500;
+    font-weight: 700;
     color: ${ ({ theme }) => theme.colors.commonBlack };
     text-indent: 10px;
     border: 1px solid ${ ({ theme }) => theme.colors.commonBlack };
@@ -40,8 +41,8 @@ export const NickNameInput = styled.input`
 `;
 
 export const JobSelect = styled(SelectDefault)`
-    height: 38px;
-    line-height: 38px;
+    height: 32px;
+    line-height: 32px;
     font-family: "inter", sans-serif;
     font-size: 18px;
     font-weight: 700;

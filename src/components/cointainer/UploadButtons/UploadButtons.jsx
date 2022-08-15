@@ -4,7 +4,6 @@ import { Wrapper } from './UploadButtons.elements'
 import * as faceapi from 'face-api.js';
 
 const UploadButtons = ({...props}) => {
-    const [ loading, setLoading ] = useState(false);
     const [ imgSrc, setImgSrc ] = useState("");
 
     useEffect(() => {
