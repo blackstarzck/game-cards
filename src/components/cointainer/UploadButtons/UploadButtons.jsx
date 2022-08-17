@@ -22,6 +22,7 @@ const UploadButtons = ({...props}) => {
                 })
                 .then((result) => {
                     console.log("얼굴/표정 감지 성공", result);
+                    result || alert("다른 이미지를 업로드해주세요")
                     result && props.getFaceResult(result);
                 });
             });

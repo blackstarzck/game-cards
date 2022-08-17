@@ -131,12 +131,11 @@ export const ViewButton = styled.button`
     font-weight: 400;
     border-radius: 25px;
     color: ${ ({ theme }) => theme.colors.realWhite };
-    background-color: ${ props => props.imgLoaded ? props.theme.colors.realRed : props.theme.colors.inActiveButtonBg };
+    background: ${ props => props.imgLoaded ? props.theme.colors.primaryColor : props.theme.colors.inActiveButtonBg };
     box-shadow: ${ ({ theme }) => theme.boxShadow.default };
 `;
 export const KeepButton = styled(ViewButton)`
     width: 110px;
-    /* color: ${ ({ theme }) => theme.colors.primaryColor }; // active */
 `;
 
 export const LevelUpButton = styled.button`

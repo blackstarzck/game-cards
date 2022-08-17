@@ -163,6 +163,7 @@ export const SectionMain = ({login}) => {
             {/* RIGHTT */}
             <Container className='right-container'>
                 <MainView
+                    login={login}
                     imgLoaded={imgLoaded}
                     mainCard={mainCard}
                     updateCard={updateCard}

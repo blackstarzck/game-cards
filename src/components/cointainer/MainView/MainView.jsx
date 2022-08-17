@@ -6,6 +6,7 @@ import { BookMark, CardImg, StatHeading, StatItem, StatPoints, Wrapper } from '.
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBookmark } from '@fortawesome/pro-solid-svg-icons'
 import { gsap } from "gsap"
+import { DescrPopup } from '../../Popups/Popups'
 
 const MainView = ({...props}) => {
     const [ editState, setEditState ] = useState(true);
@@ -126,13 +127,18 @@ export const MainViewStoryBox = ({mainCard, view}) => {
 
 export const MainViewStatContainer = ({mainCard, imgLoaded}) => {
     const keyArray = [ "STR", "AGI", "DEX", "VIT", "INT", "LUCK" ];
+    const [ visible, setVisible ] = useState({
+        target: "", toggle: false
+    });
 
     return(
         <Wrapper className="stat-wrapper">
             <span className="total-points">{mainCard.remain}</span>
             <Wrapper className="list-wrapper">
-                {keyArray.map((list, i) => <MainViewStat 
+                {keyArray.map((list, i) => <MainViewStat
                     imgLoaded={imgLoaded}
+                    visible={visible}
+                    setVisible={setVisible}
                     key={i}
                     heading={list}
                     points={mainCard.stats[list]} /> )}
@@ -141,11 +147,30 @@ export const MainViewStatContainer = ({mainCard, imgLoaded}) => {
     );
 }
 
-export const MainViewStat = ({imgLoaded, heading, points}) => {
+export const MainViewStat = ({imgLoaded, heading, points, visible, setVisible }) => {
+    const [ popup, setPopup ] = useState(false);
+    const handleVisible = () => {
+        setVisible({...visible, target: heading});
+        setPopup(!popup);
+        // imgLoaded && setVisible((visible) => visible = heading );
+    }
+
     return(
         <StatItem>
-            <StatHeading className="heading" imgLoaded={imgLoaded} >{heading}</StatHeading>
-            <StatPoints className="points" imgLoaded={imgLoaded} >{points}</StatPoints>
+            <StatHeading
+                onClick={() => imgLoaded && handleVisible}
+                className="heading"
+                imgLoaded={imgLoaded}>{heading}
+                { imgLoaded && <DescrPopup
+                    popup={popup}
+                    setPopup={setPopup}
+                    statName={heading}
+                    visible={visible} /> }
+            </StatHeading>
+            <StatPoints 
+                className="points" 
+                imgLoaded={imgLoaded} >{points}
+            </StatPoints>
             <Wrapper className="btn-wrapper">
                 <ButtonStatAdd />
                 <ButtonStatRemove />
@@ -155,9 +180,6 @@ export const MainViewStat = ({imgLoaded, heading, points}) => {
 }
 
 export const MainViewName = ({imgLoaded, mainCard, active, handleEditState}) => {
-    useEffect(() => {
-        console.log(imgLoaded);
-    });
     return(
         <Wrapper className='edit-wrapper' active={active}>
             <ButtonEditTitle

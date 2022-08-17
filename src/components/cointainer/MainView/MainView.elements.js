@@ -160,6 +160,8 @@ export const StatHeading = styled.span`
     font-family: "Montserrat", sans-serif;
     color: ${ props =>  props.imgLoaded ? props.theme.colors.commonBlack : props.theme.colors.inActive };
     line-height: 24px;
+    position: relative;
+    cursor: pointer;
 `;
 export const StatPoints = styled.span`
     text-align: center;
