@@ -1,16 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { DescriptionLI } from '../../Texts/Texts'
-import MainView from '../MainView/MainView'
-import MainViewer from '../MainViewer/MainViewer'
-import UploadButtons from '../UploadButtons/UploadButtons'
-import { MainSection, FrdSearchSection, Wrapper, Container } from './Section.elements'
+import MainView from '../../cointainer/MainView/MainView'
+import MainViewer from '../../cointainer/MainViewer/MainViewer'
+import UploadButtons from '../../cointainer/UploadButtons/UploadButtons'
+import { MainSection, Wrapper, Container } from './Section.elements'
 import Database from '../../../service/database'
 import { randomName } from '../../../assets/random-generator/random-generator'
 
-
 const data = new Database();
 
-export const SectionMain = ({login}) => {
+const SectionMain = ({login}) => {
     const [ mainCard, setMainCard ] = useState({
         nickName: randomName(),
         jobKR: "",
@@ -146,7 +145,7 @@ export const SectionMain = ({login}) => {
 
             {/* LEFT */}
             <Container className='left-container'>
-                <UploadButtons 
+                <UploadButtons
                     newCard={newCard}
                     selectNewOrPrev={selectNewOrPrev}
                     getFaceResult={getFaceResult}/>
@@ -174,8 +173,4 @@ export const SectionMain = ({login}) => {
     )
 }
 
-export const SectionFrdSearch = () => {
-    return (
-        <FrdSearchSection></FrdSearchSection>
-    )
-}
+export default SectionMain

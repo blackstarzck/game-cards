@@ -176,3 +176,16 @@ export const StatButton = styled.button`
 export const SkillButton = styled(StatButton)`
     color: ${ props => props.disable && props.theme.colors.inActive };
 `;
+
+export const SearchButton = styled.button`
+    width: 38px;
+    height: 38px;
+    position: absolute;
+    top: 0; right: 0;
+    color: ${ (props) => props.login ? props.theme.colors.commonBlack : props.theme.colors.border};
+
+    svg, i {
+        width: 55%;
+        height: auto;
+    }
+`;

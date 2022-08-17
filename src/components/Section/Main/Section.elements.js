@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import theme from "../../../assets/styles/theme";
 
 // Section
 export const DefaultSection = styled.section`

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { ButtonTextClear, ButtonArrowDown } from '../Button/Button'
-import { Wrapper, NickNameInput, JobSelect, ContainerSelect } from './input.elements'
+import { ButtonTextClear, ButtonArrowDown, ButtonSearch } from '../Button/Button'
+import { Wrapper, NickNameInput, JobSelect, ContainerSelect, FrdSrchInput } from './input.elements'
 import { gsap } from "gsap"
 
 export const InputNickName = ({names, handleNames}) => {
@@ -20,9 +20,11 @@ export const InputNickName = ({names, handleNames}) => {
                 name="nickName" 
                 value={names.nickName}
                 placeholder="원하는 이름을 입력하세요" 
-                onChange={onChnage}
-            />
-            { inputVal && <ButtonTextClear target={"nickName"} setInputVal={setInputVal} names={names} handleNames={handleNames} /> }
+                onChange={onChnage} />
+            { inputVal && <ButtonTextClear
+                target={"nickName"}
+                setInputVal={setInputVal}
+                handleNames={handleNames} /> }
         </Wrapper>
     );
 }
@@ -134,5 +136,34 @@ export const JobLists = ({ list, clickState, handleDropDown, handleNames }) => {
                 </li>
             ))}
         </ContainerSelect>
+    );
+}
+
+export const InputFrdSrch = ({login, searchFunc}) => {
+    const [ inputVal, setInputVal ] = useState("");
+    
+    const inputRef = useRef();
+
+    const onChnage = (evt) => {
+        const { value } = evt.target;
+        setInputVal((inputVal) => inputVal = value);
+    }
+
+    return(
+        <Wrapper className="search-wrapper">
+            <FrdSrchInput 
+                readOnly={ login ? false : true }
+                ref={inputRef}
+                placeholder={login ? "친구를 검색해보세요" : "로그인 후 이용가능합니다."}
+                value={inputVal || ""}
+                onChange={onChnage} 
+                onKeyPress={(e) => e.key === "Enter" && searchFunc(inputVal)} />
+
+            { inputVal && <ButtonTextClear
+                className={"btn-clear"}
+                target={""}
+                setInputVal={setInputVal} /> }
+                <ButtonSearch login={login} searchFunc={() => searchFunc(inputVal)}/>
+        </Wrapper>
     );
 }

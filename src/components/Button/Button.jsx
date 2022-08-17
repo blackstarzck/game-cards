@@ -1,13 +1,14 @@
 import React, { useEffect, useRef } from 'react'
-import { UploadButton, RecruitButton, GetButton, EditTitleButton, SaveTitleButton, ClearButton, ArrowDownButton, AddButton, RemoveButton, ResetButton, SaveButton, ViewButton, KeepButton, LevelUpButton, StatButton, SkillButton } from './Button.elements'
+import { UploadButton, RecruitButton, GetButton, EditTitleButton, SaveTitleButton, ClearButton, ArrowDownButton, AddButton, RemoveButton, ResetButton, SaveButton, ViewButton, KeepButton, LevelUpButton, StatButton, SkillButton, SearchButton } from './Button.elements'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFolderMagnifyingGlass, faCards, faCardClub, faPenToSquare, faFloppyDiskPen, faArrowRotateLeft, faFloppyDiskCircleArrowRight } from '@fortawesome/pro-thin-svg-icons'
 import { faPlus, faMinus, faCircleArrowUp, faSparkles } from '@fortawesome/pro-solid-svg-icons'
+import { faMagnifyingGlass } from '@fortawesome/pro-regular-svg-icons'
 import { faCircleXmark, faChevronDown } from '@fortawesome/pro-light-svg-icons'
 import { gsap } from "gsap"
- 
-library.add(faFolderMagnifyingGlass, faCards, faPenToSquare, faFloppyDiskPen, faCircleXmark, faChevronDown, faPlus, faMinus, faArrowRotateLeft, faFloppyDiskCircleArrowRight, faCircleArrowUp);
+
+library.add(faFolderMagnifyingGlass, faCards, faPenToSquare, faFloppyDiskPen, faCircleXmark, faChevronDown, faPlus, faMinus, faArrowRotateLeft, faFloppyDiskCircleArrowRight, faCircleArrowUp, faMagnifyingGlass);
 
 
 export const ButtonUpload = ({...props}) => {
@@ -72,13 +73,14 @@ export const ButtonSaveTitle = ({handleEditState, updateCard, names, mainCard })
   );
 }
 
-export const ButtonTextClear = ({setInputVal, target, handleNames}) => {
+export const ButtonTextClear = ({className, setInputVal, target, handleNames}) => {
   const onClick = () => {
+    console.log("지워~!")
     setInputVal("");
-    handleNames({ key: "nickName", value: "" });
+    handleNames && handleNames({ key: "nickName", value: "" });
   }
   return(
-    <ClearButton name={target} onClick={onClick} >
+    <ClearButton className={className} name={target} onClick={onClick} >
       <FontAwesomeIcon icon={faCircleXmark} />
     </ClearButton>
   );
@@ -127,3 +129,9 @@ export const ButtonLevelUp = () => <LevelUpButton ><FontAwesomeIcon icon={faCirc
 export const ButtonStat = ({imgLoaded}) => <StatButton imgLoaded={imgLoaded}><b>능</b><b>력</b><b>치</b><FontAwesomeIcon icon={faSparkles} /></StatButton>
 
 export const ButtonSkill = ({imgLoaded, disable}) => <SkillButton disable imgLoaded={imgLoaded}><b>스</b><b>킬</b><FontAwesomeIcon icon={faSparkles} /></SkillButton>
+
+export const ButtonSearch = ({login, searchFunc}) => {
+  return(
+    <SearchButton login={login} onClick={login && searchFunc} ><FontAwesomeIcon icon={faMagnifyingGlass} /></SearchButton>
+  );
+}

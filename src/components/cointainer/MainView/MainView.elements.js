@@ -28,7 +28,7 @@ export const Wrapper = styled.div`
         padding-top: 43px;
     }
     &.stat-wrapper {
-        width: calc(100% - (232px + 24px));
+        width: calc(100% - (232px + 5px));
         text-align: right;
 
         .total-points {
@@ -59,7 +59,7 @@ export const Wrapper = styled.div`
             button:first-child { margin-right: 6px; }
         }
     }
-    &.view-wrapper { width: 243px; position: relative; }
+    &.view-wrapper { width: 232px; position: relative; }
     &.custom-wrapper {
         width: 100%;
         
@@ -205,6 +205,6 @@ export const CardImg = styled.div`
     align-items: center;
     width: 100%;
     height: 262px;
-    img { max-width: 100%; };
+    img { max-height: 100%; };
     .stand-by { font-size: 14px; color: ${ ({theme}) => theme.colors.commonBlack } };
 `;

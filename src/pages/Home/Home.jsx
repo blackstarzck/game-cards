@@ -1,14 +1,17 @@
 import React from 'react'
 import styled from "styled-components"
-import { SectionMain, SectionFrdSearch } from '../../components/cointainer/Section/Section'
+import SectionFrdSearch from '../../components/Section/FrdSearch/FrdSearch';
+import SectionMain from '../../components/Section/Main/Section';
 
-const HomePage = styled.div``;
+const HomePage = styled.div`
+  padding-bottom: 600px;
+`;
 
 const Home = ({login}) => {
   return (
     <HomePage>
       <SectionMain login={login}/>
-      <SectionFrdSearch />
+      <SectionFrdSearch login={login}/>
     </HomePage>
   )
 }

@@ -40,3 +40,19 @@ export const CardSubTitle = styled.h4`
     letter-spacing: -1.5px;
     color: ${ props =>  props.imgLoaded ? props.theme.colors.realBlack : props.theme.colors.inActive };
 `;
+
+export const SectionTitle = styled.h3`
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 46px;
+    letter-spacing: -1px;
+    color: ${ ({theme}) => theme.colors.commonBlack };
+
+    img { vertical-align: inherit;margin-right: 10px; }
+`;
+
+export const FrdSectionHeading = styled(SectionTitle)`
+    font-size: 20px;
+    svg, i { margin-right: 8px; };
+`;

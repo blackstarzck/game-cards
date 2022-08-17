@@ -16,6 +16,13 @@ export const Wrapper = styled.div`
         border: 1px solid ${ ({ theme }) => theme.colors.commonBlack };
         border-radius: 5px;    
     }
+    &.search-wrapper {
+        width: 100%;
+        position: relative;
+        margin-top: 20px;
+
+        .btn-clear { right: 45px; }
+    }
 `;
 
 export const NickNameInput = styled.input`
@@ -40,6 +47,18 @@ export const NickNameInput = styled.input`
     }
 `;
 
+export const FrdSrchInput = styled.input`
+    font-size: 1rem;
+    width: 100%;
+    height: 38px;
+    border: 1px solid ${ (props) => props.readOnly ? props.theme.colors.border : props.theme.colors.commonBlack};
+    border-radius: 5px;
+    text-indent: 10px;
+
+    
+    &::placeholder { color: ${({theme}) => theme.colors.inputPlaceHolder} }
+`;
+
 export const JobSelect = styled(SelectDefault)`
     height: 32px;
     line-height: 32px;
@@ -53,6 +72,7 @@ export const JobSelect = styled(SelectDefault)`
         right: 11px;
     }
 `;
+
 export const ContainerSelect = styled.ul`
     width: 100%;
     visibility: hidden;
