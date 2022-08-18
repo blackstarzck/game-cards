@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { FrdSearchSection, Container, ResultBody, Wrapper } from './FrdSearch.elements'
 import { ResultHeading, TitleSection } from '../../Texts/Texts'
 import icon1 from '../../../assets/images/frd-srch-ico.png'
@@ -9,97 +9,114 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFaceConfused } from '@fortawesome/pro-light-svg-icons'
 import { faList } from '@fortawesome/pro-regular-svg-icons'
 import Database from '../../../service/database'
-import { useEffect } from 'react'
+import { MainPopup } from '../../Popups/Popups'
+import { gsap } from "gsap"
 
 const data = new Database();
 
-const SectionFrdSearch = ({login}) => {
+const SectionFrdSearch = ({login, sOpen, handleSelectBoxes, mainPopup}) => {
     const [ searchResult, setStatus ] = useState({ // waiting -> pending -> finished( 성공 / 실패 )
         proc: "waiting", 
         result: "success", 
-        frdId: ""
+        frdId: "",
+        name: ""
     });
+    const [ popup, setPopup ] = useState(false);
     const [ loading, setLoading ] = useState(true);
-    const [ open, setOpend ] = useState(false);
 
     const searchFunc = (frdId) => {
         if(login){
             data.getSingleData("USERS", frdId).then((frd) => {
-                console.log("result:", frd);
-                setOpend(true);
+                handleSelectBoxes({name: "FRD", state: true});
                 setLoading(true);
                 if(frd){
-                    setStatus((searchResult) => {
-                        const updated = { ...searchResult };
-                        updated["proc"] = "finished";
-                        updated["result"] = "success";
-                        updated["frdId"] = frd.USER_ID;
-                        return updated;
+                    mainPopup.current = true;
+                    setStatus({
+                        ...searchResult,
+                        proc : "finished",
+                        result : "success",
+                        frdId : frd.USER_ID,
+                        name : frd.USER_NAME
                     });
                 }else{
-                    setStatus((searchResult) => {
-                        const updated = { ...searchResult };
-                        updated["proc"] = "finished";
-                        updated["result"] = "failed";
-                        updated["frdId"] = "";
-                        return updated;
+                    setStatus({
+                        ...searchResult,
+                        proc : "finished",
+                        result : "failed",
+                        frdId : "",
+                        name : ""
                     });
                 }
                 setLoading(false);
             });
         }
-        console.log("input name: ", frdId);
     }
-
-    useEffect(() => {
-        console.log("open: ", open);
-    }, []);
-
-    useEffect(() => {
-        console.log("searchResult ", searchResult);
-    }, [searchResult]);
 
     return (
         <FrdSearchSection>
             <Wrapper>
                 <TitleSection><img src={icon1} alt="" />친구찾기</TitleSection>
 
-                <InputFrdSrch login={login} searchFunc={searchFunc}/>
+                <InputFrdSrch 
+                    login={login}
+                    searchFunc={searchFunc} 
+                    Open={sOpen} />
                 { login && <SrchResult
-                    open={open}
-                    setOpend={setOpend}
+                    sOpen={sOpen}
+                    setPopup={setPopup}
                     loading={loading}
                     searchResult={searchResult}/> }
             </Wrapper>
+            <MainPopup 
+                mainPopup={mainPopup} 
+                popup={popup} 
+                type={"FRD-REQ"} 
+                data={searchResult} 
+                handleSelectBoxes={handleSelectBoxes}
+                setPopup={setPopup} />
         </FrdSearchSection>
     );
 }
 
 export default SectionFrdSearch;
 
-export const SrchResult = ({loading, open, setOpend, searchResult}) => {
+export const SrchResult = ({loading, sOpen, searchResult, setPopup}) => {
+    const el = useRef(null);
 
     useEffect(() => {
-        console.log("SrchResult컴포넌트: ", searchResult);
-    }, [searchResult]);
-    
+        const height = sOpen ? "179px" : 0;
+        if(sOpen){
+            el.current.style.visibility = "visible";
+        }else{
+            setTimeout(() => {
+                el.current.style.visibility = "hidden";
+            }, 380); // 완벽하게 닫히고  안보이게 처리해야 한다. (border가 보이는 현상때문)
+        }
+
+        el.current.style.height = height;
+
+        console.log("sOpen: " + sOpen, height);
+    }, [sOpen]);
+
     return(
-        <Container open={open}>
+        <Container ref={el}>
             <ResultHeading><FontAwesomeIcon icon={faList}/>결과</ResultHeading>
             <ResultBody>
                 { loading ? 
                     <LoadingBox /> :
-                    ((searchResult.proc === "finished" && searchResult.result === "success") ? <ListBox friend={searchResult.frdId} setOpend={setOpend} /> : <FailBox />) }
+                    ((searchResult.proc === "finished" && searchResult.result === "success") ? <ListBox searchResult={searchResult} setPopup={setPopup} /> : <FailBox />) }
             </ResultBody>
         </Container>
     );
 }
 
-export const ListBox = ({friend, setOpend}) => {
+export const ListBox = ({searchResult, setPopup}) => {
     return(
         <div className="list-wrapper">
             <ul>
-                <li>{friend}</li>
+                <li className="frd-id" onClick={() => setPopup(true)} >
+                    {`${searchResult.frdId} (${searchResult.name})`}
+                </li>
             </ul>
         </div>
     );

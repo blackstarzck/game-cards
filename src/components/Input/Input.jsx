@@ -139,7 +139,7 @@ export const JobLists = ({ list, clickState, handleDropDown, handleNames }) => {
     );
 }
 
-export const InputFrdSrch = ({login, searchFunc}) => {
+export const InputFrdSrch = ({login, searchFunc, sOpen}) => {
     const [ inputVal, setInputVal ] = useState("");
     
     const inputRef = useRef();
@@ -148,7 +148,6 @@ export const InputFrdSrch = ({login, searchFunc}) => {
         const { value } = evt.target;
         setInputVal((inputVal) => inputVal = value);
     }
-
     return(
         <Wrapper className="search-wrapper">
             <FrdSrchInput 
@@ -163,7 +162,7 @@ export const InputFrdSrch = ({login, searchFunc}) => {
                 className={"btn-clear"}
                 target={""}
                 setInputVal={setInputVal} /> }
-                <ButtonSearch login={login} searchFunc={() => searchFunc(inputVal)}/>
+                <ButtonSearch login={login} searchFunc={() => inputVal && searchFunc(inputVal)}/>
         </Wrapper>
     );
 }

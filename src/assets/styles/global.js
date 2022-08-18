@@ -34,7 +34,7 @@ const GlobalStyle = createGlobalStyle`
   input[type="email"],
   input[type="tel"],
   input[type="date"], 
-  textarea { -webkit-appearance:none; -moz-appearance:none; appearance:none; -webkit-border-radius:0; outline:0;}
+  textarea { -webkit-appearance:none; -moz-appearance:none; appearance:none;outline:0;}
   textarea { resize: none;}
 `
 

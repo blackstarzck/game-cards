@@ -47,7 +47,7 @@ export const NickNameInput = styled.input`
     }
 `;
 
-export const FrdSrchInput = styled.input`
+export const FrdSrchInput = styled.input.attrs( props => ({ type: "text"}) )`
     font-size: 1rem;
     width: 100%;
     height: 38px;
@@ -55,8 +55,7 @@ export const FrdSrchInput = styled.input`
     border-radius: 5px;
     text-indent: 10px;
 
-    
-    &::placeholder { color: ${({theme}) => theme.colors.inputPlaceHolder} }
+    &::placeholder { color: ${({theme}) => theme.colors.inputPlaceHolder} };
 `;
 
 export const JobSelect = styled(SelectDefault)`

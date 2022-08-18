@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 export const DefaultSection = styled.section`
     max-width: ${ ({ theme }) => theme.size.desktop };
+    margin: 0 auto;
 `;
 
 export const FrdSearchSection = styled(DefaultSection)`
@@ -21,10 +22,9 @@ export const Wrapper = styled.div`
 `;
 
 export const Container = styled.div` // height 조절로 드롭다운 처럼 보인다.
-    ${ props => console.log(11111111111, props) }
-    visibility: ${ props => props.open ? "visible" : "hidden" };
+    visibility: hidden;
     width: 100%;
-    height: ${ props => props.open ? "179px" : "0" };
+    height: 0;
     overflow: hidden;
     position: absolute;
     top: 110px; left: 0;

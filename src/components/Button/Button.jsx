@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { UploadButton, RecruitButton, GetButton, EditTitleButton, SaveTitleButton, ClearButton, ArrowDownButton, AddButton, RemoveButton, ResetButton, SaveButton, ViewButton, KeepButton, LevelUpButton, StatButton, SkillButton, SearchButton } from './Button.elements'
+import { UploadButton, RecruitButton, GetButton, EditTitleButton, SaveTitleButton, ClearButton, ArrowDownButton, AddButton, RemoveButton, ResetButton, SaveButton, ViewButton, KeepButton, LevelUpButton, StatButton, SkillButton, SearchButton, YesButton, NoButton } from './Button.elements'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFolderMagnifyingGlass, faCards, faCardClub, faPenToSquare, faFloppyDiskPen, faArrowRotateLeft, faFloppyDiskCircleArrowRight } from '@fortawesome/pro-thin-svg-icons'
@@ -135,3 +135,6 @@ export const ButtonSearch = ({login, searchFunc}) => {
     <SearchButton login={login} onClick={login && searchFunc} ><FontAwesomeIcon icon={faMagnifyingGlass} /></SearchButton>
   );
 }
+
+export const ButtonYes = ({handleClick}) => <YesButton onClick={() => handleClick(false)}>네</YesButton>;
+export const ButtonNo = ({handleClick}) => <NoButton onClick={() => handleClick(false)}>아니오</NoButton>;

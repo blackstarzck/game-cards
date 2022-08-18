@@ -1,6 +1,7 @@
-import { useEffect, useRef } from "react";
-import { PopupDescr } from "./Popups.elements";
+import { useEffect, useRef, useState } from "react";
+import { Background, PopupDescr, PopupMain } from "./Popups.elements";
 import { gsap } from "gsap"
+import { ButtonYes, ButtonNo } from "../Button/Button";
 
 export const DescrPopup = ({statName, visible, popup, setPopup}) => {
     const el = useRef(null);
@@ -18,7 +19,6 @@ export const DescrPopup = ({statName, visible, popup, setPopup}) => {
     }, []);
 
     useEffect(() => {
-        // popup ? tl.current.play() : reverseFunc();
         console.log("popup 마운트");
         if(popup){
             tl.current.play();
@@ -64,3 +64,58 @@ export const DescrPopup = ({statName, visible, popup, setPopup}) => {
         </PopupDescr>
     );
 }
+
+export const MainPopup = ({type, data, popup, setPopup, handleSelectBoxes, mainPopup}) => {
+    const dataArray = [ "FRD-REQ", "FRD-RECV", "BTL-REQ", "BTL-RECV", "DEL-CARD"  ];
+    const handleClick = (close) => {
+        setPopup(close);
+        setTimeout(() => {
+            handleSelectBoxes({name: "FRD", state: false});
+            mainPopup.current = false;
+        }, 400);
+    }
+
+    const el = useRef(null);
+    const tl = useRef(null);
+
+    useEffect(() => {
+        tl.current = gsap.timeline({ pause: true });
+        tl.current.fromTo(el.current, { y: -5, opacity: 0 },{
+            y: 0, opacity: 1, duration: .3,
+            onStart: function(){
+                el.current.style.visibility = "visible"
+                el.current.style.zIndex = 3;
+            }
+        });
+    }, []);
+
+    useEffect(() => {
+        popup ? tl.current.play() : reverseFun();
+    },[popup]);
+
+    const reverseFun = () => {
+
+        console.log("reverseFun~!");
+
+        tl.current.reverse();
+        setTimeout(() => {
+            el.current.style.visibility = "hidden";
+            el.current.style.zIndex = -1;
+        }, 400)
+    }
+
+    return(
+        <>
+            <DimmbedBg popup={popup}/>
+            <PopupMain ref={el}>
+                <h4><b>{data.frdId}</b>님에게<br/>친구신청하시겠습니까?</h4>
+                <div className="btn-wrapper">
+                    <ButtonYes handleClick={handleClick}/>
+                    <ButtonNo handleClick={handleClick}/>
+                </div>
+            </PopupMain>
+        </>
+    );
+}
+
+export const DimmbedBg = ({popup}) => <Background active={popup} className={`dimmed-bg}`}></Background>;

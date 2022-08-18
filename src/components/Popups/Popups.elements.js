@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import theme from "../../assets/styles/theme";
 
 export const PopupDescr = styled.div`
     width: 268px;
@@ -45,4 +46,42 @@ export const PopupDescr = styled.div`
         border-bottom: 6px solid transparent;
         border-right: 10px solid rgba(0,0,0, .7);
     }
+`;
+
+export const PopupMain = styled.div`
+    visibility: hidden;
+    width: 335px;
+    font-family: "Noto Sans KR", sans-serif;
+    text-align: center;
+    color: ${ ({theme}) => theme.colors.commonBlack };
+    box-shadow: ${ ({theme}) => theme.boxShadow.default };
+    border-radius: 5px;
+    z-index: 10;
+    background-color: ${ ({theme}) => theme.colors.realWhite };
+    padding-top: 40px;
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+
+    h4 {
+        font-size: 22px;
+        font-weight: 400;
+        line-height: 32px
+    }
+    b { font-weight: 800; }
+    .btn-wrapper {
+        padding: 23px 24px; 
+        display: flex; 
+        justify-content: space-between
+    }
+`;
+
+export const Background = styled.div`
+    visibility: ${ props => props.active ? "visible" : "hidden" };
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0; left: 0;
+    background-color: rgba(0,0,0,.8);
+    transition: .2s;
 `;

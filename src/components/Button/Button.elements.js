@@ -189,3 +189,19 @@ export const SearchButton = styled.button`
         height: auto;
     }
 `;
+
+export const YesButton = styled.button`
+    width: calc((100% / 2) - 12px);
+    height: 50px;
+    font-size: 18px;
+    line-height: 50px;
+    font-weight: 400;
+    color: ${ ({theme}) => theme.colors.realWhite };
+    background: ${ ({theme}) => theme.colors.primaryColor};
+    border-radius: 35px;
+    box-shadow: ${ ({theme}) => theme.boxShadow.default };
+`;
+
+export const NoButton = styled(YesButton)`
+
+`;
