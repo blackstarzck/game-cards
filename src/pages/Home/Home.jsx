@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import styled from "styled-components"
 import SectionFrdSearch from '../../components/Section/FrdSearch/FrdSearch';
 import SectionMain from '../../components/Section/Main/Section';
+import { displayToken } from '../../service/kakaoLogin';
+
 
 const Home = ({login}) => {
   const [ selectBoxes, setSelectBox ] = useState({
@@ -29,6 +31,11 @@ const Home = ({login}) => {
       return updated;
     })
   }
+
+  useEffect(() => {
+    displayToken();
+    // console.log("getCookie: ", getCookie());
+  }, []);
 
   return (
     <HomePage onClick={handlePopup}>

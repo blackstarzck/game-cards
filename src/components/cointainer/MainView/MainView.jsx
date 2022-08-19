@@ -150,7 +150,6 @@ export const MainViewStatContainer = ({mainCard, imgLoaded}) => {
 export const MainViewStat = ({imgLoaded, heading, points, visible, setVisible }) => {
     const [ popup, setPopup ] = useState(false);
     const handleVisible = () => {
-        console.log(1);
         setVisible({...visible, target: heading});
         setPopup(!popup);
         // imgLoaded && setVisible((visible) => visible = heading );

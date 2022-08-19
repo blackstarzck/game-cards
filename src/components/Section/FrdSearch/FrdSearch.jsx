@@ -11,6 +11,7 @@ import { faList } from '@fortawesome/pro-regular-svg-icons'
 import Database from '../../../service/database'
 import { MainPopup } from '../../Popups/Popups'
 import { gsap } from "gsap"
+import { useData } from '../../../hooks/useData'
 
 const data = new Database();
 
@@ -19,7 +20,7 @@ const SectionFrdSearch = ({login, sOpen, handleSelectBoxes, mainPopup}) => {
         proc: "waiting", 
         result: "success", 
         frdId: "",
-        name: ""
+        frdName: ""
     });
     const [ popup, setPopup ] = useState(false);
     const [ loading, setLoading ] = useState(true);
@@ -36,7 +37,7 @@ const SectionFrdSearch = ({login, sOpen, handleSelectBoxes, mainPopup}) => {
                         proc : "finished",
                         result : "success",
                         frdId : frd.USER_ID,
-                        name : frd.USER_NAME
+                        frdName : frd.USER_NAME
                     });
                 }else{
                     setStatus({
@@ -44,7 +45,7 @@ const SectionFrdSearch = ({login, sOpen, handleSelectBoxes, mainPopup}) => {
                         proc : "finished",
                         result : "failed",
                         frdId : "",
-                        name : ""
+                        frdName : ""
                     });
                 }
                 setLoading(false);
@@ -68,6 +69,7 @@ const SectionFrdSearch = ({login, sOpen, handleSelectBoxes, mainPopup}) => {
                     searchResult={searchResult}/> }
             </Wrapper>
             <MainPopup 
+                searchResult={searchResult} 
                 mainPopup={mainPopup} 
                 popup={popup} 
                 type={"FRD-REQ"} 
@@ -111,11 +113,23 @@ export const SrchResult = ({loading, sOpen, searchResult, setPopup}) => {
 }
 
 export const ListBox = ({searchResult, setPopup}) => {
+    const dataArray = useData("ALARM_TABLE", "test");
+
+    const handleClick = () => {
+        for(let i = 0; i < dataArray.data.length; i++){
+            if(dataArray.data[i].TRG_ID === searchResult.frdId){
+                alert("이미 친구신청하였습니다.");
+                break;
+            }else{
+                setPopup(true);
+            }
+        }
+    }
     return(
         <div className="list-wrapper">
             <ul>
-                <li className="frd-id" onClick={() => setPopup(true)} >
-                    {`${searchResult.frdId} (${searchResult.name})`}
+                <li className="frd-id" onClick={handleClick} >
+                    {`${searchResult.frdId} (${searchResult.frdName})`}
                 </li>
             </ul>
         </div>

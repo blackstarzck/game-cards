@@ -1,15 +1,16 @@
 import React from 'react'
 import { Logo } from '../../Logo/Logo'
-import { Link, NavContainer, NavMenu, NavMenuItem } from './Navbar.elements'
+import { NavContainer, NavMenu, NavMenuItem } from './Navbar.elements'
+import { Link } from "react-router-dom";
 
 const Navbar = (props) => {
   return (
     <NavContainer>
         <Logo />
         <NavMenu>
-            <NavMenuItem><a href="">로그인</a></NavMenuItem>
-            <NavMenuItem><a href="">회원가입</a></NavMenuItem>
-            <NavMenuItem><a href="">공유</a></NavMenuItem>
+            <NavMenuItem><Link to="login">로그인</Link></NavMenuItem>
+            <NavMenuItem><Link to="">회원가입</Link></NavMenuItem>
+            <NavMenuItem><Link to="">공유</Link></NavMenuItem>
         </NavMenu>
     </NavContainer>
   )

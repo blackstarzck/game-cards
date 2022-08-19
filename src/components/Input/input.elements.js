@@ -38,7 +38,6 @@ export const NickNameInput = styled.input`
     border-radius: 5px;
     
     &::placeholder {
-        font-family: "Inter", sans-serif;
         font-weight: 300;
         color: ${ ({ theme }) => theme.colors.inActiveButtonBg };
     }
@@ -97,4 +96,22 @@ export const ContainerSelect = styled.ul`
 
         &:hover { background-color: ${ ({theme}) => theme.colors.highLight }; }
     }
+`;
+
+export const EmailInput = styled.input`
+    width: 100%;
+    height: 50px;
+    font-size: 20px;
+    font-weight: 400;
+    color: ${({theme}) => theme.colors.commonBlack };
+    border: 1px solid ${props => props.active ? props.theme.colors.commonBlack : props.theme.colors.border };
+    text-indent: 20px;
+    border-radius: 5px;
+
+    &::placeholder {
+        color: #D9D9D9; 
+    }
+`;
+export const PwdInput = styled(EmailInput).attrs( props => ({ type: "password"}) )`
+
 `;

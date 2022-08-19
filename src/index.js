@@ -6,9 +6,9 @@ import GlobalStyle from './assets/styles/global';
 import theme from './assets/styles/theme';
 import Database from './service/database';
 
-const data = new Database();
-// const job = data.getDatas("JOB_INFO").then((result) => console.log(result) );
-// const card = data.getSingleData("CARDS_INFO", "F-NU1-9").then((result) => console.log(result) );
+// const db = new Database();
+// db.getSingleData("USER_LOG", "chanki1004");
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

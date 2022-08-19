@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { ButtonTextClear, ButtonArrowDown, ButtonSearch } from '../Button/Button'
-import { Wrapper, NickNameInput, JobSelect, ContainerSelect, FrdSrchInput } from './input.elements'
+import { Wrapper, NickNameInput, JobSelect, ContainerSelect, FrdSrchInput, EmailInput, PwdInput } from './input.elements'
 import { gsap } from "gsap"
 
 export const InputNickName = ({names, handleNames}) => {
@@ -164,5 +164,26 @@ export const InputFrdSrch = ({login, searchFunc, sOpen}) => {
                 setInputVal={setInputVal} /> }
                 <ButtonSearch login={login} searchFunc={() => inputVal && searchFunc(inputVal)}/>
         </Wrapper>
+    );
+}
+
+export const InputEmail = () => {
+    const [ active, setActive ] = useState(false);
+
+    return(
+        <EmailInput
+            active={active}
+            onFocus={() => setActive(true)}
+            onBlur={() => setActive(false)} />
+    );
+}
+export const InputPwd = () => {
+    const [ active, setActive ] = useState(false);
+
+    return(
+        <PwdInput
+            active={active}
+            onFocus={() => setActive(true)}
+            onBlur={() => setActive(false)} />
     );
 }

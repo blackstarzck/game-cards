@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { UploadButton, RecruitButton, GetButton, EditTitleButton, SaveTitleButton, ClearButton, ArrowDownButton, AddButton, RemoveButton, ResetButton, SaveButton, ViewButton, KeepButton, LevelUpButton, StatButton, SkillButton, SearchButton, YesButton, NoButton } from './Button.elements'
+import { UploadButton, RecruitButton, GetButton, EditTitleButton, SaveTitleButton, ClearButton, ArrowDownButton, AddButton, RemoveButton, ResetButton, SaveButton, ViewButton, KeepButton, LevelUpButton, StatButton, SkillButton, SearchButton, YesButton, NoButton, LoginButton, GoogleButton, KakaoButton, NaverButton } from './Button.elements'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFolderMagnifyingGlass, faCards, faCardClub, faPenToSquare, faFloppyDiskPen, faArrowRotateLeft, faFloppyDiskCircleArrowRight } from '@fortawesome/pro-thin-svg-icons'
@@ -7,6 +7,7 @@ import { faPlus, faMinus, faCircleArrowUp, faSparkles } from '@fortawesome/pro-s
 import { faMagnifyingGlass } from '@fortawesome/pro-regular-svg-icons'
 import { faCircleXmark, faChevronDown } from '@fortawesome/pro-light-svg-icons'
 import { gsap } from "gsap"
+import { kakaoLogin } from "../../service/kakaoLogin"
 
 library.add(faFolderMagnifyingGlass, faCards, faPenToSquare, faFloppyDiskPen, faCircleXmark, faChevronDown, faPlus, faMinus, faArrowRotateLeft, faFloppyDiskCircleArrowRight, faCircleArrowUp, faMagnifyingGlass);
 
@@ -138,3 +139,18 @@ export const ButtonSearch = ({login, searchFunc}) => {
 
 export const ButtonYes = ({handleClick}) => <YesButton onClick={() => handleClick(false)}>네</YesButton>;
 export const ButtonNo = ({handleClick}) => <NoButton onClick={() => handleClick(false)}>아니오</NoButton>;
+
+export const ButtonLogin = () => <LoginButton>로그인</LoginButton>
+
+export const ButtonGoogle = () => <GoogleButton />
+
+export const ButtonKakao = () => {
+  return(
+      <KakaoButton onClick={kakaoLogin} />
+    );
+}
+export const ButtonNaver = () => {
+  return(
+    <NaverButton/>
+  );
+}

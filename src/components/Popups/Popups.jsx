@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Background, PopupDescr, PopupMain } from "./Popups.elements";
 import { gsap } from "gsap"
 import { ButtonYes, ButtonNo } from "../Button/Button";
+import Database from "../../service/database";
+
+const db = new Database();
 
 export const DescrPopup = ({statName, visible, popup, setPopup}) => {
     const el = useRef(null);
@@ -14,27 +17,28 @@ export const DescrPopup = ({statName, visible, popup, setPopup}) => {
             onStart: function(){
                 el.current.style.visibility = "visible"
                 el.current.style.zIndex = 3;
+            },
+            onComplete: function(){
+                setTimeout(() => {
+                    reverseFunc();
+                }, 1800);
             }
         });
     }, []);
 
     useEffect(() => {
-        console.log("popup 마운트");
         if(popup){
             tl.current.play();
-            console.log(`%c열기: ${statName} | ${popup}`, "color: red");
+            // console.log(`%c열기: ${statName} | ${popup}`, "color: red");
         }else{
             reverseFunc();
-            console.log(`%c1. 닫기: ${statName} | ${popup}`, "color: blue");
+            // console.log(`%c1. 닫기: ${statName} | ${popup}`, "color: blue");
         }
     }, [popup]);
 
     useEffect(() => {
-        if(popup){
-            if(visible.target !== statName){
-                reverseFunc();
-                console.log("2. 닫기", statName);
-            }
+        if(popup && (visible.target !== statName)){
+            reverseFunc();
         }
     },[visible]);
 
@@ -45,7 +49,7 @@ export const DescrPopup = ({statName, visible, popup, setPopup}) => {
             el.current.style.zIndex = -1;
 
         }, 200);
-        console.log(`%cstatName: ${statName}`, "color: goldenrod");
+        // console.log(`%cstatName: ${statName}`, "color: goldenrod");
         setPopup(false);
     }
 
@@ -65,10 +69,17 @@ export const DescrPopup = ({statName, visible, popup, setPopup}) => {
     );
 }
 
-export const MainPopup = ({type, data, popup, setPopup, handleSelectBoxes, mainPopup}) => {
+export const MainPopup = ({type, data, popup, setPopup, handleSelectBoxes, mainPopup, searchResult}) => {
+
     const dataArray = [ "FRD-REQ", "FRD-RECV", "BTL-REQ", "BTL-RECV", "DEL-CARD"  ];
-    const handleClick = (close) => {
-        setPopup(close);
+    const handleClick = (state) => {
+        // 로그인 후 유저정보 전달 필요
+        // 자기자신을 클릭 시 경고문구 필요
+
+        setPopup(false);
+
+        (state === "YES") && db.writeNewData("ALARM_TABLE", "test", searchResult);
+        
         setTimeout(() => {
             handleSelectBoxes({name: "FRD", state: false});
             mainPopup.current = false;
@@ -94,9 +105,6 @@ export const MainPopup = ({type, data, popup, setPopup, handleSelectBoxes, mainP
     },[popup]);
 
     const reverseFun = () => {
-
-        console.log("reverseFun~!");
-
         tl.current.reverse();
         setTimeout(() => {
             el.current.style.visibility = "hidden";
@@ -110,8 +118,8 @@ export const MainPopup = ({type, data, popup, setPopup, handleSelectBoxes, mainP
             <PopupMain ref={el}>
                 <h4><b>{data.frdId}</b>님에게<br/>친구신청하시겠습니까?</h4>
                 <div className="btn-wrapper">
-                    <ButtonYes handleClick={handleClick}/>
-                    <ButtonNo handleClick={handleClick}/>
+                    <ButtonYes handleClick={() => handleClick("YES")}/>
+                    <ButtonNo handleClick={() => handleClick("NO")}/>
                 </div>
             </PopupMain>
         </>

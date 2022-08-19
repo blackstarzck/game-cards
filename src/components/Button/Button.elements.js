@@ -205,3 +205,27 @@ export const YesButton = styled.button`
 export const NoButton = styled(YesButton)`
 
 `;
+
+export const LoginButton = styled.button`
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 500;
+    color: ${ props => props.theme.colors.realWhite };
+    border-radius: 5px;
+    background: ${ props => props.theme.colors.primaryColor };
+`;
+
+export const GoogleButton = styled.button`
+    width: 50px;
+    height: 50px;
+    background-image: url("./images/btn-google.png");
+`;
+export const KakaoButton = styled(GoogleButton)`
+    background-image: url("./images/btn-kakao.png");
+`;
+export const NaverButton = styled(GoogleButton)`
+    background-image: url("./images/btn-naver.png");
+`;
