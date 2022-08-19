@@ -45,17 +45,12 @@ const SectionMain = ({login}) => {
     }
   
     const updateCard = (data) => { // 클릭에 이벤트
-        console.log("업데이트: ", data);
         setMainCard(mainCard => (
             { ...mainCard, [data.key]: data.value }
         ));
     }
 
     const getFaceResult = (result) => setExpression(result);
-
-    useEffect(() => {
-        console.log("SectionMain:", login);
-    }, [login]);
 
     useEffect(() => {
         if(expression.age !== 0 && expression.gender !== ""){

@@ -50,7 +50,7 @@ export const PopupDescr = styled.div`
 
 export const PopupMain = styled.div`
     visibility: hidden;
-    width: 335px;
+    width: 410px;
     font-family: "Noto Sans KR", sans-serif;
     text-align: center;
     color: ${ ({theme}) => theme.colors.commonBlack };
@@ -66,11 +66,12 @@ export const PopupMain = styled.div`
     h4 {
         font-size: 22px;
         font-weight: 400;
-        line-height: 32px
+        line-height: 32px;
+        padding: 0 18px;
     }
     b { font-weight: 800; }
     .btn-wrapper {
-        padding: 23px 24px; 
+        padding: 40px 24px 23px; 
         display: flex; 
         justify-content: space-between
     }

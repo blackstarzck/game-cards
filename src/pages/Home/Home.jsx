@@ -3,8 +3,6 @@ import { useEffect } from 'react';
 import styled from "styled-components"
 import SectionFrdSearch from '../../components/Section/FrdSearch/FrdSearch';
 import SectionMain from '../../components/Section/Main/Section';
-import { displayToken } from '../../service/kakaoLogin';
-
 
 const Home = ({login}) => {
   const [ selectBoxes, setSelectBox ] = useState({
@@ -15,10 +13,17 @@ const Home = ({login}) => {
   const handlePopup = (evt) => {
     const targetEle = evt.target.className;
     const targetTag = evt.target.tagName;
+
+    console.log("mainPopup.current : ", mainPopup.current );
     
     if(mainPopup.current === false &&
       (selectBoxes["FRD"].show &&
-      (targetEle !== "frd-id" && targetTag != "INPUT" && targetTag != "BUTTON" && targetTag != "path" && targetTag != "svg")))
+      (targetEle !== "frd-id" &&
+      targetEle !== "dimmed-bg" &&
+      targetTag != "INPUT" && 
+      targetTag != "BUTTON" && 
+      targetTag != "path" && 
+      targetTag != "svg")))
     {
       handleSelectBoxes({ name: "FRD", state: false });
     }
@@ -32,10 +37,6 @@ const Home = ({login}) => {
     })
   }
 
-  useEffect(() => {
-    displayToken();
-    // console.log("getCookie: ", getCookie());
-  }, []);
 
   return (
     <HomePage onClick={handlePopup}>

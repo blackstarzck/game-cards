@@ -69,16 +69,11 @@ export const DescrPopup = ({statName, visible, popup, setPopup}) => {
     );
 }
 
-export const MainPopup = ({type, data, popup, setPopup, handleSelectBoxes, mainPopup, searchResult}) => {
-
-    const dataArray = [ "FRD-REQ", "FRD-RECV", "BTL-REQ", "BTL-RECV", "DEL-CARD"  ];
+export const MainPopup = ({login, data, popup, setPopup, handleSelectBoxes, mainPopup, searchResult}) => {
     const handleClick = (state) => {
-        // 로그인 후 유저정보 전달 필요
-        // 자기자신을 클릭 시 경고문구 필요
-
         setPopup(false);
 
-        (state === "YES") && db.writeNewData("ALARM_TABLE", "test", searchResult);
+        (state === "YES") && db.writeNewData("ALARM_TABLE", login.ID, searchResult);
         
         setTimeout(() => {
             handleSelectBoxes({name: "FRD", state: false});
@@ -102,6 +97,13 @@ export const MainPopup = ({type, data, popup, setPopup, handleSelectBoxes, mainP
 
     useEffect(() => {
         popup ? tl.current.play() : reverseFun();
+        console.log("popup: ", popup);
+        if(popup){
+            document.body.style.overflow = "hidden";
+        }else{
+            document.body.style.overflow = "";
+        }
+
     },[popup]);
 
     const reverseFun = () => {
@@ -116,7 +118,7 @@ export const MainPopup = ({type, data, popup, setPopup, handleSelectBoxes, mainP
         <>
             <DimmbedBg popup={popup}/>
             <PopupMain ref={el}>
-                <h4><b>{data.frdId}</b>님에게<br/>친구신청하시겠습니까?</h4>
+                <h4><b>{data.frdEmail}</b>님에게<br/>친구신청하시겠습니까?</h4>
                 <div className="btn-wrapper">
                     <ButtonYes handleClick={() => handleClick("YES")}/>
                     <ButtonNo handleClick={() => handleClick("NO")}/>

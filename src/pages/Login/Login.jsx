@@ -6,9 +6,10 @@ import { faCheck } from '@fortawesome/pro-solid-svg-icons'
 import { ButtonGoogle, ButtonKakao, ButtonLogin, ButtonNaver } from '../../components/Button/Button'
 import { useEffect } from 'react'
 import { InputEmail, InputPwd } from '../../components/Input/Input'
+import { Link } from 'react-router-dom'
 
 
-const Login = () => {
+const Login = ({setLogin, goToHome}) => {
     const emailRef = useRef(null);
     const pwedRef = useRef(null);
 
@@ -16,13 +17,12 @@ const Login = () => {
 
     }, []);
 
-
     return (
         <LoginContainer>
             <form>
 
             </form>
-            <Logo />
+            <Link to="/"><Logo  /></Link>
             <InputEmail
                 placeholder="이메일" />
             <InputPwd
@@ -44,9 +44,9 @@ const Login = () => {
             </Wrapper>
 
             <Wrapper className="sns-wrapper">
-                <ButtonGoogle />
-                <ButtonKakao />
-                <ButtonNaver />
+                <ButtonGoogle setLogin={setLogin} goToHome={goToHome}/>
+                <ButtonKakao setLogin={setLogin} goToHome={goToHome}/>
+                <ButtonNaver setLogin={setLogin} goToHome={goToHome}/>
             </Wrapper>
         </LoginContainer>
     )

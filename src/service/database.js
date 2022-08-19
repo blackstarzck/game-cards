@@ -20,33 +20,33 @@ class Database {
 
     writeNewData(tableName, docum, input){
         const docName = String(docum);
+
+        console.log(`[write] tableName: ${tableName}, docName: ${docName} input: `, input);
+
         this.getSingleData(tableName, docName)
         .then((result) => {
             let doubleCheck = false;
 
             switch(tableName){
                 case "ALARM_TABLE" :
-                    for(let i = 0; i < result.data.length; i++){
-                        if(result.data[i].TRG_ID == input.frdId && result.data[i].TRG_NAME == input.frdName){
-                            doubleCheck = true;
-                            break;
+                    console.log(20000000000, result);
+                    if(result && result.data.length > 0){
+                        for(let i = 0; i < result.data.length; i++){
+                            if(result.data[i].TRG_ID == input.frdId && result.data[i].TRG_NAME == input.frdName){
+                                doubleCheck = true;
+                                break;
+                            }
                         }
                     }
                     if(!doubleCheck){
+                        const inputData = result ? 
+                            [ ...result.data, { ALARM_TYPE : "FRD_REQ_SENT",READ_STATE : "N",RESULT : "N",TIME_STAMP : new Date(),TRG_ID : input.frdEmail,TRG_NAME : input.frdName,TRG_UID : "" }] :
+                            [ { ALARM_TYPE : "FRD_REQ_SENT",READ_STATE : "N",RESULT : "N",TIME_STAMP : new Date(),TRG_ID : input.frdEmail,TRG_NAME : input.frdName,TRG_UID : "" }];
                         setDoc(doc(this.db, "ALARM_TABLE", docName), {
-                            UID: "나",
-                            USER_ID: "나",
-                            USER_NAME: "나",
-                            data: [
-                                ...result?.data,
-                                { ALARM_TYPE : "FRD_REQ_SENT",
-                                READ_STATE : "N",
-                                RESULT : "N",
-                                TIME_STAMP : new Date(),
-                                TRG_ID : input.frdId,
-                                TRG_NAME : input.frdName,
-                                TRG_UID : "" }
-                            ]
+                            UID: "",
+                            USER_ID: input.frdEmail,
+                            USER_NAME: input.frdName,
+                            data: inputData
                         });
                         console.log("친구신청 완료");
                         return { state: "success", msg: "친구신청이 완료되었습니다." }
@@ -56,18 +56,35 @@ class Database {
                     }
                 break;
                 case "USER_LOG" :
+                    const inputData = result ? 
+                        [ ...result.LOG, { STATUS: input.inOut, TIME_STAMP: new Date() } ] :
+                        [ { STATUS: input.inOut, TIME_STAMP: new Date() } ];
                     setDoc(doc(this.db, "USER_LOG", docName), {
                         UID: "",
                         USER_ID: input.id,
                         USER_NAME: input.name,
-                        LOG: [
-                            ...result?.LOG,
-                            { STATUS: "IN", TIME_STAMP: new Date() }
-                        ]
+                        LOG: inputData
                     });
                 break;
+                case "USERS" :
+                    let email ="", pwd = "";
+                    let docRef = doc(this.db, "USERS", docName);
+                    if(input.id.indexOf("K") > -1) email = input.email;
+                    if(input.id.indexOf("F") > -1) email = input.id.replace("F-", "");
+                    setDoc(docRef, {
+                        ACCOUNT_STATE : "Y",
+                        AUTO_LOGIN : "N",
+                        ENTER_DATE : result?.ENTER_DATE || new Date(),
+                        LEAVE_DATE : "",
+                        REGI_TYPE : "KAKAO",
+                        UID : "",
+                        USER_EMAIL : email,
+                        USER_ID : input.id,
+                        USER_NAME : input.name,
+                        USER_PW : pwd
+                    }).then(() => window.location.href = "/" );
+                break;
             }
-            console.log(`[write] tableName: ${tableName}, docName: ${docName} input: `, input);
         });
     }
 }

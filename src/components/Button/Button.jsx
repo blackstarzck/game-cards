@@ -8,6 +8,7 @@ import { faMagnifyingGlass } from '@fortawesome/pro-regular-svg-icons'
 import { faCircleXmark, faChevronDown } from '@fortawesome/pro-light-svg-icons'
 import { gsap } from "gsap"
 import { kakaoLogin } from "../../service/kakaoLogin"
+import { firebaseLogin } from '../../service/firebaseLogin'
 
 library.add(faFolderMagnifyingGlass, faCards, faPenToSquare, faFloppyDiskPen, faCircleXmark, faChevronDown, faPlus, faMinus, faArrowRotateLeft, faFloppyDiskCircleArrowRight, faCircleArrowUp, faMagnifyingGlass);
 
@@ -48,8 +49,6 @@ export const ButtonEditTitle = ({handleEditState, imgLoaded}) => {
   const onClick = () => {
     imgLoaded && handleEditState();
   }
-
-  console.log("ButtonEditTitle:", imgLoaded);
 
   return(
     <EditTitleButton onClick={onClick} imgLoaded={imgLoaded}>
@@ -133,7 +132,7 @@ export const ButtonSkill = ({imgLoaded, disable}) => <SkillButton disable imgLoa
 
 export const ButtonSearch = ({login, searchFunc}) => {
   return(
-    <SearchButton login={login} onClick={login && searchFunc} ><FontAwesomeIcon icon={faMagnifyingGlass} /></SearchButton>
+    <SearchButton login={login} onClick={login ? searchFunc : undefined} ><FontAwesomeIcon icon={faMagnifyingGlass} /></SearchButton>
   );
 }
 
@@ -142,11 +141,25 @@ export const ButtonNo = ({handleClick}) => <NoButton onClick={() => handleClick(
 
 export const ButtonLogin = () => <LoginButton>로그인</LoginButton>
 
-export const ButtonGoogle = () => <GoogleButton />
-
-export const ButtonKakao = () => {
+export const ButtonGoogle = ({setLogin}) => { // 응답속도가 느
+  const onClick = () => {
+    firebaseLogin().then((result) => {
+      setLogin({ REGI_TYPE: result.REGI_TYPE, ID: result.user.email, NAME: result.user.displayName, state: true });
+    });
+  }
   return(
-      <KakaoButton onClick={kakaoLogin} />
+    <GoogleButton onClick={() => onClick()} />
+  );
+}
+
+export const ButtonKakao = ({setLogin}) => {
+  const onClick = () => {
+    kakaoLogin().then((result) => {
+      setLogin({ REGI_TYPE: result.REGI_TYPE, ID: result.id, NAME: result.kakao_account.profile.nickname, state: true });
+    });
+  }
+  return(
+      <KakaoButton onClick={() => onClick()} />
     );
 }
 export const ButtonNaver = () => {

@@ -200,7 +200,6 @@ export const MainViewEditName = ({handleEditState, updateCard, mainCard, active,
     });
 
     const handleNames = obj => {
-        console.log("handleNames:", obj);
         setNames((names) => {
             const updated = {...names};
             updated[obj.key] = obj.value;

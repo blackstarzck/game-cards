@@ -1,54 +1,68 @@
 import Database from "./database";
-import { getCookie } from "../util/util";
 
+const { Kakao } = window;
 const db = new Database;
 
-export function kakaoLogin (){
-    const { Kakao } = window;
-
-    // step1
-    Kakao.Auth.login({
-        success: function(authObj) {
-            // step2
+export function kakaoLoginCheck(){
+    return new Promise((resolve) => {
+        const token = Kakao.Auth.getAccessToken();
+        if(token){
+            console.log("[O] 카카오로 로그인하였습니다.");
             Kakao.API.request({
                 url: '/v2/user/me',
-                success: function(res) {
-                    console.log("res: ", res);
+                success: function(result) {
                     const data = {
-                        name: res.kakao_account.profile.nickname,
-                        id: res.id,
+                        name: result.kakao_account.profile.nickname,
+                        id: result.id,
                     };
-
-                    // step3
-                    db.writeNewData("USER_LOG", res.id, data);
-
-                    // step4
-                    setTimeout(() => {
-                        Kakao.Auth.authorize({ redirectUri: 'http://localhost:3000' });
-                    }, 600);
+                    resolve({ ...result, REGI_TYPE: "KAKAO" });
                 }
             });
-        },
-        fail: function(err) {
-            console.log(err);
-        },
+        }else{
+            console.log("[X] 카카오로그인이 아닙니다.");
+            resolve(null);
+        }
     });
 }
 
+export function kakaoLogin (){
+    return new Promise((resolve) => {
+        // step1
+        Kakao.Auth.login({
+            success: function(authObj) {
+                // step2
+                Kakao.API.request({
+                    url: '/v2/user/me',
+                    success: function(result) {
+                        const data = {
+                            name: result.kakao_account.profile.nickname,
+                            id: `K-${result.id}`,
+                            inOut: "IN",
+                            email: result.kakao_account.email
+                        };
 
-export function displayToken (){
-    const token = getCookie('authorize-access-token');
+                        console.log("카카오 유저 정보: ", result);
+                        // step3
+                        db.writeNewData("USER_LOG", result.kakao_account.email, data);
+                        db.writeNewData("USERS", result.kakao_account.email, data);
+                        resolve({ ...result, REGI_TYPE: "KAKAO" });
+                    }
+                });
+            },
+            fail: function(err) {
+                console.log(`[kakaoLogin함수 오작동] err:${err}`);
+            },
+        });
+        
+    });
+}
 
-    console.log("displayToken: ", token);
-    
-    // if(token) {
-    //     Kakao.Auth.setAccessToken(token)
-    //     Kakao.Auth.getStatusInfo(({ status }) => {
-    //         if(status === 'connected') {
-    //             document.getElementById('token-result').innerText = 'login success. token: ' + Kakao.Auth.getAccessToken()
-    //         } else {
-    //             Kakao.Auth.setAccessToken(null)
-    //         }
-    //     })
-    // }
+export function kakaoLogOut (data){
+    return new Promise((resolve)=> {
+        Kakao.Auth.logout(function() {
+            console.log("로그아웃 데이터: ", data)
+            db.writeNewData("USER_LOG", data.id, data);
+            resolve(true);
+        });
+    });
 }

@@ -10,7 +10,6 @@ import { faFaceConfused } from '@fortawesome/pro-light-svg-icons'
 import { faList } from '@fortawesome/pro-regular-svg-icons'
 import Database from '../../../service/database'
 import { MainPopup } from '../../Popups/Popups'
-import { gsap } from "gsap"
 import { useData } from '../../../hooks/useData'
 
 const data = new Database();
@@ -20,24 +19,25 @@ const SectionFrdSearch = ({login, sOpen, handleSelectBoxes, mainPopup}) => {
         proc: "waiting", 
         result: "success", 
         frdId: "",
-        frdName: ""
+        frdName: "",
+        frdEmail: "",
     });
     const [ popup, setPopup ] = useState(false);
     const [ loading, setLoading ] = useState(true);
 
     const searchFunc = (frdId) => {
-        if(login){
+        if(login.state){
             data.getSingleData("USERS", frdId).then((frd) => {
                 handleSelectBoxes({name: "FRD", state: true});
                 setLoading(true);
                 if(frd){
-                    mainPopup.current = true;
                     setStatus({
                         ...searchResult,
                         proc : "finished",
                         result : "success",
-                        frdId : frd.USER_ID,
-                        frdName : frd.USER_NAME
+                        frdId : frd.USER_ID.replace("K-", "").replace("F-", ""),
+                        frdName : frd.USER_NAME,
+                        frdEmail : frd.USER_EMAIL
                     });
                 }else{
                     setStatus({
@@ -45,7 +45,8 @@ const SectionFrdSearch = ({login, sOpen, handleSelectBoxes, mainPopup}) => {
                         proc : "finished",
                         result : "failed",
                         frdId : "",
-                        frdName : ""
+                        frdName : "",
+                        frdEmail: ""
                     });
                 }
                 setLoading(false);
@@ -62,13 +63,17 @@ const SectionFrdSearch = ({login, sOpen, handleSelectBoxes, mainPopup}) => {
                     login={login}
                     searchFunc={searchFunc} 
                     Open={sOpen} />
-                { login && <SrchResult
+                { login.state && <SrchResult
+                    login={login}
                     sOpen={sOpen}
+                    handleSelectBoxes={handleSelectBoxes}
                     setPopup={setPopup}
+                    mainPopup={mainPopup}
                     loading={loading}
                     searchResult={searchResult}/> }
             </Wrapper>
             <MainPopup 
+                login={login}
                 searchResult={searchResult} 
                 mainPopup={mainPopup} 
                 popup={popup} 
@@ -82,7 +87,7 @@ const SectionFrdSearch = ({login, sOpen, handleSelectBoxes, mainPopup}) => {
 
 export default SectionFrdSearch;
 
-export const SrchResult = ({loading, sOpen, searchResult, setPopup}) => {
+export const SrchResult = ({login, loading, sOpen, searchResult, setPopup, handleSelectBoxes, mainPopup}) => {
     const el = useRef(null);
 
     useEffect(() => {
@@ -96,8 +101,6 @@ export const SrchResult = ({loading, sOpen, searchResult, setPopup}) => {
         }
 
         el.current.style.height = height;
-
-        console.log("sOpen: " + sOpen, height);
     }, [sOpen]);
 
     return(
@@ -106,30 +109,48 @@ export const SrchResult = ({loading, sOpen, searchResult, setPopup}) => {
             <ResultBody>
                 { loading ? 
                     <LoadingBox /> :
-                    ((searchResult.proc === "finished" && searchResult.result === "success") ? <ListBox searchResult={searchResult} setPopup={setPopup} /> : <FailBox />) }
+                    ((searchResult.proc === "finished" && searchResult.result === "success") ?
+                        <ListBox
+                            login={login}
+                            mainPopup={mainPopup}
+                            searchResult={searchResult}
+                            setPopup={setPopup}
+                            handleSelectBoxes={handleSelectBoxes}/> : <FailBox />) }
             </ResultBody>
         </Container>
     );
 }
 
-export const ListBox = ({searchResult, setPopup}) => {
-    const dataArray = useData("ALARM_TABLE", "test");
+export const ListBox = ({login, searchResult, setPopup, handleSelectBoxes, mainPopup}) => {
+    const dataArray = useData("ALARM_TABLE", login.ID);
+    const listRef = useRef(null);
 
-    const handleClick = () => {
-        for(let i = 0; i < dataArray.data.length; i++){
-            if(dataArray.data[i].TRG_ID === searchResult.frdId){
-                alert("이미 친구신청하였습니다.");
-                break;
-            }else{
-                setPopup(true);
+    const handleClick = ()=> {
+        console.log("listRef.current.value: ", listRef.current);
+        console.log(dataArray);
+
+        if(dataArray && dataArray.data.length > 0){
+            for(let i = 0; i < dataArray.data.length; i++){
+                if(dataArray.data[i].TRG_ID === searchResult.frdId){
+                    alert("이미 친구신청하였습니다.");
+                    return;
+                }
             }
         }
+        if(login.ID === searchResult.frdId){
+            alert("사용자 자신을 친구신청할 수 없습니다.");
+        }else{
+            setPopup(true);
+            handleSelectBoxes({name: "FRD", state: true});
+            mainPopup.current = true;
+        }
     }
+
     return(
         <div className="list-wrapper">
             <ul>
-                <li className="frd-id" onClick={handleClick} >
-                    {`${searchResult.frdId} (${searchResult.frdName})`}
+                <li ref={listRef} className="frd-id" onClick={handleClick} >
+                    { `${searchResult.frdEmail.replace("K-", "").replace("F-", "")} (${login.ID === searchResult.frdId ? "나" : searchResult.frdName})` }
                 </li>
             </ul>
         </div>
