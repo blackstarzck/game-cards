@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { ButtonTextClear, ButtonArrowDown, ButtonSearch } from '../Button/Button'
-import { Wrapper, NickNameInput, JobSelect, ContainerSelect, FrdSrchInput, EmailInput, PwdInput } from './input.elements'
+import { ButtonTextClear, ButtonArrowDown, ButtonSearch, ButtonEyeOpen, ButtonEyeClose } from '../Button/Button'
+import { Wrapper, NickNameInput, JobSelect, ContainerSelect, FrdSrchInput, EmailInput, PwdInput, FormInput } from './input.elements'
 import { gsap } from "gsap"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEye, faEyeSlash } from '@fortawesome/pro-light-svg-icons'
 
 export const InputNickName = ({names, handleNames}) => {
     const [ inputVal, setInputVal ] = useState("");
@@ -141,19 +143,18 @@ export const JobLists = ({ list, clickState, handleDropDown, handleNames }) => {
 
 export const InputFrdSrch = ({login, searchFunc, sOpen}) => {
     const [ inputVal, setInputVal ] = useState("");
-    
     const inputRef = useRef();
-
     const onChnage = (evt) => {
         const { value } = evt.target;
-        setInputVal((inputVal) => inputVal = value);
+        setInputVal(inputVal => inputVal = value);
     }
+
     return(
         <Wrapper className="search-wrapper">
             <FrdSrchInput 
-                readOnly={ login ? false : true }
+                readOnly={ login.state ? false : true }
                 ref={inputRef}
-                placeholder={login ? "친구를 검색해보세요" : "로그인 후 이용가능합니다."}
+                placeholder={login.state ? "친구를 검색해보세요" : "로그인 후 이용가능합니다."}
                 value={inputVal || ""}
                 onChange={onChnage} 
                 onKeyPress={(e) => e.key === "Enter" && searchFunc(inputVal)} />
@@ -162,28 +163,121 @@ export const InputFrdSrch = ({login, searchFunc, sOpen}) => {
                 className={"btn-clear"}
                 target={""}
                 setInputVal={setInputVal} /> }
-                <ButtonSearch login={login} searchFunc={() => inputVal && searchFunc(inputVal)}/>
+                <ButtonSearch login={login.state} searchFunc={() => inputVal && searchFunc(inputVal)}/>
         </Wrapper>
     );
 }
 
-export const InputEmail = () => {
+export const InputEmail = ({emailRef}) => {
     const [ active, setActive ] = useState(false);
+    const handleACtive = () => emailRef.current.value || setActive(!active);
 
     return(
+        <>
         <EmailInput
+            ref={emailRef}
+            placeholder="이메일"
             active={active}
-            onFocus={() => setActive(true)}
-            onBlur={() => setActive(false)} />
+            onFocus={handleACtive}
+            onBlur={handleACtive} />
+        </>
     );
 }
-export const InputPwd = () => {
+export const InputPwd = ({pwedRef}) => {
     const [ active, setActive ] = useState(false);
+    const [ eye, setEye ] = useState(false);
+
+    const handleACtive = () => pwedRef.current.value || setActive(!active);
 
     return(
-        <PwdInput
+        <Wrapper className="pwd-input-wrapper">
+            <PwdInput
+                eyeOpen={eye}
+                ref={pwedRef}
+                placeholder="비밀번호"
+                active={active}
+                onFocus={handleACtive}
+                onBlur={handleACtive} />
+            <div className="btns-wrapepr">
+                <ButtonEyeOpen eyeOpen={eye} setEye={setEye}/>
+                <ButtonEyeClose eyeOpen={eye} setEye={setEye}/>
+            </div>
+        </Wrapper>
+    );
+}
+
+export const InputForm = ({validate, inputRef, setIdState, setPwState, idState, pwState, emailState, setEmailState}) => {
+    const [ active, setActive ] = useState(false);
+    const handleACtive = () => inputRef.current.value || setActive(!active);
+
+    const handleState = (data) => {
+        if(validate === "id"){
+            setIdState((idState) => {
+                const updated = { ...idState };
+                updated[data.key] = data.value;
+                return updated;
+            });
+        }
+        if(validate === "pw" || validate === "pw-cfrm"){
+            setPwState((pwState) => {
+                const updated = { ...pwState };
+                updated[data.key] = data.value;
+                return updated;
+            });           
+        }
+        if(validate === "email"){
+            setEmailState((emailState) => {
+                const updated = { ...emailState };
+                updated[data.key] = data.value;
+                return updated;
+            });  
+        }
+    }
+
+    const validateInputs = (e) => {
+        if(validate === "id"){
+            const id1Reg = /^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z]{6,16}$/; // 6자 이상의 영문 혹은 영문과 숫자
+            const id1Result = id1Reg.test(e.target.value);
+            handleState({key: "id1", value: id1Result });
+        }
+        if(validate === "pw"){
+            const pw1Reg = /^(?=.*[a-zA-z])(?=.*[0-9]).{8,}$/; // 8자리 이상
+            const pw1Result = pw1Reg.test(e.target.value);
+            handleState({key: "pw1", value: pw1Result });
+
+            const pw2Reg = /^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+]).{8,}$/; // 8 ~ 16자 영문, 숫자, 특수문자를 최소 한가지씩 조합
+            const pw2Result = pw2Reg.test(e.target.value);
+            handleState({key: "pw2", value: pw2Result });
+
+            const pw3Reg = /(\w)\1\1/; // 동일한문자 3개 이상 금지
+            const pw3Result = pw3Reg.test(e.target.value);
+            handleState({key: "pw3", value: !pw3Result });
+
+            handleState({key: "result", value: e.target.value });
+        }
+        if(validate === "pw-cfrm"){
+            if(inputRef.current.value === pwState.result){
+                handleState({key: "dup", value: true });
+            }else{
+                handleState({key: "dup", value: false });
+            }
+        }
+        if(validate === "email"){
+            const emailReg = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
+            const emailResult = emailReg.test(e.target.value);
+            handleState({key: "reg", value: emailResult });
+            handleState({key: "result", value: e.target.value });
+        }
+    }
+
+    return(
+        <FormInput
+            ref={inputRef}
             active={active}
-            onFocus={() => setActive(true)}
-            onBlur={() => setActive(false)} />
+            validate={validate}
+            type={(validate === "pw" || validate === "pw-cfrm") ? "password" : "text"}
+            onChange={validateInputs}
+            onFocus={handleACtive}
+            onBlur={handleACtive} />
     );
 }

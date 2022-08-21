@@ -23,6 +23,15 @@ export const Wrapper = styled.div`
 
         .btn-clear { right: 45px; }
     }
+    &.pwd-input-wrapper {
+        position: relative;
+
+        .btns-wrapepr {
+            width: 50px; height: 50px;
+            position: absolute;
+            top: 0; right: 0;
+        }
+    }
 `;
 
 export const NickNameInput = styled.input`
@@ -112,6 +121,14 @@ export const EmailInput = styled.input`
         color: #D9D9D9; 
     }
 `;
-export const PwdInput = styled(EmailInput).attrs( props => ({ type: "password"}) )`
+export const PwdInput = styled(EmailInput).attrs( props => ({ type: props.eyeOpen ? "text" : "password" }) )`
 
+`;
+
+export const FormInput = styled.input.attrs( props => ({ type: props.type, data: props.validate }) )`
+    width: 337px;
+    height: 40px;
+    border: 1px solid ${props => props.active ? props.theme.colors.commonBlack : props.theme.colors.border };
+    border-radius: 5px;
+    text-indent: 12px;
 `;

@@ -23,7 +23,7 @@ export const Wrapper = styled.div`
 
 
     label {
-        display: flex;
+        display: inline-block;
         align-items: center;
         font-size: 14px;
         color: ${ props => props.theme.colors.commonBlack };
@@ -41,9 +41,8 @@ export const Wrapper = styled.div`
     }
 
     .checkbox {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        display: inline-block;
+        text-align: center;
         width: 24px;
         height: 24px;
         border: 1px solid #D9D9D9;

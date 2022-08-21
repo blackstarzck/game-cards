@@ -1,5 +1,4 @@
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut  } from "firebase/auth";
-import { resolvePath } from "react-router-dom";
 import Database from "./database";
 
 const auth = getAuth();
@@ -18,13 +17,14 @@ export function firebaseLoginCheck(){
     });
 }
 
-export function firebaseLogin (){
+export function firebaseLogin(redirectFunc){
     const provider = new GoogleAuthProvider();
 
     return new Promise((resolve) => {
         signInWithPopup(auth, provider)
         .then((result) => {
             const data = {
+                regi_type: "GOOGLE",
                 name: result.user.displayName,
                 id: `F-${result.user.email}`,
                 inOut: "IN"
@@ -32,7 +32,7 @@ export function firebaseLogin (){
   
             console.log("파이어베이스 유저정보: ", result);
             db.writeNewData("USER_LOG", result.user.email, data);
-            db.writeNewData("USERS", result.user.email, data);
+            db.writeNewData("USERS", result.user.email, data, redirectFunc);
             resolve({ ...result, REGI_TYPE: "GOOGLE" });
 
         }).catch((error) => {

@@ -19,12 +19,12 @@ const Navbar = ({login, setLogin, goToHome}) => {
     if(login.REGI_TYPE === "KAKAO"){
       kakaoLogOut(data).then(() => {
         setLogin({ ID: "", NAME: "", REGI_TYPE: "", state: false });
-        goToHome(null);
+        goToHome();
       });
     }else{
       firebaseLogOut(data).then(() => {
         setLogin({ ID: "", NAME: "", REGI_TYPE: "", state: false });
-        goToHome(null);
+        goToHome();
       });
     }
   }
@@ -40,7 +40,7 @@ const Navbar = ({login, setLogin, goToHome}) => {
             <NavMenuItem>
               { login.state ? <a href="/" onClick={handleLogOut}>로그아웃</a> : <Link to="login">로그인</Link> }
             </NavMenuItem>
-            <NavMenuItem><Link to="">회원가입</Link></NavMenuItem>
+            { login.state || <NavMenuItem><Link to="/join/new">회원가입</Link></NavMenuItem> }
             <NavMenuItem><Link to="">공유</Link></NavMenuItem>
         </NavMenu>
     </NavContainer>

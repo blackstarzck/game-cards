@@ -16,7 +16,7 @@ const GlobalStyle = createGlobalStyle`
   /* Normalize */
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body { font-size: 16px;color: #444444; font-family: 'Noto Sans KR', sans-serif;-webkit-font-smoothing: antialiased;-webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; user-select:none; }
+  body { height: 100%; font-size: 16px;color: #444444; font-family: 'Noto Sans KR', sans-serif;-webkit-font-smoothing: antialiased;-webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; user-select:none; }
   select { appearance:none;}
   select::-ms-expand { display:none;}
   input { outline: none; }

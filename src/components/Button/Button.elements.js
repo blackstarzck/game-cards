@@ -229,3 +229,26 @@ export const KakaoButton = styled(GoogleButton)`
 export const NaverButton = styled(GoogleButton)`
     background-image: url("./images/btn-naver.png");
 `;
+
+export const EyeOpenButton = styled.button`
+    width: 100%; height: 100%;
+    display: ${props => props.eyeOpen ? "none" : "flex" };
+    justify-content: center;
+    align-items: center;
+`;
+
+export const EyeCloseButton = styled(EyeOpenButton)`
+    display: ${props => props.eyeOpen ? "flex" : "none" };
+`;
+
+export const SignButton = styled.button`
+    width: 235px;
+    height: 50px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 500px;
+    line-height: 45px;
+    color: ${ props => props.theme.colors.realWhite };
+    background: ${ props => props.theme.colors.primaryColor };
+    border-radius: 5px;
+`;

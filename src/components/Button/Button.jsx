@@ -1,16 +1,16 @@
-import React, { useEffect, useRef } from 'react'
-import { UploadButton, RecruitButton, GetButton, EditTitleButton, SaveTitleButton, ClearButton, ArrowDownButton, AddButton, RemoveButton, ResetButton, SaveButton, ViewButton, KeepButton, LevelUpButton, StatButton, SkillButton, SearchButton, YesButton, NoButton, LoginButton, GoogleButton, KakaoButton, NaverButton } from './Button.elements'
+import React, { useEffect, useRef, useState } from 'react'
+import { UploadButton, RecruitButton, GetButton, EditTitleButton, SaveTitleButton, ClearButton, ArrowDownButton, AddButton, RemoveButton, ResetButton, SaveButton, ViewButton, KeepButton, LevelUpButton, StatButton, SkillButton, SearchButton, YesButton, NoButton, LoginButton, GoogleButton, KakaoButton, NaverButton, EyeOpenButton, EyeCloseButton, SignButton } from './Button.elements'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFolderMagnifyingGlass, faCards, faCardClub, faPenToSquare, faFloppyDiskPen, faArrowRotateLeft, faFloppyDiskCircleArrowRight } from '@fortawesome/pro-thin-svg-icons'
-import { faPlus, faMinus, faCircleArrowUp, faSparkles } from '@fortawesome/pro-solid-svg-icons'
+import { faPlus, faMinus, faCircleArrowUp, faSparkles, faEyeSlash, faEye } from '@fortawesome/pro-solid-svg-icons'
 import { faMagnifyingGlass } from '@fortawesome/pro-regular-svg-icons'
 import { faCircleXmark, faChevronDown } from '@fortawesome/pro-light-svg-icons'
 import { gsap } from "gsap"
 import { kakaoLogin } from "../../service/kakaoLogin"
 import { firebaseLogin } from '../../service/firebaseLogin'
 
-library.add(faFolderMagnifyingGlass, faCards, faPenToSquare, faFloppyDiskPen, faCircleXmark, faChevronDown, faPlus, faMinus, faArrowRotateLeft, faFloppyDiskCircleArrowRight, faCircleArrowUp, faMagnifyingGlass);
+library.add(faEye, faEyeSlash, faFolderMagnifyingGlass, faCards, faPenToSquare, faFloppyDiskPen, faCircleXmark, faChevronDown, faPlus, faMinus, faArrowRotateLeft, faFloppyDiskCircleArrowRight, faCircleArrowUp, faMagnifyingGlass);
 
 
 export const ButtonUpload = ({...props}) => {
@@ -139,11 +139,15 @@ export const ButtonSearch = ({login, searchFunc}) => {
 export const ButtonYes = ({handleClick}) => <YesButton onClick={() => handleClick(false)}>네</YesButton>;
 export const ButtonNo = ({handleClick}) => <NoButton onClick={() => handleClick(false)}>아니오</NoButton>;
 
-export const ButtonLogin = () => <LoginButton>로그인</LoginButton>
+export const ButtonLogin = ({emailLogin}) => {
+  return(
+    <LoginButton onClick={emailLogin}>로그인</LoginButton>
+  );
+}
 
-export const ButtonGoogle = ({setLogin}) => { // 응답속도가 느
+export const ButtonGoogle = ({setLogin, redirect}) => {
   const onClick = () => {
-    firebaseLogin().then((result) => {
+    firebaseLogin(redirect).then((result) => {
       setLogin({ REGI_TYPE: result.REGI_TYPE, ID: result.user.email, NAME: result.user.displayName, state: true });
     });
   }
@@ -152,10 +156,10 @@ export const ButtonGoogle = ({setLogin}) => { // 응답속도가 느
   );
 }
 
-export const ButtonKakao = ({setLogin}) => {
+export const ButtonKakao = ({setLogin, redirect}) => {
   const onClick = () => {
-    kakaoLogin().then((result) => {
-      setLogin({ REGI_TYPE: result.REGI_TYPE, ID: result.id, NAME: result.kakao_account.profile.nickname, state: true });
+    kakaoLogin(redirect).then((result) => {
+      setLogin({ REGI_TYPE: result.REGI_TYPE, ID: result.kakao_account.email, NAME: result.kakao_account.profile.nickname, state: true });
     });
   }
   return(
@@ -165,5 +169,33 @@ export const ButtonKakao = ({setLogin}) => {
 export const ButtonNaver = () => {
   return(
     <NaverButton/>
+  );
+}
+
+export const ButtonEyeOpen = ({eyeOpen, setEye}) => {
+  const handleEye = (e) => {
+    e.preventDefault();
+    setEye(!eyeOpen);
+  }
+
+  return(
+  <EyeOpenButton eyeOpen={eyeOpen} onClick={handleEye}><FontAwesomeIcon icon={faEye} /></EyeOpenButton>
+  );
+}
+export const ButtonEyeClose = ({eyeOpen, setEye}) => {
+  const handleEye = (e) => {
+    e.preventDefault();
+    setEye(!eyeOpen);
+  }
+
+  return(
+    <EyeCloseButton eyeOpen={eyeOpen} onClick={handleEye}><FontAwesomeIcon icon={faEyeSlash} /></EyeCloseButton>
+  );
+}
+
+export const ButtonSign = ({handleSignIn}) => {
+
+  return(
+    <SignButton onClick={handleSignIn}>가입하기</SignButton>
   );
 }

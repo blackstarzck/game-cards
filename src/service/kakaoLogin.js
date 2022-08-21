@@ -25,7 +25,7 @@ export function kakaoLoginCheck(){
     });
 }
 
-export function kakaoLogin (){
+export function kakaoLogin(redirectFunc){
     return new Promise((resolve) => {
         // step1
         Kakao.Auth.login({
@@ -35,6 +35,7 @@ export function kakaoLogin (){
                     url: '/v2/user/me',
                     success: function(result) {
                         const data = {
+                            regi_type: "KAKAO",
                             name: result.kakao_account.profile.nickname,
                             id: `K-${result.id}`,
                             inOut: "IN",
@@ -44,7 +45,7 @@ export function kakaoLogin (){
                         console.log("카카오 유저 정보: ", result);
                         // step3
                         db.writeNewData("USER_LOG", result.kakao_account.email, data);
-                        db.writeNewData("USERS", result.kakao_account.email, data);
+                        db.writeNewData("USERS", result.kakao_account.email, data, redirectFunc);
                         resolve({ ...result, REGI_TYPE: "KAKAO" });
                     }
                 });

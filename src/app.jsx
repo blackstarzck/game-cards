@@ -3,13 +3,14 @@ import './app.css';
 import Navbar from './components/cointainer/Navbar/Navbar';
 import Home from './pages/Home/Home';
 import Login from './pages/Login/Login';
+import Join from './pages/Join/Join';
 import { Routes,  Route, useNavigate } from "react-router-dom";
 import { kakaoLoginCheck } from './service/kakaoLogin';
 import { firebaseLoginCheck } from './service/firebaseLogin';
 
 
 function App() {
-  const [ login, setLogin] = useState({ ID: "", NAME: "", REGI_TYPE: "", state: false}); // 로그인 true, 로그아웃 false
+  const [ login, setLogin] = useState({ID: "", NAME: "", REGI_TYPE: "", state: false}); // 로그인 true, 로그아웃 false
   const [ alarm, setAlarm ] = useState({ ID: "", NAME: "" });
   const navigate = useNavigate();
 
@@ -58,8 +59,9 @@ function App() {
       <div className="blur-img"></div>
       <Navbar login={login} setLogin={setLogin} goToHome={goToHome} />
       <Routes>
-        <Route path="/*"  element={ <Home login={login} /> } />
-        <Route path="/login"  element={ <Login login={login} setLogin={setLogin} goToHome={goToHome} /> }/>
+        <Route path="/*" element={ <Home login={login} /> } />
+        <Route path="/login" element={ <Login login={login} setLogin={setLogin} goToHome={goToHome} /> }/>
+        <Route path="/join/:depends" element={ <Join login={login} setLogin={setLogin} goToHome={goToHome} /> }/>
       </Routes>
     </>
   );

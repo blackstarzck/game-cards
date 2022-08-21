@@ -11,14 +11,16 @@ class Database {
         return result;
     }
 
-    async getSingleData(tableName, docName){
+    async getSingleData(tableName, docName, func){
         const docRef = doc(this.db, tableName, docName);
-        const result = await getDoc(docRef);
-        console.log(`[get] tableName: ${tableName}, docName: ${docName}`, result.data());
-        return result.data();
+        const document = await getDoc(docRef);
+        const result = document.data();
+        console.log(`[get] tableName: ${tableName}, docName: ${docName}`, result);
+        func && func(result);
+        return result;
     }
 
-    writeNewData(tableName, docum, input){
+    writeNewData(tableName, docum, input, func){
         const docName = String(docum);
 
         console.log(`[write] tableName: ${tableName}, docName: ${docName} input: `, input);
@@ -67,22 +69,23 @@ class Database {
                     });
                 break;
                 case "USERS" :
-                    let email ="", pwd = "";
-                    let docRef = doc(this.db, "USERS", docName);
-                    if(input.id.indexOf("K") > -1) email = input.email;
+                    let email = input.email
+                    // if(input.id.indexOf("K") > -1) email = input.email;
                     if(input.id.indexOf("F") > -1) email = input.id.replace("F-", "");
-                    setDoc(docRef, {
+                    setDoc(doc(this.db, "USERS", docName), {
                         ACCOUNT_STATE : "Y",
                         AUTO_LOGIN : "N",
                         ENTER_DATE : result?.ENTER_DATE || new Date(),
                         LEAVE_DATE : "",
-                        REGI_TYPE : "KAKAO",
+                        REGI_TYPE : input.regi_type,
                         UID : "",
                         USER_EMAIL : email,
                         USER_ID : input.id,
                         USER_NAME : input.name,
-                        USER_PW : pwd
-                    }).then(() => window.location.href = "/" );
+                        USER_PW : input.pwd ? input.pwd : ""
+                    }).then(() => {
+                        func && func();
+                    });
                 break;
             }
         });
