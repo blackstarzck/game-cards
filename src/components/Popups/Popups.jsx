@@ -70,10 +70,27 @@ export const DescrPopup = ({statName, visible, popup, setPopup}) => {
 }
 
 export const MainPopup = ({login, data, popup, setPopup, handleSelectBoxes, mainPopup, searchResult}) => {
-    const handleClick = (state) => {
+    const handleClick = async (state) => {
         setPopup(false);
+        const frdObj = { ...searchResult, alarm_type: "FRD_REQ_SENT" };
+        const myObj = {
+            proc: "waiting", 
+            result: "success", 
+            alarm_type: "FRD_REQ_RECV"
+        }
 
-        (state === "YES") && db.writeNewData("ALARM_TABLE", login.ID, searchResult);
+        if(state === "YES"){
+            const frd = await db.getSingleData("ALARM_TABLE", frdObj.id);
+            myObj.id = login.ID;
+            myObj.name = login.NAME;
+            myObj.email = login.EMAIL;
+
+            console.log("frdObj: ", frdObj);
+            console.log("myObj: ", myObj);
+
+            db.writeNewData("ALARM_TABLE", login.ID, frdObj); // 내 알림에 기록
+            db.writeNewData("ALARM_TABLE", frdObj.id, myObj); // 친구 알림에 기록
+        }
         
         setTimeout(() => {
             handleSelectBoxes({name: "FRD", state: false});
@@ -97,13 +114,11 @@ export const MainPopup = ({login, data, popup, setPopup, handleSelectBoxes, main
 
     useEffect(() => {
         popup ? tl.current.play() : reverseFun();
-        console.log("popup: ", popup);
         if(popup){
             document.body.style.overflow = "hidden";
         }else{
             document.body.style.overflow = "";
         }
-
     },[popup]);
 
     const reverseFun = () => {
@@ -118,7 +133,7 @@ export const MainPopup = ({login, data, popup, setPopup, handleSelectBoxes, main
         <>
             <DimmbedBg popup={popup}/>
             <PopupMain ref={el}>
-                <h4><b>{data.frdEmail}</b>님에게<br/>친구신청하시겠습니까?</h4>
+                <h4><b>{data.id}</b>님에게<br/>친구신청하시겠습니까?</h4>
                 <div className="btn-wrapper">
                     <ButtonYes handleClick={() => handleClick("YES")}/>
                     <ButtonNo handleClick={() => handleClick("NO")}/>

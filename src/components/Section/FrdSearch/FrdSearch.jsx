@@ -18,9 +18,9 @@ const SectionFrdSearch = ({login, sOpen, handleSelectBoxes, mainPopup}) => {
     const [ searchResult, setStatus ] = useState({ // waiting -> pending -> finished( 성공 / 실패 )
         proc: "waiting", 
         result: "success", 
-        frdId: "",
-        frdName: "",
-        frdEmail: "",
+        id: "",
+        name: "",
+        email: "",
     });
     const [ popup, setPopup ] = useState(false);
     const [ loading, setLoading ] = useState(true);
@@ -35,18 +35,18 @@ const SectionFrdSearch = ({login, sOpen, handleSelectBoxes, mainPopup}) => {
                         ...searchResult,
                         proc : "finished",
                         result : "success",
-                        frdId : frd.USER_ID.replace("K-", "").replace("F-", ""),
-                        frdName : frd.USER_NAME,
-                        frdEmail : frd.USER_EMAIL
+                        id : frd.USER_ID,
+                        name : frd.USER_NAME,
+                        email : frd.USER_EMAIL
                     });
                 }else{
                     setStatus({
                         ...searchResult,
                         proc : "finished",
                         result : "failed",
-                        frdId : "",
-                        frdName : "",
-                        frdEmail: ""
+                        id : "",
+                        name : "",
+                        email: ""
                     });
                 }
                 setLoading(false);
@@ -127,17 +127,18 @@ export const ListBox = ({login, searchResult, setPopup, handleSelectBoxes, mainP
 
     const handleClick = ()=> {
         console.log("listRef.current.value: ", listRef.current);
-        console.log(dataArray);
+        console.log("dataArray: ", dataArray);
+        console.log("searchResult: ", searchResult);
 
         if(dataArray && dataArray.data.length > 0){
             for(let i = 0; i < dataArray.data.length; i++){
-                if(dataArray.data[i].TRG_ID === searchResult.frdId){
+                if(dataArray.data[i].TRG_ID === searchResult.id){
                     alert("이미 친구신청하였습니다.");
                     return;
                 }
             }
         }
-        if(login.ID === searchResult.frdId){
+        if(login.ID === searchResult.id){
             alert("사용자 자신을 친구신청할 수 없습니다.");
         }else{
             setPopup(true);
@@ -150,7 +151,7 @@ export const ListBox = ({login, searchResult, setPopup, handleSelectBoxes, mainP
         <div className="list-wrapper">
             <ul>
                 <li ref={listRef} className="frd-id" onClick={handleClick} >
-                    { `${searchResult.frdEmail.replace("K-", "").replace("F-", "")} (${login.ID === searchResult.frdId ? "나" : searchResult.frdName})` }
+                    { `${searchResult.id} (${login.ID === searchResult.id ? "나" : searchResult.name})` }
                 </li>
             </ul>
         </div>

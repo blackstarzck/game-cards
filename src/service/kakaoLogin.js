@@ -1,3 +1,4 @@
+import { setCookie } from "../util/util";
 import Database from "./database";
 
 const { Kakao } = window;
@@ -11,10 +12,6 @@ export function kakaoLoginCheck(){
             Kakao.API.request({
                 url: '/v2/user/me',
                 success: function(result) {
-                    const data = {
-                        name: result.kakao_account.profile.nickname,
-                        id: result.id,
-                    };
                     resolve({ ...result, REGI_TYPE: "KAKAO" });
                 }
             });
@@ -25,6 +22,7 @@ export function kakaoLoginCheck(){
     });
 }
 
+// async, await 사용불가
 export function kakaoLogin(redirectFunc){
     return new Promise((resolve) => {
         // step1
@@ -37,21 +35,31 @@ export function kakaoLogin(redirectFunc){
                         const data = {
                             regi_type: "KAKAO",
                             name: result.kakao_account.profile.nickname,
-                            id: `K-${result.id}`,
+                            id: String(result.id),
                             inOut: "IN",
                             email: result.kakao_account.email
                         };
+                        const userData = {
+                            user_email: result.kakao_account.email,
+                            user_id: String(result.id),
+                            user_name: result.kakao_account.profile.nickname,
+                            auto: false
+                        }
 
                         console.log("카카오 유저 정보: ", result);
                         // step3
-                        db.writeNewData("USER_LOG", result.kakao_account.email, data);
-                        db.writeNewData("USERS", result.kakao_account.email, data, redirectFunc);
+                        // setCookie("U_INFO", JSON.stringify(userData).replace(/[\{\}\[\]\/?.;|\~`\"]/g, ""), 1);
+                        db.writeNewData("USER_LOG", String(result.id), data);
+                        db.writeNewData("USERS", String(result.id), data, redirectFunc);
                         resolve({ ...result, REGI_TYPE: "KAKAO" });
+                    },
+                    fail: function(error){
+                        console.log(`[kakaoLogin 유저정보 에러] err:${error}`);
                     }
                 });
             },
-            fail: function(err) {
-                console.log(`[kakaoLogin함수 오작동] err:${err}`);
+            fail: function(error) {
+                console.log(`[kakaoLogin 함수 에러] err:${error}`);
             },
         });
         

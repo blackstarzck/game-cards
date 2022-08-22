@@ -125,7 +125,7 @@ export const PwdInput = styled(EmailInput).attrs( props => ({ type: props.eyeOpe
 
 `;
 
-export const FormInput = styled.input.attrs( props => ({ type: props.type, data: props.validate }) )`
+export const FormInput = styled.input.attrs( props => ({ type: props.type, data: props.validate, autoComplete: "off" }) )`
     width: 337px;
     height: 40px;
     border: 1px solid ${props => props.active ? props.theme.colors.commonBlack : props.theme.colors.border };

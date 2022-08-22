@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { Logo } from '../../components/Logo/Logo'
 import { Wrapper, LoginContainer, NewLink } from './Login.element'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -6,35 +6,74 @@ import { faCheck } from '@fortawesome/pro-solid-svg-icons'
 import { ButtonGoogle, ButtonKakao, ButtonLogin, ButtonNaver } from '../../components/Button/Button'
 import { useEffect } from 'react'
 import { InputEmail, InputPwd } from '../../components/Input/Input'
-import { Link, Route, Routes } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import Database from '../../service/database'
-import Join from '../Join/Join'
+import { setCookie } from '../../util/util'
+import { emailLoginCheck } from '../../service/emailLogin'
 const db = new Database;
 
 const Login = ({login, setLogin, goToHome}) => {
+    let location = useLocation();
     const emailRef = useRef(null);
     const pwedRef = useRef(null);
     const formRef = useRef(null);
+    const checkRef = useRef(null);
 
-    const getUserData = (user) => {
-        if(!user){
+    const emailLogin = async (evt) => { // 카카오, 파이어베이스 로그인과는 다르게 사용자의 아이디/비번을 수동으로 직접입력해야 하기 때문에 유효성 검사가 필요하다.
+        evt.preventDefault();
+        if(login.state){
+            alert("이미 로그인되어 있습니다.");
+            return
+        }
+
+        const id = emailRef.current.value;
+        const pwd = pwedRef.current.value;
+        const autoLogin = checkRef.current.checked;
+        if(!emailRef.current.value){ alert("이메일을 입력해주세요."); emailRef.current.focus(); return }
+        if(!pwedRef.current.value){ alert("비밀번호를 입력해주세요."); pwedRef.current.focus(); return }
+
+        const user = await db.getSingleData("USERS", id);
+
+        if(!user || (user && user.USER_PW !== pwd)){ // 실패
             alert("이메일 또는 비밀번호를 다시 확인하세요.\n회원등록이 되어 있지 않은 이메일이거나 이메일 또는 비밀번호를 잘못 입력하셨습니다.");
-        }else{
-            goToHome();
+            return;
+        }
+        if(user){ // 성공
+            const userData = {
+                user_email: user.USER_EMAIL,
+                user_id: user.USER_ID,
+                user_pwd: user.USER_PW,
+                user_name: user.USER_NAME,
+                auto: autoLogin
+            }
+            const reqData = {
+                regi_type: user.REGI_TYPE,
+                name: user.USER_NAME,
+                id: user.USER_ID,
+                inOut: "IN",
+                email: user.USER_EMAIL,
+                AUTO_LOGIN: autoLogin
+            };
+            setCookie("U_INFO", "", -1); // 갱신
+            setLogin({ID: id, NAME: user.USER_NAME, EMAIL: user.USER_EMAIL, REGI_TYPE: user.REGI_TYPE, state: true});
+            const cookie = await setCookie("U_INFO", JSON.stringify(userData).replace(/[\{\}\[\]\/?.;|\~`\"]/g, ""), 1);
+            db.writeNewData("USER_LOG", user.USER_ID, reqData, goToHome);
+
+            console.log("userData: ", userData);
+            console.log("cookie: ", document.cookie);
         }
     }
 
-    const emailLogin = (evt) => {
-        evt.preventDefault();
-        const email = emailRef.current.value;
-        const pwd = pwedRef.current.value;
-        console.log("email: ", email);
-        console.log("pwedRef: ", pwd);
-        db.getSingleData("USERS", emailRef.current.value, getUserData);
-    }
 
     useEffect(() => {
-
+        const cookie = emailLoginCheck();
+        console.log("로그인 페이지");
+        console.log(cookie);
+        if(cookie && cookie.auto === "true"){
+           checkRef.current.checked = cookie.auto;
+           emailRef.current.value = cookie.id;
+           pwedRef.current.value = cookie.pwd;
+        }
     }, []);
 
     return (
@@ -42,9 +81,9 @@ const Login = ({login, setLogin, goToHome}) => {
             <Link to="/"><Logo /></Link>
             <form ref={formRef}>
                 <InputEmail emailRef={emailRef} />
-                <InputPwd pwedRef={pwedRef} />
+                <InputPwd pwedRef={pwedRef} emailLogin={emailLogin}/>
                 <Wrapper className="input-wrapper">
-                    <input type="checkbox" id="remember" />
+                    <input ref={checkRef} type="checkbox" id="remember" />
                     <label htmlFor="remember">
                         <span className="checkbox"><FontAwesomeIcon icon={faCheck} /></span>
                         <span className="label">계정 기억하기</span>
@@ -54,14 +93,14 @@ const Login = ({login, setLogin, goToHome}) => {
             </form>
 
             <Wrapper className="btns-wrapper">
-                <NewLink to="/join/reset">비밀번호 재설정</NewLink>
+                <NewLink disabled to="">비밀번호 재설정</NewLink>
                 <NewLink to="/join/new">회원가입</NewLink>
             </Wrapper>
 
             <Wrapper className="sns-wrapper">
-                <ButtonGoogle setLogin={setLogin} redirect={goToHome}/>
-                <ButtonKakao setLogin={setLogin} redirect={goToHome}/>
-                <ButtonNaver setLogin={setLogin} redirect={goToHome}/>
+                <ButtonGoogle login={login} setLogin={setLogin} redirect={goToHome}/>
+                <ButtonKakao login={login} setLogin={setLogin} redirect={goToHome}/>
+                <ButtonNaver login={login} setLogin={setLogin} redirect={goToHome}/>
             </Wrapper>
         </LoginContainer>
     )

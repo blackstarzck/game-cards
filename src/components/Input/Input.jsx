@@ -146,7 +146,7 @@ export const InputFrdSrch = ({login, searchFunc, sOpen}) => {
     const inputRef = useRef();
     const onChnage = (evt) => {
         const { value } = evt.target;
-        setInputVal(inputVal => inputVal = value);
+        setInputVal(inputVal => inputVal = value.replace(/(\s*)/g, ""));
     }
 
     return(
@@ -183,11 +183,17 @@ export const InputEmail = ({emailRef}) => {
         </>
     );
 }
-export const InputPwd = ({pwedRef}) => {
+export const InputPwd = ({pwedRef, emailLogin}) => {
     const [ active, setActive ] = useState(false);
     const [ eye, setEye ] = useState(false);
 
     const handleACtive = () => pwedRef.current.value || setActive(!active);
+    const handleKeyPress = (e) => {
+        if(e.key === "Enter"){
+            emailLogin(e);
+            e.preventDefault();
+        }
+    }
 
     return(
         <Wrapper className="pwd-input-wrapper">
@@ -196,6 +202,7 @@ export const InputPwd = ({pwedRef}) => {
                 ref={pwedRef}
                 placeholder="비밀번호"
                 active={active}
+                onKeyPress={handleKeyPress}
                 onFocus={handleACtive}
                 onBlur={handleACtive} />
             <div className="btns-wrapepr">

@@ -11,6 +11,7 @@ export const MainSection = styled(DefaultSection)`
     justify-content: space-between;
     align-items: center;
     padding-top: 85px;
+    margin-bottom: 150px;
 
     & .left-container, .right-container {
         /* width: calc(100% / 2); */

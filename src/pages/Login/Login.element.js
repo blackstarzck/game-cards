@@ -60,4 +60,5 @@ export const NewLink = styled(Link)`
     font-weight: 400;
     width: calc(100% / 2);
     text-align: center;
+    color: ${ props => props.disabled ? "#c5c5c5" : props.theme.colors.commonBlack }
 `

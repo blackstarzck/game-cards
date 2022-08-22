@@ -145,22 +145,24 @@ export const ButtonLogin = ({emailLogin}) => {
   );
 }
 
-export const ButtonGoogle = ({setLogin, redirect}) => {
+export const ButtonGoogle = ({login, setLogin, redirect}) => {
   const onClick = () => {
+    !login.state ?
     firebaseLogin(redirect).then((result) => {
-      setLogin({ REGI_TYPE: result.REGI_TYPE, ID: result.user.email, NAME: result.user.displayName, state: true });
-    });
+      setLogin({ REGI_TYPE: result.REGI_TYPE, ID: result.user.email, NAME: result.user.displayName, EMAIL:result.user.email, state: true });
+    }) : alert("이미 로그인이 되어있습니다.");
   }
   return(
     <GoogleButton onClick={() => onClick()} />
   );
 }
 
-export const ButtonKakao = ({setLogin, redirect}) => {
+export const ButtonKakao = ({login, setLogin, redirect}) => {
   const onClick = () => {
+    !login.state ?
     kakaoLogin(redirect).then((result) => {
-      setLogin({ REGI_TYPE: result.REGI_TYPE, ID: result.kakao_account.email, NAME: result.kakao_account.profile.nickname, state: true });
-    });
+      setLogin({ REGI_TYPE: result.REGI_TYPE, ID: String(result.id), NAME: result.kakao_account.profile.nickname, EMAIL: result.kakao_account.email, state: true });
+    }) : alert("이미 로그인이 되어있습니다.");
   }
   return(
       <KakaoButton onClick={() => onClick()} />

@@ -1,4 +1,5 @@
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut  } from "firebase/auth";
+import { setCookie } from "../util/util";
 import Database from "./database";
 
 const auth = getAuth();
@@ -26,11 +27,20 @@ export function firebaseLogin(redirectFunc){
             const data = {
                 regi_type: "GOOGLE",
                 name: result.user.displayName,
-                id: `F-${result.user.email}`,
-                inOut: "IN"
+                id: result.user.email,
+                inOut: "IN",
+                email: result.user.email
             };
+            const userData = {
+                user_email: result.user.email,
+                user_id: result.user.email,
+                user_name: result.user.displayName,
+                auto: false
+            }
   
             console.log("파이어베이스 유저정보: ", result);
+
+            // setCookie("U_INFO", JSON.stringify(userData).replace(/[\{\}\[\]\/?.;|\~`\"]/g, ""), 1);
             db.writeNewData("USER_LOG", result.user.email, data);
             db.writeNewData("USERS", result.user.email, data, redirectFunc);
             resolve({ ...result, REGI_TYPE: "GOOGLE" });

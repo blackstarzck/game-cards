@@ -1,7 +1,7 @@
 import React from 'react'
 import { Logo } from '../../Logo/Logo'
 import { NavContainer, NavMenu, NavMenuItem } from './Navbar.elements'
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useEffect } from 'react';
 import { kakaoLogOut } from '../../../service/kakaoLogin';
 import { firebaseLogOut } from '../../../service/firebaseLogin';
@@ -10,28 +10,28 @@ import Database from '../../../service/database';
 const db = new Database();
 
 const Navbar = ({login, setLogin, goToHome}) => {
+  const location = useLocation();
+
   const handleLogOut = (e) => {
     e.preventDefault();
-    const data = { id: login.ID, name: login.NAME, inOut: "OUT" };
-
-    console.log("로그아웃 데이터: ", data)
+    const data = { id: login.ID, name: login.NAME, inOut: "OUT", regi_type: login.REGI_TYPE };
   
     if(login.REGI_TYPE === "KAKAO"){
-      kakaoLogOut(data).then(() => {
-        setLogin({ ID: "", NAME: "", REGI_TYPE: "", state: false });
-        goToHome();
-      });
+      kakaoLogOut(data);
+    }else if(login.REGI_TYPE === "GOOGLE"){
+      firebaseLogOut(data);
     }else{
-      firebaseLogOut(data).then(() => {
-        setLogin({ ID: "", NAME: "", REGI_TYPE: "", state: false });
-        goToHome();
-      });
+
     }
+    setLogin({ ID: "", NAME: "", EMAIL: "", REGI_TYPE: "", state: false });
+    goToHome();
   }
 
   useEffect(() => {
 
-  }, []);
+  });
+
+  if(location.pathname === "/login") return;
 
   return (
     <NavContainer>

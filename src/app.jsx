@@ -7,49 +7,66 @@ import Join from './pages/Join/Join';
 import { Routes,  Route, useNavigate } from "react-router-dom";
 import { kakaoLoginCheck } from './service/kakaoLogin';
 import { firebaseLoginCheck } from './service/firebaseLogin';
+import { setCookie } from './util/util';
+import { emailLoginCheck } from './service/emailLogin';
 
 
 function App() {
-  const [ login, setLogin] = useState({ID: "", NAME: "", REGI_TYPE: "", state: false}); // 로그인 true, 로그아웃 false
+  const [ login, setLogin] = useState({ID: "", NAME: "", EMAIL: "", REGI_TYPE: "", state: false}); // 로그인 true, 로그아웃 false
   const [ alarm, setAlarm ] = useState({ ID: "", NAME: "" });
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log("111 login: ", login);
-
-    kakaoLoginCheck().then((result) => {
-      console.log("카카오 로그인여부 체크", result);
+  const loginProcessCheck = async () => {
+    const kakao = await kakaoLoginCheck().then((result) => {
+      console.log(result);
 
       result && setLogin(login => {
         const updated = { ...login };
-        updated["ID"] = result.kakao_account.email;
+        updated["ID"] = result.id;
+        updated["EMAIL"] = result.kakao_account.email;
         updated["NAME"] = result.kakao_account.profile.nickname;
         updated["REGI_TYPE"] = result.REGI_TYPE;
         updated["state"] = true;
         return updated
       });
 
+      console.log(1, login.state);
     });
-    firebaseLoginCheck().then((result) => {
-      console.log("파이어베이스 로그인여부 체크", result);
+
+    const firebase = await firebaseLoginCheck().then((result) => {
+      console.log(result);
 
       result && setLogin(login => {
         const updated = { ...login };
         updated["ID"] = result.email;
+        updated["email"] = result.email;
         updated["NAME"] = result.displayName;
         updated["REGI_TYPE"] = result.REGI_TYPE;
         updated["state"] = true;
         return updated
       });
 
-      console.log("44444444login: ", login)
+      console.log(2, login.state);
     });
 
-  }, []);
+    const cookie = await emailLoginCheck();
+    // console.log(cookie);
+    // console.log(login.state);
+    if(cookie && !login.state){
+
+      console.log("이메일로 로그인했습니다.", kakao, firebase);
+      console.log(3, login.state);
+      setLogin({ID: cookie.id, NAME: cookie.name, EMAIL: cookie.email, REGI_TYPE: "EMAIL", state: true});
+    }else{
+      setLogin({ ID: "", NAME: "", EMAIL: "", REGI_TYPE: "", state: false });
+    }
+  }
 
   useEffect(() => {
+    // setCookie("U_INFO", "", -1); // 갱신
+    loginProcessCheck();
+  }, []);
 
-  }, [login]);
 
   const goToHome = (user) => navigate("/", { replace: false, state: user });
 

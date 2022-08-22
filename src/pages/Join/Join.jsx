@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom'
 import { ButtonGoogle, ButtonKakao, ButtonNaver, ButtonSign } from '../../components/Button/Button';
 import { InputForm } from '../../components/Input/Input';
 import Database from '../../service/database';
+import { setCookie } from '../../util/util';
 import styles from './Join.module.css'
 
 const db = new Database();
@@ -116,10 +117,21 @@ const Join = ({login, setLogin, goToHome}) => {
             email: emailRef.current.value,
             id: idRef.current.value,
             name: nmRef.current.value,
-            pwd: pw2Ref.current.value
+            pwd: pw2Ref.current.value,
+            log: [{ status: "IN", time: new Date() }]
         }
-        
-        db.writeNewData("USERS", idRef.current.value, input, goToHome);
+        const userData = {
+            user_email: emailRef.current.value,
+            user_id: idRef.current.value,
+            user_pwd: pw2Ref.current.value,
+            user_name: nmRef.current.value,
+            auto: false
+        }
+
+        setCookie("U_INFO", JSON.stringify(userData).replace(/[\{\}\[\]\/?.;|\~`\"]/g, ""), 1);
+        setLogin({ID: idRef.current.value, NAME: nmRef.current.value, EMAIL: emailRef.current.value, REGI_TYPE: "EMAIL", state: true});
+        db.writeNewDataV2("USER_LOG", idRef.current.value, input); // 1회성
+        db.writeNewDataV2("USERS", idRef.current.value, input, goToHome); // 1회성
     }
 
     useEffect(() => {

@@ -11,19 +11,22 @@ class Database {
         return result;
     }
 
-    async getSingleData(tableName, docName, func){
+    async getSingleData(tableName, docName, func){ // docName이 공백으로 들어와서는 안된다. (경고메시지 발생)
+        if(!docName){ alert("docName이 공백입니다."); return  }
         const docRef = doc(this.db, tableName, docName);
         const document = await getDoc(docRef);
         const result = document.data();
-        console.log(`[get] tableName: ${tableName}, docName: ${docName}`, result);
+        console.log(`2 [get] tableName: ${tableName}, docName: ${docName}`, result);
         func && func(result);
         return result;
     }
 
     writeNewData(tableName, docum, input, func){
-        const docName = String(docum);
+        if(!docum){ alert(`${tableName} docName이 공백입니다.`); return  }
+        console.log(`0 [write2] tableName: ${tableName}, docName: ${docum} input: `, input);
 
-        console.log(`[write] tableName: ${tableName}, docName: ${docName} input: `, input);
+        const docName = String(docum);
+        let obj;
 
         this.getSingleData(tableName, docName)
         .then((result) => {
@@ -31,10 +34,9 @@ class Database {
 
             switch(tableName){
                 case "ALARM_TABLE" :
-                    console.log(20000000000, result);
                     if(result && result.data.length > 0){
                         for(let i = 0; i < result.data.length; i++){
-                            if(result.data[i].TRG_ID == input.frdId && result.data[i].TRG_NAME == input.frdName){
+                            if(result.data[i].TRG_ID == input.id && result.data[i].TRG_NAME == input.name){
                                 doubleCheck = true;
                                 break;
                             }
@@ -42,52 +44,85 @@ class Database {
                     }
                     if(!doubleCheck){
                         const inputData = result ? 
-                            [ ...result.data, { ALARM_TYPE : "FRD_REQ_SENT",READ_STATE : "N",RESULT : "N",TIME_STAMP : new Date(),TRG_ID : input.frdEmail,TRG_NAME : input.frdName,TRG_UID : "" }] :
-                            [ { ALARM_TYPE : "FRD_REQ_SENT",READ_STATE : "N",RESULT : "N",TIME_STAMP : new Date(),TRG_ID : input.frdEmail,TRG_NAME : input.frdName,TRG_UID : "" }];
-                        setDoc(doc(this.db, "ALARM_TABLE", docName), {
+                            [ ...result.data, { ALARM_TYPE : input.alarm_type, READ_STATE : "N",RESULT : "N",TIME_STAMP : new Date(),TRG_ID : input.id, TRG_NAME : input.name,TRG_UID : "" }] :
+                            [ { ALARM_TYPE : input.alarm_type, READ_STATE : "N",RESULT : "N",TIME_STAMP : new Date(),TRG_ID : input.id, TRG_NAME : input.name,TRG_UID : "" }];
+                        obj = {
                             UID: "",
-                            USER_ID: input.frdEmail,
-                            USER_NAME: input.frdName,
+                            USER_ID: String(input.id),
+                            USER_EMAIL: input.email,
+                            USER_NAME: input.name,
                             data: inputData
-                        });
-                        console.log("친구신청 완료");
-                        return { state: "success", msg: "친구신청이 완료되었습니다." }
-                    }else{
-                        console.log("친구신청 중복");
-                        return { state: "error", msg: "이미 친구신청하였습니다." }
+                        }
                     }
                 break;
                 case "USER_LOG" :
                     const inputData = result ? 
                         [ ...result.LOG, { STATUS: input.inOut, TIME_STAMP: new Date() } ] :
                         [ { STATUS: input.inOut, TIME_STAMP: new Date() } ];
-                    setDoc(doc(this.db, "USER_LOG", docName), {
+                    obj = {
                         UID: "",
-                        USER_ID: input.id,
+                        REGI_TYPE: input.regi_type,
+                        USER_ID: String(input.id),
                         USER_NAME: input.name,
                         LOG: inputData
-                    });
+                    }
                 break;
                 case "USERS" :
-                    let email = input.email
-                    // if(input.id.indexOf("K") > -1) email = input.email;
-                    if(input.id.indexOf("F") > -1) email = input.id.replace("F-", "");
-                    setDoc(doc(this.db, "USERS", docName), {
+                    obj = {
                         ACCOUNT_STATE : "Y",
-                        AUTO_LOGIN : "N",
+                        AUTO_LOGIN : false,
                         ENTER_DATE : result?.ENTER_DATE || new Date(),
                         LEAVE_DATE : "",
                         REGI_TYPE : input.regi_type,
                         UID : "",
-                        USER_EMAIL : email,
-                        USER_ID : input.id,
+                        USER_EMAIL : input.email,
+                        USER_ID : String(input.id),
                         USER_NAME : input.name,
                         USER_PW : input.pwd ? input.pwd : ""
-                    }).then(() => {
-                        func && func();
-                    });
+                    }
                 break;
             }
+            
+            console.log(`[write1] tableName: ${tableName}, docName: ${docName} input: `, input, obj);
+
+            setDoc(doc(this.db, tableName, docName), obj).then(() => {
+                func && func();
+            });
+        });
+    }
+
+    writeNewDataV2(tableName, docum, input, func){ // db조회가 먼저 이루어진 상황에서만 사용 가능하다.
+        if(!docum){ alert("docName이 공백입니다."); return  }
+        let obj;
+  
+        switch(tableName){
+            case "USER_LOG" :
+                obj = {
+                    USER_ID: String(input.id),
+                    USER_NAME: input.name,
+                    LOG: input.log
+                };
+            break;
+            case "USERS" :
+                obj = {
+                    ACCOUNT_STATE : "Y",
+                    AUTO_LOGIN : false,
+                    ENTER_DATE : new Date(),
+                    LEAVE_DATE : "",
+                    REGI_TYPE : input.regi_type,
+                    UID : "",
+                    USER_EMAIL : input.email,
+                    USER_ID : String(input.id),
+                    USER_NAME : input.name,
+                    USER_PW : input.pwd
+                };
+            break;
+        }
+
+        console.log(`[write2] tableName: ${tableName}, docName: ${docum} input: `, input, obj);
+      
+        setDoc(doc(this.db, tableName, docum), obj).then(() => {
+            func && func();
         });
     }
 }

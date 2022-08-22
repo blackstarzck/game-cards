@@ -12,6 +12,7 @@ export const FrdSearchSection = styled(DefaultSection)`
     justify-content: center;
     align-items: center;
     font-family: "Noto Sans KR", sans-serif;
+    background-color: ${ props => props.theme.colors.realWhite };
 
     h3 { text-align: center; };
 `;
