@@ -1,16 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { UploadButton, RecruitButton, GetButton, EditTitleButton, SaveTitleButton, ClearButton, ArrowDownButton, AddButton, RemoveButton, ResetButton, SaveButton, ViewButton, KeepButton, LevelUpButton, StatButton, SkillButton, SearchButton, YesButton, NoButton, LoginButton, GoogleButton, KakaoButton, NaverButton, EyeOpenButton, EyeCloseButton, SignButton } from './Button.elements'
+import { UploadButton, RecruitButton, GetButton, EditTitleButton, SaveTitleButton, ClearButton, ArrowDownButton, AddButton, RemoveButton, ResetButton, SaveButton, ViewButton, KeepButton, LevelUpButton, StatButton, SkillButton, SearchButton, YesButton, NoButton, LoginButton, GoogleButton, KakaoButton, NaverButton, EyeOpenButton, EyeCloseButton, SignButton, InfoButton, DeleteButton, SelectCardButton } from './Button.elements'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFolderMagnifyingGlass, faCards, faCardClub, faPenToSquare, faFloppyDiskPen, faArrowRotateLeft, faFloppyDiskCircleArrowRight } from '@fortawesome/pro-thin-svg-icons'
-import { faPlus, faMinus, faCircleArrowUp, faSparkles, faEyeSlash, faEye } from '@fortawesome/pro-solid-svg-icons'
-import { faMagnifyingGlass } from '@fortawesome/pro-regular-svg-icons'
+import { faFolderMagnifyingGlass, faCards, faCardClub, faPenToSquare, faFloppyDiskPen, faArrowRotateLeft, faFloppyDiskCircleArrowRight, faTrashCan, faMagnifyingGlassPlus } from '@fortawesome/pro-thin-svg-icons'
+import { faPlus, faMinus, faCircleArrowUp, faSparkles, faEyeSlash, faEye, faMagnifyingGlass } from '@fortawesome/pro-solid-svg-icons'
 import { faCircleXmark, faChevronDown } from '@fortawesome/pro-light-svg-icons'
 import { gsap } from "gsap"
 import { kakaoLogin } from "../../service/kakaoLogin"
 import { firebaseLogin } from '../../service/firebaseLogin'
 
-library.add(faEye, faEyeSlash, faFolderMagnifyingGlass, faCards, faPenToSquare, faFloppyDiskPen, faCircleXmark, faChevronDown, faPlus, faMinus, faArrowRotateLeft, faFloppyDiskCircleArrowRight, faCircleArrowUp, faMagnifyingGlass);
+library.add(faTrashCan, faMagnifyingGlassPlus, faEye, faEyeSlash, faFolderMagnifyingGlass, faCards, faPenToSquare, faFloppyDiskPen, faCircleXmark, faChevronDown, faPlus, faMinus, faArrowRotateLeft, faFloppyDiskCircleArrowRight, faCircleArrowUp, faMagnifyingGlass);
 
 
 export const ButtonUpload = ({...props}) => {
@@ -24,22 +23,22 @@ export const ButtonUpload = ({...props}) => {
   );
 }
 
-export const ButtonRecruit = ({...props}) => {
+export const ButtonRecruit = ({selectNewOrPrev, newCard}) => {
   return(
-    <RecruitButton 
-      state={props.activeState}
-      onClick={props.selectNewOrPrev}
-      >NEW<FontAwesomeIcon icon={faCards} />
+    <RecruitButton
+      select={newCard}
+      onClick={() => selectNewOrPrev("NEW")}>NEW
+      <FontAwesomeIcon icon={faCards} />
     </RecruitButton>
   );
 }
 
-export const ButtonGetPrev = ({...props}) => {
+export const ButtonGetPrev = ({selectNewOrPrev, newCard}) => {
   return(
-    <GetButton 
-      state={props.activeState}
-      onClick={props.selectNewOrPrev}
-      >LVL UP<FontAwesomeIcon icon={faCardClub} />
+    <GetButton
+      select={newCard}
+      onClick={() => selectNewOrPrev("PREV")}>LVL UP
+      <FontAwesomeIcon icon={faCardClub} />
     </GetButton>
   );
 }
@@ -122,7 +121,11 @@ export const ButtonViewInfo = ({imgLoaded, viewCardInfo}) => {
   );
 }
 
-export const ButtonKeepCard = ({imgLoaded}) => <KeepButton imgLoaded={imgLoaded}>보관하기</KeepButton>
+export const ButtonKeepCard = ({imgLoaded, handleCardUpdate, mainCard}) => {
+  return(
+    <KeepButton imgLoaded={imgLoaded} onClick={() => handleCardUpdate(mainCard)}>보관하기</KeepButton>
+  );
+}
 
 export const ButtonLevelUp = () => <LevelUpButton ><FontAwesomeIcon icon={faCircleArrowUp} /></LevelUpButton>
 
@@ -196,8 +199,25 @@ export const ButtonEyeClose = ({eyeOpen, setEye}) => {
 }
 
 export const ButtonSign = ({handleSignIn}) => {
-
   return(
     <SignButton onClick={handleSignIn}>가입하기</SignButton>
+  );
+}
+
+export const ButtonCardInfo = ({visible, onClick}) => {
+  return(
+    <InfoButton onClick={() => onClick(!visible)}><FontAwesomeIcon icon={faMagnifyingGlassPlus}/></InfoButton>
+  );
+}
+
+export const ButtonCardDelete = () => {
+  return(
+    <DeleteButton><FontAwesomeIcon icon={faTrashCan}/></DeleteButton>
+  );
+}
+
+export const ButtonSelectCard = () => {
+  return(
+    <SelectCardButton>Lv UP</SelectCardButton>
   );
 }

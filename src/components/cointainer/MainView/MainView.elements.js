@@ -97,6 +97,13 @@ export const Wrapper = styled.div`
     &.view-box {
         width: 100%;
         position: relative;
+
+        .loading { animation: spin 1.5s ease infinite; }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     }
     &.exp-wrapper {
         display: flex;
@@ -205,6 +212,17 @@ export const CardImg = styled.div`
     align-items: center;
     width: 100%;
     height: 262px;
-    img { max-height: 100%; };
+
+    img {
+        opacity: 0;
+        max-height: 100%;
+        animation: show 1s ease;
+        animation-fill-mode: forwards;
+    };
     .stand-by { font-size: 14px; color: ${ ({theme}) => theme.colors.commonBlack } };
+
+    @keyframes show {
+        0% { opacity: 0 }
+        100% { opacity: 1}
+    }
 `;

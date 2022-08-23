@@ -29,8 +29,8 @@ export const UploadButton = styled(DefaultButton)`
 export const RecruitButton = styled(DefaultButton)`
     font-size: 20px;
     font-weight: 500;
-    color: ${ (prop) => prop.state == "active" ? prop.theme.colors.realWhite : prop.theme.colors.lightBlack };
-    background-color: ${ (prop) => prop.state == "active" ? prop.theme.colors.lightRed : prop.theme.colors.realWhite };
+    color: ${ (props) => props.select === "NEW" ? props.theme.colors.realWhite : props.theme.colors.lightBlack };
+    background-color: ${ (props) => props.select === "NEW" ? props.theme.colors.lightRed : props.theme.colors.realWhite };
     width: 114px;
     height: 46px;
     line-height: 46px;
@@ -41,8 +41,19 @@ export const RecruitButton = styled(DefaultButton)`
     }
 `;
 
-export const GetButton = styled(RecruitButton)`
+export const GetButton = styled(DefaultButton)`
+    font-size: 20px;
+    font-weight: 500;
+    color: ${ (props) => props.select == "PREV" ? props.theme.colors.realWhite : props.theme.colors.lightBlack };
+    background-color: ${ (props) => props.select == "PREV" ? props.theme.colors.lightRed : props.theme.colors.realWhite };
+    width: 114px;
+    height: 46px;
+    line-height: 46px;
+    transition: .2s;
 
+    & > svg, i {
+        margin-left: 5px;
+    }
 `;
 
 export const EditTitleButton = styled.button`
@@ -251,4 +262,32 @@ export const SignButton = styled.button`
     color: ${ props => props.theme.colors.realWhite };
     background: ${ props => props.theme.colors.primaryColor };
     border-radius: 5px;
+`;
+
+export const InfoButton = styled.button`
+    width: 70px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 1.2rem;
+    text-align: center;
+    background: ${ props => props.theme.colors.primaryColor };
+    color: ${ props => props.theme.colors.realWhite };
+    border-radius: 25px;
+    box-shadow: ${ props => props.theme.boxShadow.default };
+`;
+
+export const DeleteButton = styled(InfoButton)``;
+
+export const SelectCardButton = styled.button`
+    width: 77px;
+    height: 40px;
+    line-height: 40px;
+    font-family: "Inter", sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    text-align: center;
+    background-color: ${ props => props.theme.colors.realRed };
+    color: ${ props => props.theme.colors.realWhite };
+    border-radius: 25px;
+    box-shadow: ${ props => props.theme.boxShadow.default };
 `;

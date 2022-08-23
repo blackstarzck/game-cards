@@ -7,13 +7,22 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBookmark } from '@fortawesome/pro-solid-svg-icons'
 import { gsap } from "gsap"
 import { DescrPopup } from '../../Popups/Popups'
+import loadingSrc from '../../../assets/images/loading.png'
 
 const MainView = ({...props}) => {
     const [ editState, setEditState ] = useState(true);
     const [ view, setView] = useState(false);
+    const [ load, setLoad ] = useState(false);
+
 
     const handleEditState = () => setEditState(!editState);
     const viewCardInfo = () => setView(!view);
+
+    useEffect(() => {
+        const img = new Image();
+        img.src = props.imgSrc;
+        img.onload = () => setLoad(true);
+    }, [props.imgSrc]);
 
     return (
         <Wrapper className="main-view">
@@ -54,8 +63,9 @@ const MainView = ({...props}) => {
                         </BookMark>}
 
                         <CardImg>
-                            { props.mainCard.imgURL ? 
-                                <img src={props.mainCard.imgURL}/> :
+                            { props.imgSrc ?
+                                ( load ? 
+                                    <img src={props.mainCard.imgURL} /> : <img src={loadingSrc} /> ) :
                                 <span>이미지를 업로드하세요</span> }
                         </CardImg>
                         
@@ -82,7 +92,10 @@ const MainView = ({...props}) => {
                 <ButtonReset imgLoaded={props.imgLoaded} />
                 <ButtonSave imgLoaded={props.imgLoaded} />
                 <ButtonViewInfo imgLoaded={props.imgLoaded} viewCardInfo={viewCardInfo}/>
-                <ButtonKeepCard imgLoaded={props.imgLoaded} />
+                <ButtonKeepCard
+                    imgLoaded={props.imgLoaded}
+                    mainCard={props.mainCard}
+                    handleCardUpdate={props.handleCardUpdate} />
             </Wrapper>
         </Wrapper>
     )

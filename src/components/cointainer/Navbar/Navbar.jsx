@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { kakaoLogOut } from '../../../service/kakaoLogin';
 import { firebaseLogOut } from '../../../service/firebaseLogin';
 import Database from '../../../service/database';
+import { emailLogOut } from '../../../service/emailLogin';
 
 const db = new Database();
 
@@ -16,13 +17,10 @@ const Navbar = ({login, setLogin, goToHome}) => {
     e.preventDefault();
     const data = { id: login.ID, name: login.NAME, inOut: "OUT", regi_type: login.REGI_TYPE };
   
-    if(login.REGI_TYPE === "KAKAO"){
-      kakaoLogOut(data);
-    }else if(login.REGI_TYPE === "GOOGLE"){
-      firebaseLogOut(data);
-    }else{
+    if(login.REGI_TYPE === "KAKAO") kakaoLogOut(data);
+    if(login.REGI_TYPE === "GOOGLE") firebaseLogOut(data);
+    if(login.REGI_TYPE === "EMAIL") emailLogOut();
 
-    }
     setLogin({ ID: "", NAME: "", EMAIL: "", REGI_TYPE: "", state: false });
     goToHome();
   }

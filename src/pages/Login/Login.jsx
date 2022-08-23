@@ -8,8 +8,8 @@ import { useEffect } from 'react'
 import { InputEmail, InputPwd } from '../../components/Input/Input'
 import { Link, useLocation } from 'react-router-dom'
 import Database from '../../service/database'
-import { setCookie } from '../../util/util'
-import { emailLoginCheck } from '../../service/emailLogin'
+import { handleSessionItem, rememberUserData, setCookie } from '../../util/util'
+
 const db = new Database;
 
 const Login = ({login, setLogin, goToHome}) => {
@@ -54,9 +54,13 @@ const Login = ({login, setLogin, goToHome}) => {
                 email: user.USER_EMAIL,
                 AUTO_LOGIN: autoLogin
             };
-            setCookie("U_INFO", "", -1); // 갱신
+            setCookie("U_INFO", "", -1); // 초기화
             setLogin({ID: id, NAME: user.USER_NAME, EMAIL: user.USER_EMAIL, REGI_TYPE: user.REGI_TYPE, state: true});
-            const cookie = await setCookie("U_INFO", JSON.stringify(userData).replace(/[\{\}\[\]\/?.;|\~`\"]/g, ""), 1);
+            const str = JSON.stringify(userData).replace(/[\{\}\[\]\/?.;|\~`\"]/g, "");
+            
+            autoLogin && setCookie("U_INFO", str, 1);
+            handleSessionItem("SET", "U_INFO", str);
+            
             db.writeNewData("USER_LOG", user.USER_ID, reqData, goToHome);
 
             console.log("userData: ", userData);
@@ -66,11 +70,11 @@ const Login = ({login, setLogin, goToHome}) => {
 
 
     useEffect(() => {
-        const cookie = emailLoginCheck();
+        const cookie = rememberUserData("U_INFO");
         console.log("로그인 페이지");
         console.log(cookie);
-        if(cookie && cookie.auto === "true"){
-           checkRef.current.checked = cookie.auto;
+        if(cookie){
+           checkRef.current.checked = (cookie.auto === "true") ? true : false;
            emailRef.current.value = cookie.id;
            pwedRef.current.value = cookie.pwd;
         }

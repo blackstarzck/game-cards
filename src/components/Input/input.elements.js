@@ -132,3 +132,60 @@ export const FormInput = styled.input.attrs( props => ({ type: props.type, data:
     border-radius: 5px;
     text-indent: 12px;
 `;
+
+export const InputSearchContainer = styled.div`
+    display: flex;
+    .heading {
+        width: 70px;
+        height: 40px;
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 40px;
+        text-align: center;
+        background-color: ${ props => props.theme.colors.realWhite };
+        border-top-left-radius: 25px;
+        border-bottom-left-radius: 25px;
+        border: 1px solid ${ props => props.theme.colors.border };
+        border-right: 0;
+        position: relative;
+
+        &::after {
+            content: "";
+            width: 1px;
+            height: 60%;
+            background-color: #D9D9D9;
+            position: absolute;
+            top: 0; right: 0; bottom: 0; margin: auto;
+        }
+    }
+    .btn-wrapper {
+        background-color: ${ props => props.theme.colors.realWhite };
+        border: 1px solid ${ props => props.theme.colors.border };
+        border-top-right-radius: 25px;
+        border-bottom-right-radius: 25px;
+        border-left: 0;
+        padding-right: 10px;
+        overflow: hidden;
+        
+        button {
+            width: 40px;
+            height: 38px;
+            font-size: 1.2rem;
+        }
+        .btn-clear { color: #E2E2E2 }
+    }
+
+`;
+
+export const InputSearch = styled.input`
+    width: 270px;
+    height: 40px;
+    font-size: 18px;
+    text-indent: 15px;
+    border-top: 1px solid ${ props => props.theme.colors.border };
+    border-bottom: 1px solid ${ props => props.theme.colors.border };
+
+    &::placeholder {
+        color: #E2E2E2;
+    }
+`;

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const DefaultSection = styled.section`
-    max-width: ${ ({ theme }) => theme.size.desktop };
+    /* max-width: ${ ({ theme }) => theme.size.desktop }; */
     margin: 0 auto;
 `;
 

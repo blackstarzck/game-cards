@@ -7,7 +7,6 @@ import Join from './pages/Join/Join';
 import { Routes,  Route, useNavigate } from "react-router-dom";
 import { kakaoLoginCheck } from './service/kakaoLogin';
 import { firebaseLoginCheck } from './service/firebaseLogin';
-import { setCookie } from './util/util';
 import { emailLoginCheck } from './service/emailLogin';
 
 
@@ -16,10 +15,16 @@ function App() {
   const [ alarm, setAlarm ] = useState({ ID: "", NAME: "" });
   const navigate = useNavigate();
 
-  const loginProcessCheck = async () => {
-    const kakao = await kakaoLoginCheck().then((result) => {
-      console.log(result);
 
+  const loginProcessCheck = () => {
+    const sStorage = emailLoginCheck();
+    if(sStorage && !login.state){
+      console.log("이메일로 로그인했습니다.");
+      setLogin({ID: sStorage.id, NAME: sStorage.name, EMAIL: sStorage.email, REGI_TYPE: "EMAIL", state: true});
+    }
+
+    const kakao = kakaoLoginCheck().then((result) => {
+      console.log("kakaoLoginCheck: ", result);
       result && setLogin(login => {
         const updated = { ...login };
         updated["ID"] = result.id;
@@ -29,13 +34,11 @@ function App() {
         updated["state"] = true;
         return updated
       });
-
-      console.log(1, login.state);
+      return
     });
 
-    const firebase = await firebaseLoginCheck().then((result) => {
-      console.log(result);
-
+    const firebase = firebaseLoginCheck().then((result) => {
+      console.log("firebaseLoginCheck: ", result);
       result && setLogin(login => {
         const updated = { ...login };
         updated["ID"] = result.email;
@@ -45,25 +48,11 @@ function App() {
         updated["state"] = true;
         return updated
       });
-
-      console.log(2, login.state);
+      return
     });
-
-    const cookie = await emailLoginCheck();
-    // console.log(cookie);
-    // console.log(login.state);
-    if(cookie && !login.state){
-
-      console.log("이메일로 로그인했습니다.", kakao, firebase);
-      console.log(3, login.state);
-      setLogin({ID: cookie.id, NAME: cookie.name, EMAIL: cookie.email, REGI_TYPE: "EMAIL", state: true});
-    }else{
-      setLogin({ ID: "", NAME: "", EMAIL: "", REGI_TYPE: "", state: false });
-    }
   }
 
   useEffect(() => {
-    // setCookie("U_INFO", "", -1); // 갱신
     loginProcessCheck();
   }, []);
 

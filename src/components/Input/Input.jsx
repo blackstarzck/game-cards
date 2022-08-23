@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { ButtonTextClear, ButtonArrowDown, ButtonSearch, ButtonEyeOpen, ButtonEyeClose } from '../Button/Button'
-import { Wrapper, NickNameInput, JobSelect, ContainerSelect, FrdSrchInput, EmailInput, PwdInput, FormInput } from './input.elements'
+import { Wrapper, NickNameInput, JobSelect, ContainerSelect, FrdSrchInput, EmailInput, PwdInput, FormInput, InputSearchContainer, InputSearch } from './input.elements'
 import { gsap } from "gsap"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEye, faEyeSlash } from '@fortawesome/pro-light-svg-icons'
+import { faMagnifyingGlass } from '@fortawesome/pro-solid-svg-icons'
+import { faCircleXmark } from '@fortawesome/pro-light-svg-icons'
 
 export const InputNickName = ({names, handleNames}) => {
     const [ inputVal, setInputVal ] = useState("");
@@ -286,5 +287,18 @@ export const InputForm = ({validate, inputRef, setIdState, setPwState, idState, 
             onChange={validateInputs}
             onFocus={handleACtive}
             onBlur={handleACtive} />
+    );
+}
+
+export const SearchInput = () => {
+    return(
+        <InputSearchContainer>
+            <span className="heading">검색</span>
+            <InputSearch placeholder="불타는 중2병의..."/>
+            <div className="btn-wrapper">
+                <button className="btn-clear"><FontAwesomeIcon icon={faCircleXmark}/></button>
+                <button className="btn-search"><FontAwesomeIcon icon={faMagnifyingGlass}/></button>
+            </div>
+        </InputSearchContainer>
     );
 }

@@ -1,11 +1,9 @@
-import React, { useState, useEffect }from 'react'
+import React, { useEffect }from 'react'
 import { ButtonUpload, ButtonRecruit, ButtonGetPrev } from '../../Button/Button'
 import { Wrapper } from './UploadButtons.elements'
 import * as faceapi from 'face-api.js';
 
 const UploadButtons = ({...props}) => {
-    const [ imgSrc, setImgSrc ] = useState("");
-
     useEffect(() => {
         const loadModels = async () => {
             Promise.all([
@@ -27,8 +25,8 @@ const UploadButtons = ({...props}) => {
                 });
             });
         }
-        imgSrc && loadModels();
-    }, [imgSrc]);
+        props.imgSrc && loadModels();
+    }, [props.imgSrc]);
 
     const onChange = evt => {
         let src = URL.createObjectURL(evt.target.files[0]);
@@ -40,13 +38,13 @@ const UploadButtons = ({...props}) => {
         //   console.log(1, src)
         // }
 
-        setImgSrc(src);
+        props.setImgSrc(src);
      }
 
      const detect = async () => {
         const keyNames = [ "angry", "disgusted", "fearful", "happy", "neutral", "sad", "surprised"  ];
         const img = document.createElement("img");
-        img.src = imgSrc;
+        img.src = props.imgSrc;
         const detections = await faceapi.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
             .withFaceLandmarks()
             .withFaceExpressions()
@@ -85,8 +83,8 @@ const UploadButtons = ({...props}) => {
         <Wrapper className="outer-wrapper">
             <ButtonUpload onChange={onChange} />
             <Wrapper className="inner-wrapper">
-                <ButtonRecruit activeState={ !props.newCard ? "active" : "inactive" } selectNewOrPrev={props.selectNewOrPrev} />
-                <ButtonGetPrev activeState={ props.newCard ? "active" : "inactive" } selectNewOrPrev={props.selectNewOrPrev} />
+                <ButtonRecruit  newCard={props.newCard} selectNewOrPrev={props.selectNewOrPrev} />
+                <ButtonGetPrev newCard={props.newCard} selectNewOrPrev={props.selectNewOrPrev} />
             </Wrapper>
         </Wrapper>
     )

@@ -1,10 +1,10 @@
-import { getCookie } from "../util/util";
+import { handleSessionItem } from "../util/util";
 
 export const emailLoginCheck = () => {
-    const cookie = getCookie("U_INFO");
+    const sStorage = handleSessionItem("GET", "U_INFO");
     let name, id, email, auto, pwd;
-    if(cookie){
-        const arr = cookie.split(",");
+    if(sStorage){
+        const arr = sStorage.split(",");
         let keyVal;
         for(let i = 0; i < arr.length; i++){
             keyVal = arr[i].split(":");
@@ -21,3 +21,5 @@ export const emailLoginCheck = () => {
         return null;
     }
 }
+
+export const emailLogOut = () => handleSessionItem("REMOVE", "U_INFO");

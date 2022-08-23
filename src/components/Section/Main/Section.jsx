@@ -6,10 +6,12 @@ import UploadButtons from '../../cointainer/UploadButtons/UploadButtons'
 import { MainSection, Wrapper, Container } from './Section.elements'
 import Database from '../../../service/database'
 import { randomName } from '../../../assets/random-generator/random-generator'
+import { detectGIF } from '../../../util/util'
 
 const data = new Database();
 
-const SectionMain = ({login}) => {
+const SectionMain = ({login, handleCardUpdate}) => {
+    const [ imgSrc, setImgSrc ] = useState("");
     const [ mainCard, setMainCard ] = useState({
         nickName: randomName(),
         jobKR: "",
@@ -34,10 +36,9 @@ const SectionMain = ({login}) => {
         }
     });
     const [ imgLoaded, setImgLoaded ] = useState(false);
-
-    const [ newCard, setNewCard ] = useState(false);
+    const [ newCard, setNewCard ] = useState("NEW");
           
-    const selectNewOrPrev = () => setNewCard(!newCard);
+    const selectNewOrPrev = (select) => setNewCard(select);
   
     const onChange = (e) => { // input change 이벤트
       const { value, name } = e.target;
@@ -55,7 +56,7 @@ const SectionMain = ({login}) => {
     useEffect(() => {
         if(expression.age !== 0 && expression.gender !== ""){
             const resultCardCode = getCardCode(expression);
-            console.log("resultCardCode: ", resultCardCode);
+
             data.getSingleData("CARDS_INFO", resultCardCode.code)
             .then((result) => {
                 console.log("card-info", result);
@@ -116,7 +117,7 @@ const SectionMain = ({login}) => {
         const imgTotal = cardsCount[dir][gender];
         const range = [];
         let initNumb = 50;
-        let cardCode, imgURL;
+        let cardCode, imgURL, fileName;
 
         for(let i = 1; i <= imgTotal; i++){
             range.push({ 
@@ -126,7 +127,8 @@ const SectionMain = ({login}) => {
 
             if(range[i-1].min <= value && range[i-1].max >= value){
                 cardCode = `${code}-${i}`;
-                imgURL = `https://firebasestorage.googleapis.com/v0/b/card-maker-89016.appspot.com/o/${dir}%2F${cardCode}.png?alt=media`;
+                fileName = detectGIF(cardCode);
+                imgURL = `https://firebasestorage.googleapis.com/v0/b/card-maker-89016.appspot.com/o/${dir}%2F${cardCode}.${fileName}?alt=media`;
                 break;
             }
         }
@@ -136,14 +138,16 @@ const SectionMain = ({login}) => {
 
     return (
         <MainSection>
-            <MainViewer mainCard={mainCard} />
+            {/* <MainViewer mainCard={mainCard} /> */}
 
             {/* LEFT */}
             <Container className='left-container'>
                 <UploadButtons
+                    imgSrc={imgSrc}
+                    setImgSrc={setImgSrc}
                     newCard={newCard}
                     selectNewOrPrev={selectNewOrPrev}
-                    getFaceResult={getFaceResult}/>
+                    getFaceResult={getFaceResult} />
                 <Wrapper className='descr-wrapper'>
                     <DescriptionLI>※ 얼굴이 보이는 사진으로 업로드해주세요.</DescriptionLI>
                     <DescriptionLI>※ 하루에 최대 5개만 업로드할 수 있십니다.</DescriptionLI>
@@ -158,11 +162,12 @@ const SectionMain = ({login}) => {
             <Container className='right-container'>
                 <MainView
                     login={login}
+                    handleCardUpdate={handleCardUpdate}
+                    imgSrc={imgSrc}
                     imgLoaded={imgLoaded}
                     mainCard={mainCard}
                     updateCard={updateCard}
-                    onChange={onChange}
-                />
+                    onChange={onChange} />
             </Container>
         </MainSection>
     )
