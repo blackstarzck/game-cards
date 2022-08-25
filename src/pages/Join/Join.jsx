@@ -128,7 +128,7 @@ const Join = ({login, setLogin, goToHome}) => {
             auto: false
         }
 
-        setCookie("U_INFO", JSON.stringify(userData).replace(/[\{\}\[\]\/?.;|\~`\"]/g, ""), 1);
+        setCookie("U_INFO", JSON.stringify(userData).replace(/[\{\}\[\]\;|\~`\"]/g, ""), 1);
         setLogin({ID: idRef.current.value, NAME: nmRef.current.value, EMAIL: emailRef.current.value, REGI_TYPE: "EMAIL", state: true});
         db.writeNewDataV2("USER_LOG", idRef.current.value, input); // 1회성
         db.writeNewDataV2("USERS", idRef.current.value, input, goToHome); // 1회성

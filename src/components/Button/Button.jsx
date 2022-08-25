@@ -58,11 +58,11 @@ export const ButtonEditTitle = ({handleEditState, imgLoaded}) => {
 
 export const ButtonSaveTitle = ({handleEditState, updateCard, names, mainCard }) => {
   const onClick = () => {
-    updateCard({ key: "nickName", value: names["nickName"] || mainCard.nickName });
-    updateCard({ key: "jobKR", value: names["jobKR"] });
-    updateCard({ key: "jobEN", value: names["jobEN"] });
+    updateCard({ key: "NICK", value: names["NICK"] || mainCard.NICK });
+    updateCard({ key: "JOB_KR", value: names["JOB_KR"] || mainCard.JOB_KR });
+    updateCard({ key: "JOB_EN", value: names["JOB_EN"] || mainCard.JOB_EN });
     handleEditState();
-    console.log("ButtonSaveTitle:", { nickName: names["nickName"], jobKR: names["jobKR"], jobEN: names["jobEN"] });
+    console.log("ButtonSaveTitle:", { NICK: names["NICK"], JOB_KR: names["JOB_KR"], JOB_EN: names["JOB_EN"] });
   }
 
   return(
@@ -72,11 +72,10 @@ export const ButtonSaveTitle = ({handleEditState, updateCard, names, mainCard })
   );
 }
 
-export const ButtonTextClear = ({className, setInputVal, target, handleNames}) => {
+export const ButtonTextClear = ({className, setInputVal, target, updateCard}) => {
   const onClick = () => {
-    console.log("지워~!")
     setInputVal("");
-    handleNames && handleNames({ key: "nickName", value: "" });
+    updateCard({ key: "NICK", value: "" });
   }
   return(
     <ClearButton className={className} name={target} onClick={onClick} >
@@ -108,26 +107,35 @@ export const ButtonStatAdd = () => <AddButton ><FontAwesomeIcon icon={faPlus} />
 
 export const ButtonStatRemove = () => <RemoveButton ><FontAwesomeIcon icon={faMinus} /></RemoveButton>
 
-export const ButtonReset = ({imgLoaded}) => <ResetButton imgLoaded={imgLoaded}><FontAwesomeIcon icon={faArrowRotateLeft} /></ResetButton>
+export const ButtonReset = ({imgLoaded}) => {
+  return(
+    <ResetButton imgLoaded={imgLoaded}><FontAwesomeIcon icon={faArrowRotateLeft} /></ResetButton>
+  );
+}
 
 export const ButtonSave = ({imgLoaded}) => <SaveButton imgLoaded={imgLoaded}><FontAwesomeIcon icon={faFloppyDiskCircleArrowRight} /></SaveButton>
 
 export const ButtonViewInfo = ({imgLoaded, viewCardInfo}) => {
-  const onClick = () => {
-    imgLoaded && viewCardInfo();
+  return(
+    <ViewButton onClick={() => imgLoaded && viewCardInfo()} imgLoaded={imgLoaded}>설명보기</ViewButton>
+  );
+}
+
+export const ButtonKeepCard = ({imgLoaded, mainCard, keepSelectedCard, notice, setNotice}) => {
+  const handleClick = () => {
+    imgLoaded && keepSelectedCard(mainCard);
+    imgLoaded && setNotice(!notice);
   }
   return(
-    <ViewButton onClick={onClick} imgLoaded={imgLoaded}>설명보기</ViewButton>
+    <KeepButton imgLoaded={imgLoaded} onClick={handleClick}>보관하기</KeepButton>
   );
 }
 
-export const ButtonKeepCard = ({imgLoaded, handleCardUpdate, mainCard}) => {
+export const ButtonLevelUp = ({imgLoaded}) => {
   return(
-    <KeepButton imgLoaded={imgLoaded} onClick={() => handleCardUpdate(mainCard)}>보관하기</KeepButton>
+    <LevelUpButton imgLoaded={imgLoaded}><FontAwesomeIcon icon={faCircleArrowUp} /></LevelUpButton>
   );
 }
-
-export const ButtonLevelUp = () => <LevelUpButton ><FontAwesomeIcon icon={faCircleArrowUp} /></LevelUpButton>
 
 export const ButtonStat = ({imgLoaded}) => <StatButton imgLoaded={imgLoaded}><b>능</b><b>력</b><b>치</b><FontAwesomeIcon icon={faSparkles} /></StatButton>
 

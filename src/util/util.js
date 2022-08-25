@@ -66,3 +66,38 @@ export function rememberUserData(){
         return null;
     }
 }
+
+export function rememberCardData(){
+    const cookie = getCookie("PREV_INFO");
+    let NICK, JOB_KR, JOB_EN, LEVEL, EXP, GROUP_NO, STR, AGI, DEX, VIT, INT, LUCK, REMAIN, CODE, DESCR, QUOTE, SELECTED, IMG_URL;
+    if(cookie){
+        const arr = cookie.split(",");
+        let keyVal;
+        for(let i = 0; i < arr.length; i++){
+            keyVal = arr[i].split(":");
+            for(let n = 0; n < keyVal.length; n++){
+                if(keyVal[0] === "NICK") NICK = keyVal[1];
+                if(keyVal[0] === "JOB_KR") JOB_KR = keyVal[1];
+                if(keyVal[0] === "JOB_EN") JOB_EN = keyVal[1];
+                if(keyVal[0] === "LEVEL") LEVEL = Number(keyVal[1]);
+                if(keyVal[0] === "EXP") EXP = Number(keyVal[1]);
+                if(keyVal[0] === "GROUP_NO") GROUP_NO = Number(keyVal[1]);
+                if(keyVal[0] === "STR") STR = Number(keyVal[1]);
+                if(keyVal[0] === "AGI") AGI = Number(keyVal[1]);
+                if(keyVal[0] === "DEX") DEX = Number(keyVal[1]);
+                if(keyVal[0] === "VIT") VIT = Number(keyVal[1]);
+                if(keyVal[0] === "INT") INT = Number(keyVal[1]);
+                if(keyVal[0] === "LUCK") LUCK = Number(keyVal[1]);
+                if(keyVal[0] === "REMAIN") REMAIN = Number(keyVal[1]);
+                if(keyVal[0] === "CODE") CODE = keyVal[1];
+                if(keyVal[0] === "DESCR") DESCR = keyVal[1];
+                if(keyVal[0] === "QUOTE") QUOTE = keyVal[1];
+                if(keyVal[0] === "SELECTED") SELECTED = Number(keyVal[1]);
+                if(keyVal[0] === "IMG_URL") IMG_URL = "https:" + keyVal[1];
+            }
+        }
+        return { STATS: { STR,  AGI,  DEX,  VIT,  INT, LUCK }, NICK, JOB_KR, JOB_EN, LEVEL, EXP, GROUP_NO, REMAIN, CODE, DESCR, QUOTE, SELECTED, IMG_URL };
+    }else{
+        return null;
+    }
+}

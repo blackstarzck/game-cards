@@ -10,7 +10,7 @@ import { faFaceConfused } from '@fortawesome/pro-light-svg-icons'
 import { faList } from '@fortawesome/pro-regular-svg-icons'
 import Database from '../../../service/database'
 import { MainPopup } from '../../Popups/Popups'
-import { useData } from '../../../hooks/useData'
+import { useData } from '../../../hooks/hooks'
 
 const data = new Database();
 
@@ -22,7 +22,7 @@ const SectionFrdSearch = ({login, sOpen, handleSelectBoxes, mainPopup}) => {
         name: "",
         email: "",
     });
-    const [ popup, setPopup ] = useState(false);
+    const [ popup, setPopup ] = useState(false); // 매인팝업의 상태유무
     const [ loading, setLoading ] = useState(true);
 
     const searchFunc = (frdId) => {

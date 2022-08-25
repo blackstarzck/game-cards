@@ -12,7 +12,8 @@ export const Wrapper = styled.div`
         /* display: flex; */
         display: ${ props => props.active ? "flex" : "none" };
         align-items: center;
-        padding-left: 15px;
+        padding: 0 15px;
+        height: 74px;
         
         button {
             margin-right: 12px;
@@ -60,10 +61,12 @@ export const Wrapper = styled.div`
         }
     }
     &.view-wrapper { width: 232px; position: relative; }
-    &.custom-wrapper {
+    &.custom-wrapper { 
         width: 100%;
-        
-        & > div:first-of-type { margin-bottom: 6px; }
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
     &.btn-handlers {
         display: flex;
@@ -112,15 +115,15 @@ export const Wrapper = styled.div`
 
         .outer {
             width: 194px;
-            height: 8px;
+            /* height: 8px; */
             border: 1px solid #DEDEDE;
             border-radius: 15px;
             background-color: ${ ({theme}) => theme.colors.realWhite };
             padding: 3px;
             
             .inner {
-                width: ${ prop => `${prop.exp}%` };
-                height: 100%;
+                width: ${ prop => prop.EXP ? `${prop.EXP}%` : 0 };
+                height: 10px;
                 background-color: ${ ({theme}) => theme.colors.lightBlue };
                 border-radius: 15px;
                 transition: all .2s ease;
@@ -144,7 +147,7 @@ export const Wrapper = styled.div`
         border-radius: 5px;
 
         h4 { width: 95%; font-size: 18px; font-weight: 700; line-height: 22px; text-align: center;padding: 37px 0 70px;margin: auto; }
-        p { display: block; width: calc(100% - 20px); font-size: 16px; font-weight: 200; line-height: 24px; padding: 0 10px; }
+        p { display: block; width: calc(100% - 20px); text-align: center; font-size: 16px; font-weight: 200; line-height: 24px; padding: 0 10px; }
     }
 `;
 
@@ -169,6 +172,7 @@ export const StatHeading = styled.span`
     line-height: 24px;
     position: relative;
     cursor: pointer;
+    transition: .2s;
 `;
 export const StatPoints = styled.span`
     text-align: center;
@@ -180,6 +184,7 @@ export const StatPoints = styled.span`
     border: 1px solid ${ ({ theme }) => theme.colors.border02 };
     color: ${ props => props.imgLoaded ? props.theme.colors.commonBlack2 : props.theme.colors.inActiveInputTxt };
     background-color: ${ ({ theme }) => theme.colors.inActiveInputBG };
+    transition: .2s;
 `;
 
 export const BookMark = styled.div`

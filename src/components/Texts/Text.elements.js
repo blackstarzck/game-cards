@@ -26,10 +26,10 @@ export const CardMainTitle = styled.h3`
     line-height: 44px;
     letter-spacing: -1.5px;
     color: ${ props =>  props.imgLoaded ? props.theme.colors.realBlack : props.theme.colors.inActive };
-    /* overflow: hidden;
+    overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    width: 100%; */
+    width: 360px;
 `;
 
 export const CardSubTitle = styled.h4`
@@ -39,6 +39,10 @@ export const CardSubTitle = styled.h4`
     line-height: 30px;
     letter-spacing: -1.5px;
     color: ${ props =>  props.imgLoaded ? props.theme.colors.realBlack : props.theme.colors.inActive };
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
 `;
 
 export const SectionTitle = styled.h3`

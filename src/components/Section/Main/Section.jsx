@@ -5,28 +5,14 @@ import MainViewer from '../../cointainer/MainViewer/MainViewer'
 import UploadButtons from '../../cointainer/UploadButtons/UploadButtons'
 import { MainSection, Wrapper, Container } from './Section.elements'
 import Database from '../../../service/database'
-import { randomName } from '../../../assets/random-generator/random-generator'
-import { detectGIF } from '../../../util/util'
+import { detectGIF, rememberCardData, setCookie } from '../../../util/util'
+import { randomName, setInitDatas } from '../../../data/data'
 
 const data = new Database();
 
-const SectionMain = ({login, handleCardUpdate}) => {
+const SectionMain = ({login, handleCardUpdate, mainCard, setMainCard, keepSelectedCard}) => {
     const [ imgSrc, setImgSrc ] = useState("");
-    const [ mainCard, setMainCard ] = useState({
-        nickName: randomName(),
-        jobKR: "",
-        jobEN: "",
-        level: 1,
-        exp: 0,
-        groupNo: 0,
-        stats: { STR: 0, AGI: 0, DEX: 0, VIT: 0, INT: 0, LUCK: 0 },
-        remain: 0,
-        code: "",
-        descr: "",
-        quote: "",
-        selected: 0,
-        imgURL: "",
-    });
+    const [ imgLoaded, setImgLoaded ] = useState(false);
     const [ expression, setExpression ] = useState({
         age: 0,
         gender: "",
@@ -35,7 +21,6 @@ const SectionMain = ({login, handleCardUpdate}) => {
             value: 0
         }
     });
-    const [ imgLoaded, setImgLoaded ] = useState(false);
     const [ newCard, setNewCard ] = useState("NEW");
           
     const selectNewOrPrev = (select) => setNewCard(select);
@@ -54,32 +39,56 @@ const SectionMain = ({login, handleCardUpdate}) => {
     const getFaceResult = (result) => setExpression(result);
 
     useEffect(() => {
+        const lists = setInitDatas("JOBS");
+        const random = Math.floor((Math.random() * ((lists.length) - 1)) + 1);
+
         if(expression.age !== 0 && expression.gender !== ""){
             const resultCardCode = getCardCode(expression);
-
-            data.getSingleData("CARDS_INFO", resultCardCode.code)
+            if(!resultCardCode.CODE){
+                alert("다른 이미지를 업로드해주세요.");
+                setImgSrc("");
+                setImgLoaded(false);
+                return
+            }
+            
+            data.getSingleData("CARDS_INFO", resultCardCode.CODE)
             .then((result) => {
-                console.log("card-info", result);
-                setImgLoaded(true);
+                setImgLoaded(true);                
+                updateCard({ key: "NICK", value: randomName() });
+                updateCard({ key: "JOB_KR", value: lists[random].KR });
+                updateCard({ key: "JOB_EN", value: lists[random].EN });
+
                 setMainCard((mainCard) => {
                     const keyArray = [ "STR", "AGI", "DEX", "VIT", "INT", "LUCK" ];
                     const max = 5;
                     const updated = {...mainCard};
-                    updated["code"] = resultCardCode.code;
-                    updated["imgURL"] = resultCardCode.imgURL;
-                    updated["quote"] = result.QUOTE;
-                    updated["descr"] = result.DESCR;
-                    updated["selected"] = result.SELECTED;
+                    updated["CODE"] = resultCardCode.CODE;
+                    updated["IMG_URL"] = resultCardCode.IMG_URL;
+                    updated["QUOTE"] = result.QUOTE;
+                    updated["DESCR"] = result.DESCR;
+                    updated["SELECTED"] = result.SELECTED;
 
                     for(let i = 0; i < keyArray.length; i++){
                         let key = keyArray[i];
-                        updated["stats"][key] = Math.floor((Math.random() * ((max) - 1)) + 1);
+                        updated["STATS"][key] = Math.floor((Math.random() * ((max) - 1)) + 1);
                     }
                     return updated
                 });
             });
         }
     }, [expression]);
+
+    useEffect(() => {
+        const prevData = rememberCardData();
+        if(prevData) setMainCard(prevData); 
+      }, []);
+
+    useEffect(() => {
+        if(!mainCard.code){
+            setImgSrc("");
+            setImgLoaded(false);
+        }
+    }, [mainCard]);
 
     const getCardCode = (imgData) => {
         const cardsCount = {
@@ -116,24 +125,25 @@ const SectionMain = ({login, handleCardUpdate}) => {
         const code = `${gender}-${dir}`;
         const imgTotal = cardsCount[dir][gender];
         const range = [];
-        let initNumb = 50;
-        let cardCode, imgURL, fileName;
+        let initNumb = 40;
+        let numb = (100 - initNumb);
+        let cardCode, IMG_URL, fileName;
 
         for(let i = 1; i <= imgTotal; i++){
             range.push({ 
                 min: range[i-2] ? (range[i-2].max + 1) : initNumb,
-                max: Math.round(50 + (50 / imgTotal) * i)
+                max: Math.round(initNumb + (numb / imgTotal) * i)
             });
 
             if(range[i-1].min <= value && range[i-1].max >= value){
+                console.log("i:", i);
                 cardCode = `${code}-${i}`;
                 fileName = detectGIF(cardCode);
-                imgURL = `https://firebasestorage.googleapis.com/v0/b/card-maker-89016.appspot.com/o/${dir}%2F${cardCode}.${fileName}?alt=media`;
+                IMG_URL = `https://firebasestorage.googleapis.com/v0/b/card-maker-89016.appspot.com/o/${dir}%2F${cardCode}.${fileName}?alt=media`;
                 break;
             }
         }
-        // console.log(cardCode, imgURL);
-        return { code: cardCode, imgURL: imgURL };
+        return { CODE: cardCode, IMG_URL: IMG_URL };
     }
 
     return (
@@ -162,9 +172,10 @@ const SectionMain = ({login, handleCardUpdate}) => {
             <Container className='right-container'>
                 <MainView
                     login={login}
-                    handleCardUpdate={handleCardUpdate}
+                    keepSelectedCard={keepSelectedCard}
                     imgSrc={imgSrc}
                     imgLoaded={imgLoaded}
+                    setImgLoaded={setImgLoaded}
                     mainCard={mainCard}
                     updateCard={updateCard}
                     onChange={onChange} />

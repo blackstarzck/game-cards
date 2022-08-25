@@ -19,17 +19,17 @@ const MainViewer = ({...props}) => {
   return (
     <MainCardInputs>
         <ul>
-            <li><span>nickName:</span><input readOnly name="nickName" placeholder="" type="text"  value={props.mainCard.nickName || ""} /></li>
-            <li><span>jobKR:</span><input readOnly name="jobKR" placeholder="" type="text"  value={props.mainCard.jobKR || ""} /></li>
-            <li><span>jobEN:</span><input readOnly name="jobEN" placeholder="" type="text"  value={props.mainCard.jobEN || ""} /></li>
-            <li><span>level: </span><input readOnly name="level: " placeholder="" type="text"  value={props.mainCard.level  || ""} /></li>
-            <li><span>exp:</span><input readOnly name="exp" placeholder="" type="text"  value={props.mainCard.exp || ""} /></li>
-            <li><span>groupNo:</span><input readOnly name="groupNo" placeholder="" type="text"  value={props.mainCard.groupNo || ""} /></li>
-            <li><span>code:</span><input readOnly name="code" placeholder="" type="text"  value={props.mainCard.code || ""} /></li>
-            <li><span>descr:</span><input readOnly name="descr" placeholder="" type="text"  value={props.mainCard.descr || ""} /></li>
-            <li><span>quote:</span><input readOnly name="quote" placeholder="" type="text"  value={props.mainCard.quote || ""} /></li>
-            <li><span>selected:</span><input readOnly name="selected" placeholder="" type="text"  value={props.mainCard.selected || ""} /></li>
-            <li><span>imgURL:</span><input readOnly name="imgURL" placeholder="" type="text"  value={props.mainCard.imgURL || ""} /></li>
+            <li><span>NICK:</span><input readOnly name="NICK" placeholder="" type="text"  value={props.mainCard.NICK || ""} /></li>
+            <li><span>JOB_KR:</span><input readOnly name="JOB_KR" placeholder="" type="text"  value={props.mainCard.JOB_KR || ""} /></li>
+            <li><span>JOB_EN:</span><input readOnly name="JOB_EN" placeholder="" type="text"  value={props.mainCard.JOB_EN || ""} /></li>
+            <li><span>LEVEL: </span><input readOnly name="LEVEL: " placeholder="" type="text"  value={props.mainCard.LEVEL  || ""} /></li>
+            <li><span>EXP:</span><input readOnly name="EXP" placeholder="" type="text"  value={props.mainCard.EXP || ""} /></li>
+            <li><span>GROUP_NO:</span><input readOnly name="GROUP_NO" placeholder="" type="text"  value={props.mainCard.GROUP_NO || ""} /></li>
+            <li><span>CODE:</span><input readOnly name="CODE" placeholder="" type="text"  value={props.mainCard.CODE || ""} /></li>
+            <li><span>DESCR:</span><input readOnly name="DESCR" placeholder="" type="text"  value={props.mainCard.DESCR || ""} /></li>
+            <li><span>QUOTE:</span><input readOnly name="QUOTE" placeholder="" type="text"  value={props.mainCard.QUOTE || ""} /></li>
+            <li><span>SELECTED:</span><input readOnly name="SELECTED" placeholder="" type="text"  value={props.mainCard.SELECTED || ""} /></li>
+            <li><span>IMG_URL:</span><input readOnly name="IMG_URL" placeholder="" type="text"  value={props.mainCard.IMG_URL || ""} /></li>
         </ul>
     </MainCardInputs>
   )

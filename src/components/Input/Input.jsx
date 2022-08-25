@@ -13,26 +13,26 @@ export const InputNickName = ({names, handleNames}) => {
     const onChnage = (evt) => {
         const { value } = evt.target;
         setInputVal(value);
-        handleNames({ key: "nickName", value });
+        handleNames({ key: "NICK", value });
     }
     
     return(
         <Wrapper className="input-wrapper">
             <NickNameInput 
                 ref={inputRef}
-                name="nickName" 
-                value={names.nickName}
+                name="NICK" 
+                value={names.NICK || ""}
                 placeholder="원하는 이름을 입력하세요" 
                 onChange={onChnage} />
             { inputVal && <ButtonTextClear
-                target={"nickName"}
+                target={"NICK"}
                 setInputVal={setInputVal}
                 handleNames={handleNames} /> }
         </Wrapper>
     );
 }
 
-export const SelectJob = ({names, updateCard, handleNames, imgLoaded}) => {
+export const SelectJob = ({names, mainCard, updateCard, handleNames, imgLoaded}) => {
     const init = [
         { KR: '소프트웨어 엔지니어', key: 1, EN: 'Software Engineer' },
         { key: 2, EN: 'Frontend Developer', KR: '프론트엔드 개발자' },
@@ -47,47 +47,23 @@ export const SelectJob = ({names, updateCard, handleNames, imgLoaded}) => {
     const [ jobLists, setJobLists ] = useState(init);
     const [ clicked, setClicked] = useState(false);
 
-    // const data = new Database();
-    // const jobs = data.getData("JOB_INFO");
-
-    // useEffect(() => {
-    //     jobs.then((result) => {
-    //         setJobLists(result[0].JOBS);
-    //     });
-    // }, []);
-
-    useEffect(() => {
-        updateCard({ key: "jobKR", value: jobLists[0].KR }); // 초기값 세팅
-        updateCard({ key: "jobEN", value: jobLists[0].EN }); // 초기값 세팅
-        handleNames({ key: "jobKR", value: jobLists[0].KR });
-        handleNames({ key: "jobEN", value: jobLists[0].EN });
-    }, [jobLists]);
-
     const handleDropDown = (state) => {
         setClicked(state);
-    }
-
-    if(jobLists === null){
-        // 로딩화면
-        return <h1>받아오는중...</h1>;
-    }else{
-        // consoe.log(jobLists);
     }
 
     return(
         <Wrapper className="job-wrapper">
             <Wrapper className="show-selected" onClick={ () => handleDropDown(!clicked) }>
-                <JobSelect>{names.jobKR || jobLists[0].KR}</JobSelect>
+                <JobSelect>{names.JOB_KR || mainCard.JOB_KR}</JobSelect>
                 <ButtonArrowDown clickState={clicked}/>
             </Wrapper>
             <JobLists
-                clickState={clicked}
                 imgLoaded={imgLoaded}
                 list={jobLists}
-                jobKR={"jobKR"}
+                JOB_KR={"JOB_KR"}
+                clickState={clicked}
                 handleDropDown={handleDropDown}
-                handleNames={handleNames}
-            />
+                handleNames={handleNames} />
         </Wrapper>
     );
 }
@@ -111,14 +87,14 @@ export const JobLists = ({ list, clickState, handleDropDown, handleNames }) => {
     }, []);
 
     useEffect(() => {
+        console.log("toggle: ", toggle);
         toggle ? tl.current.play() : reverseFun();
     },[toggle]);
 
     const onClick = (kr, en) => {
-        reverseFun();
-        handleDropDown(clickState);
-        handleNames({ key: "jobEN", value: en });
-        handleNames({ key: "jobKR", value: kr });
+        handleDropDown(!clickState);
+        handleNames({ key: "JOB_EN", value: en });
+        handleNames({ key: "JOB_KR", value: kr });
         console.log(kr, en)
     }
 

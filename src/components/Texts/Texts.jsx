@@ -6,7 +6,7 @@ export const DescriptionLI = ({ children, ...props }) => <DescriptionLi {...prop
 
 
 export const TitleSection = ({ children, ...props }) => <SectionTitle {...props}>{children}</SectionTitle>
-export const TitleNickName = ({ children, ...props }) => <CardMainTitle {...props}>{children}</CardMainTitle>
+export const TitleNickName = ({ children, ...props }) => <CardMainTitle title={children} {...props}>{children}</CardMainTitle>
 export const TitleJob = ({ children, ...props }) => <CardSubTitle {...props}>{children}</CardSubTitle>
 
-export const ResultHeading = ({ children, ...props }) => <FrdSectionHeading {...props}>{children}</FrdSectionHeading>
+export const ResultHeading = ({ children, ...props }) => <FrdSectionHeading title={children} {...props}>{children}</FrdSectionHeading>

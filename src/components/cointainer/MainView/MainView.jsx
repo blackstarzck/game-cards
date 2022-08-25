@@ -6,23 +6,22 @@ import { BookMark, CardImg, StatHeading, StatItem, StatPoints, Wrapper } from '.
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBookmark } from '@fortawesome/pro-solid-svg-icons'
 import { gsap } from "gsap"
-import { DescrPopup } from '../../Popups/Popups'
+import { CardKeepPopup, DescrPopup, MainPopup, Notice } from '../../Popups/Popups'
 import loadingSrc from '../../../assets/images/loading.png'
 
 const MainView = ({...props}) => {
     const [ editState, setEditState ] = useState(true);
     const [ view, setView] = useState(false);
-    const [ load, setLoad ] = useState(false);
-
+    const [ notice, setNotice ] = useState(false);
 
     const handleEditState = () => setEditState(!editState);
     const viewCardInfo = () => setView(!view);
 
     useEffect(() => {
         const img = new Image();
-        img.src = props.imgSrc;
-        img.onload = () => setLoad(true);
-    }, [props.imgSrc]);
+        img.src = props.imgSrc || props.mainCard.IMG_URL;
+        img.onload = () => props.setImgLoaded(true);
+    }, [props.mainCard]);
 
     return (
         <Wrapper className="main-view">
@@ -57,22 +56,22 @@ const MainView = ({...props}) => {
                     
                     <Wrapper className="view-box">
                         {/* BOOKMARK */}
-                        {props.mainCard.imgURL && <BookMark>
+                        {props.mainCard.IMG_URL && <BookMark>
                             <FontAwesomeIcon icon={faBookmark} />
-                            <span className="group-no">{props.mainCard.groupNo || "-"}</span>
+                            <span className="group-no">{props.mainCard.GROUP_NO || "-"}</span>
                         </BookMark>}
 
                         <CardImg>
-                            { props.imgSrc ?
-                                ( load ? 
-                                    <img src={props.mainCard.imgURL} /> : <img src={loadingSrc} /> ) :
+                            { (props.imgSrc || props.mainCard.IMG_URL) ?
+                                ( props.imgLoaded ? 
+                                    <img src={ props.mainCard.IMG_URL} /> : <img src={loadingSrc} /> ) :
                                 <span>이미지를 업로드하세요</span> }
                         </CardImg>
                         
                         {/* RANK */}
-                        {props.mainCard.imgURL && <Wrapper className="text-wrapper">
-                            <span className="level"><b>Lv.</b>{props.mainCard.level}</span>
-                            <span className="pref-rank">선호순위 {props.mainCard.selected || "-"}위</span>
+                        {props.mainCard.IMG_URL && <Wrapper className="text-wrapper">
+                            <span className="level"><b>Lv.</b>{props.mainCard.LEVEL}</span>
+                            <span className="pref-rank">선호순위 {props.mainCard.SELECTED || "-"}위</span>
                         </Wrapper>}
                     </Wrapper>
 
@@ -80,10 +79,10 @@ const MainView = ({...props}) => {
                     <MainViewStoryBox mainCard={props.mainCard} view={view}/>
 
                     {/* EXPERIENCE */}
-                    <Wrapper className="exp-wrapper" exp={props.mainCard.exp}>
-                        <ButtonLevelUp />
+                    <Wrapper className="exp-wrapper" exp={props.mainCard.EXP}>
+                        <ButtonLevelUp imgLoaded={props.imgLoaded} />
                         <div className="outer">
-                            <div className="inner" ></div>
+                            <div className="inner"></div>
                         </div>
                     </Wrapper>
                 </Wrapper> 
@@ -93,10 +92,17 @@ const MainView = ({...props}) => {
                 <ButtonSave imgLoaded={props.imgLoaded} />
                 <ButtonViewInfo imgLoaded={props.imgLoaded} viewCardInfo={viewCardInfo}/>
                 <ButtonKeepCard
+                    notice={notice}
+                    setNotice={setNotice}
+                    editState={editState}
+                    keepSelectedCard={props.keepSelectedCard}
                     imgLoaded={props.imgLoaded}
-                    mainCard={props.mainCard}
-                    handleCardUpdate={props.handleCardUpdate} />
+                    mainCard={props.mainCard} />
             </Wrapper>
+            <Notice
+                target={"main-view"}
+                notice={notice} setNotice={setNotice}
+                mainCard={props.mainCard} />
         </Wrapper>
     )
 }
@@ -132,8 +138,8 @@ export const MainViewStoryBox = ({mainCard, view}) => {
 
     return(
         <Wrapper ref={el} className="story-box">
-            <h4>{mainCard.quote || "..."}</h4>
-            <p>{mainCard.descr || "..."}</p>
+            <h4>{mainCard.QUOTE || "..."}</h4>
+            <p>{mainCard.DESCR || "..."}</p>
         </Wrapper>
     );
 }
@@ -146,7 +152,7 @@ export const MainViewStatContainer = ({mainCard, imgLoaded}) => {
 
     return(
         <Wrapper className="stat-wrapper">
-            <span className="total-points">{mainCard.remain}</span>
+            <span className="total-points">{mainCard.REMAIN}</span>
             <Wrapper className="list-wrapper">
                 {keyArray.map((list, i) => <MainViewStat
                     imgLoaded={imgLoaded}
@@ -154,7 +160,7 @@ export const MainViewStatContainer = ({mainCard, imgLoaded}) => {
                     setVisible={setVisible}
                     key={i}
                     heading={list}
-                    points={mainCard.stats[list]} /> )}
+                    points={mainCard.STATS[list]} /> )}
             </Wrapper>
         </Wrapper>
     );
@@ -165,7 +171,6 @@ export const MainViewStat = ({imgLoaded, heading, points, visible, setVisible })
     const handleVisible = () => {
         setVisible({...visible, target: heading});
         setPopup(!popup);
-        // imgLoaded && setVisible((visible) => visible = heading );
     }
 
     return(
@@ -174,11 +179,11 @@ export const MainViewStat = ({imgLoaded, heading, points, visible, setVisible })
                 onClick={() => imgLoaded && handleVisible()}
                 className="heading"
                 imgLoaded={imgLoaded}>{heading}
-                { imgLoaded && <DescrPopup
+                <DescrPopup
                     popup={popup}
                     setPopup={setPopup}
                     statName={heading}
-                    visible={visible} /> }
+                    visible={visible} />
             </StatHeading>
             <StatPoints 
                 className="points" 
@@ -200,8 +205,8 @@ export const MainViewName = ({imgLoaded, mainCard, active, handleEditState}) => 
                 imgLoaded={imgLoaded} 
                 handleEditState={handleEditState} />
             <Wrapper className='input-wrapper'>
-                <TitleNickName imgLoaded={imgLoaded}>{ imgLoaded ? mainCard.nickName : "-" }</TitleNickName>
-                <TitleJob imgLoaded={imgLoaded}>{ imgLoaded ? mainCard.jobEN : "-" }</TitleJob>
+                <TitleNickName imgLoaded={imgLoaded}>{ imgLoaded ? mainCard.NICK : "-" }</TitleNickName>
+                <TitleJob imgLoaded={imgLoaded}>{ imgLoaded ? mainCard.JOB_EN : "-" }</TitleJob>
             </Wrapper>
         </Wrapper>
     );
@@ -209,7 +214,7 @@ export const MainViewName = ({imgLoaded, mainCard, active, handleEditState}) => 
 
 export const MainViewEditName = ({handleEditState, updateCard, mainCard, active, imgLoaded}) => {
     const [ names, setNames ] = useState({
-        nickName: "", jobKR: "", jobEN: ""
+        NICK: mainCard.NICK, JOB_KR: mainCard.JOB_KR, JOB_EN: mainCard.JOB_EN
     });
 
     const handleNames = obj => {
@@ -221,9 +226,12 @@ export const MainViewEditName = ({handleEditState, updateCard, mainCard, active,
     }
 
     useEffect(() => {
-        // console.log("MainViewEditName:", names);
-        // console.log(mainCard);
+
     }, [names]);
+
+    useEffect(() => {
+
+    }, [mainCard]);
 
     return(
         <Wrapper className='select-wrapper' active={active} >
@@ -237,14 +245,12 @@ export const MainViewEditName = ({handleEditState, updateCard, mainCard, active,
                 <InputNickName
                     mainCard={mainCard}
                     names={names}
-                    handleNames={handleNames}
-                />
+                    handleNames={handleNames} />
                 <SelectJob
+                    mainCard={mainCard}
                     updateCard={updateCard} 
                     names={names} 
-                    handleNames={handleNames}
-                >
-                </SelectJob>
+                    handleNames={handleNames} />
             </Wrapper>
         </Wrapper>
     );

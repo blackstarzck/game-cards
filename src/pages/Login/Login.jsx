@@ -56,7 +56,7 @@ const Login = ({login, setLogin, goToHome}) => {
             };
             setCookie("U_INFO", "", -1); // 초기화
             setLogin({ID: id, NAME: user.USER_NAME, EMAIL: user.USER_EMAIL, REGI_TYPE: user.REGI_TYPE, state: true});
-            const str = JSON.stringify(userData).replace(/[\{\}\[\]\/?.;|\~`\"]/g, "");
+            const str = JSON.stringify(userData).replace(/[\{\}\[\]\;|\~`\"]/g, "");
             
             autoLogin && setCookie("U_INFO", str, 1);
             handleSessionItem("SET", "U_INFO", str);
@@ -71,8 +71,6 @@ const Login = ({login, setLogin, goToHome}) => {
 
     useEffect(() => {
         const cookie = rememberUserData("U_INFO");
-        console.log("로그인 페이지");
-        console.log(cookie);
         if(cookie){
            checkRef.current.checked = (cookie.auto === "true") ? true : false;
            emailRef.current.value = cookie.id;

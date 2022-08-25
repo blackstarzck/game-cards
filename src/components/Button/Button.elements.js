@@ -60,6 +60,7 @@ export const EditTitleButton = styled.button`
     width: 35px;
     height: 35px;
     color: ${ props =>  props.imgLoaded ? props.theme.colors.commonBlack : props.theme.colors.inActive };
+    transition: .2s;
 
     & svg, i {
         width: 100%;
@@ -121,6 +122,7 @@ export const ResetButton = styled.button`
     background-color: ${ props => props.imgLoaded ? props.theme.colors.realRed : props.theme.colors.inActiveButtonBg };
     border-radius: 25px;
     box-shadow: ${ ({ theme }) => theme.boxShadow.default };
+    transition: .2s;
 
     & svg, i {
         color: ${ ({ theme }) => theme.colors.realWhite };
@@ -144,6 +146,7 @@ export const ViewButton = styled.button`
     color: ${ ({ theme }) => theme.colors.realWhite };
     background: ${ props => props.imgLoaded ? props.theme.colors.primaryColor : props.theme.colors.inActiveButtonBg };
     box-shadow: ${ ({ theme }) => theme.boxShadow.default };
+    transition: .2s;
 `;
 export const KeepButton = styled(ViewButton)`
     width: 110px;
@@ -152,10 +155,10 @@ export const KeepButton = styled(ViewButton)`
 export const LevelUpButton = styled.button`
     width: 25px;
     height: 25px;
+    color: ${ props =>  props.imgLoaded ? props.theme.colors.realRed : props.theme.colors.inActiveButtonBg };
+    transition: .2s;
 
     svg, i {
-        color: ${ ({ theme }) => theme.colors.inActiveButtonBg };
-        /* color: ${ ({ theme }) => theme.colors.realRed }; // active */
         width: 100%;
         height: 100%;
     }
@@ -175,6 +178,7 @@ export const StatButton = styled.button`
     justify-content: center;
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
+    transition: .2s;
 
     b { display: block; width: 100%; text-align: center;}
     svg, i {

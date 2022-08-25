@@ -12,6 +12,7 @@ const GlobalStyle = createGlobalStyle`
   a{color: inherit;}
   button { cursor: pointer;background-color: inherit; }
   img {vertical-align: top;}
+  b { font-weight: inherit }
 
   /* Normalize */
   * { box-sizing: border-box; }

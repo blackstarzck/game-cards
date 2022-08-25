@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import theme from "../../assets/styles/theme";
 
 export const PopupDescr = styled.div`
@@ -85,4 +85,43 @@ export const Background = styled.div`
     top: 0; left: 0;
     background-color: rgba(0,0,0,.8);
     transition: .2s;
+`;
+
+export const NoticeStyle = styled.div`
+    visibility: ${ props => props.notice ? "visible" : "hidden" };
+    opacity: ${ props => props.notice ? 1 : 0 };
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .5);
+    position: absolute;
+    top: 0; left: 0;
+    border-radius: 5px;
+    transition: opacity .1s ease-out;
+    z-index: 5;
+
+    .inner-box {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 60%;
+        padding: 15px 20px;
+        background-color: ${ props => props.theme.colors.realWhite };
+        box-shadow: ${ props => props.theme.boxShadow.default };
+        text-align: center;
+        font-family: "Noto Sans KR", sans-serif;
+        position: relative;
+        border-radius: 5px;
+        position: absolute;
+        top: 50%; left: 50%; transform: translate(-50%, -50%);
+        z-index: 7px;
+        visibility: ${ props => props.notice ? "visible" : "hidden" };
+        opacity: ${ props => props.notice ? 1 : 0 };
+        transition: .1s ease;
+        transition-delay: .1s;
+
+    }
+
+    b.strong { font-weight: 700; }
+    .main-text { font-size: 1rem; color: ${ props => props.theme.colors.commonBlack }; line-height: 20px; }
+    .timer { font-family: "Montserrat", sans-serif; font-size: 12px; font-weight: 300; color: #A4A4A4; position: absolute; right: 10px; bottom: 10px; }
 `;

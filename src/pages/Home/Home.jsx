@@ -1,66 +1,21 @@
 import React, { useRef, useState } from 'react'
-import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from "styled-components"
 import SectionFrdSearch from '../../components/Section/FrdSearch/FrdSearch';
 import SectionMain from '../../components/Section/Main/Section';
 import SectionStorage from '../../components/Section/Storage/Storage';
+import { setInitDatas } from '../../data/data';
 import Database from '../../service/database';
+import { setCookie } from '../../util/util';
 
-// const db = new Database();
-// db.getSingleData("USER_CARDS", "chanki1004");
+const db = new Database();
 
-const Home = ({login}) => {
-  const [ cards, setCards ] = useState({
-    UID: "", USER_ID: "", USER_NAME: "",
-    CARDS: [
-        { KEY: 1, CODE: "", QUOTE: "", DESCR: "", GROUP_NO: 0, GROUP_ORDER: 0, NICK: "", JOB: "", JOB_KR: "", JOB_EN: "", PREF_RANK: 0, REMAIN: 0, LEVEL: 1, STR: 0, AGI: 0, DEX: 0, VIT: 0, INT: 0, LUCK: 0, POWER: 0 },
-        { KEY: 2, CODE: "", QUOTE: "", DESCR: "", GROUP_NO: 0, GROUP_ORDER: 0, NICK: "", JOB: "", JOB_KR: "", JOB_EN: "", PREF_RANK: 0, REMAIN: 0, LEVEL: 2, STR: 0, AGI: 0, DEX: 0, VIT: 0, INT: 0, LUCK: 0, POWER: 0 },
-        { KEY: 3, CODE: "", QUOTE: "", DESCR: "", GROUP_NO: 0, GROUP_ORDER: 0, NICK: "", JOB: "", JOB_KR: "", JOB_EN: "", PREF_RANK: 0, REMAIN: 0, LEVEL: 0, STR: 0, AGI: 0, DEX: 0, VIT: 0, INT: 0, LUCK: 0, POWER: 0 },
-        { KEY: 4, CODE: "", QUOTE: "", DESCR: "", GROUP_NO: 0, GROUP_ORDER: 0, NICK: "", JOB: "", JOB_KR: "", JOB_EN: "", PREF_RANK: 0, REMAIN: 0, LEVEL: 0, STR: 0, AGI: 0, DEX: 0, VIT: 0, INT: 0, LUCK: 0, POWER: 0 },
-        { KEY: 5, CODE: "", QUOTE: "", DESCR: "", GROUP_NO: 0, GROUP_ORDER: 0, NICK: "", JOB: "", JOB_KR: "", JOB_EN: "", PREF_RANK: 0, REMAIN: 0, LEVEL: 0, STR: 0, AGI: 0, DEX: 0, VIT: 0, INT: 0, LUCK: 0, POWER: 0 },
-        { KEY: 6, CODE: "", QUOTE: "", DESCR: "", GROUP_NO: 0, GROUP_ORDER: 0, NICK: "", JOB: "", JOB_KR: "", JOB_EN: "", PREF_RANK: 0, REMAIN: 0, LEVEL: 0, STR: 0, AGI: 0, DEX: 0, VIT: 0, INT: 0, LUCK: 0, POWER: 0 },
-        { KEY: 7, CODE: "", QUOTE: "", DESCR: "", GROUP_NO: 0, GROUP_ORDER: 0, NICK: "", JOB: "", JOB_KR: "", JOB_EN: "", PREF_RANK: 0, REMAIN: 0, LEVEL: 0, STR: 0, AGI: 0, DEX: 0, VIT: 0, INT: 0, LUCK: 0, POWER: 0 },
-        { KEY: 8, CODE: "", QUOTE: "", DESCR: "", GROUP_NO: 0, GROUP_ORDER: 0, NICK: "", JOB: "", JOB_KR: "", JOB_EN: "", PREF_RANK: 0, REMAIN: 0, LEVEL: 0, STR: 0, AGI: 0, DEX: 0, VIT: 0, INT: 0, LUCK: 0, POWER: 0 }
-    ],
-    GROUPS: {
-        NO1 : {
-            GROUP_POWER: 0,
-            GROUP_RANK: 0,
-            MEMBERS: [
-                { CODE: "", POWER: 0 },
-                { CODE: "", POWER: 0 }
-            ]
-        },
-        NO2 : {
-            GROUP_POWER: 0,
-            GROUP_RANK: 0,
-            MEMBERS: [
-                { CODE: "", POWER: 0 },
-                { CODE: "", POWER: 0 }
-            ]
-        },
-        NO3 : {
-            GROUP_POWER: 0,
-            GROUP_RANK: 0,
-            MEMBERS: [
-                { CODE: "", POWER: 0 },
-                { CODE: "", POWER: 0 }
-            ]
-        }
-      }
-  });
-  const cardObj = { CODE: "", QUOTE: "", DESCR: "", GROUP_NO: 0, GROUP_ORDER: 0, NICK: "", JOB_KR: "", JOB_EN: "", PREF_RANK: 0, REMAIN: 0, LEVEL: 0, STR: 0, AGI: 0, DEX: 0, VIT: 0, INT: 0, LUCK: 0, POWER: 0 };
-  const groupObj = {
-      GROUP_POWER: 0,
-      GROUP_RANK: 0,
-      MEMBERS: [
-          { CODE: "", POWER: 0 },
-          { CODE: "", POWER: 0 }
-      ]
-  }
+const Home = ({login, cards, setCards }) => {
+  const [ mainCard, setMainCard ] = useState(setInitDatas("MAIN_CARD"));
 
   const [ selectBoxes, setSelectBox ] = useState({ FRD : { show: false } });
   const mainPopup = useRef(false);
+  const navigate = useNavigate();
 
   const handlePopup = (evt) => {
     if(login){
@@ -89,42 +44,46 @@ const Home = ({login}) => {
     })
   }
 
-  const handleCardUpdate = (result) => {
-    if(!login.state) alert("로그인 후 이용가능하십니다."); // 로그인 페이지로 이동??
-    const cardObj = {
-      USER_ID: login["ID"], USER_NAME: login["NAME"],
-      CODE: result["code"],
-      QUOTE: "",
-      DESCR: "",
-      GROUP_NO: 0, 
-      GROUP_ORDER: 0, 
-      NICK: result["nickName"],
-      JOB_KR: result["jobKR"],
-      JOB_EN: result["jobEN"],
-      PREF_RANK: 0,
-      REMAIN: 0,
-      LEVEL: result["level"],
-      STR: result.stats["STR"], AGI: result.stats["AGI"], DEX: result.stats["DEX"], VIT: result.stats["VIT"], INT: result.stats["INT"], LUCK: result.stats["LUCK"],
-      POWER: (result.stats["STR"] + result.stats["AGI"] + result.stats["DEX"] + result.stats["VIT"] + result.stats["INT"] + result.stats["LUCK"])
-    };
+  const keepSelectedCard = async (result) => {
+    const POWER = mainCard.STATS.STR + mainCard.STATS.AGI + mainCard.STATS.DEX + mainCard.STATS.VIT + mainCard.STATS.INT + mainCard.STATS.LUCK;
+    if(login.state){
+      if(cards.CARDS.length < 8){
+        const write = await db.writeNewData("USER_CARDS", login.ID, {...mainCard, USER_ID: String(login.ID), USER_NAME: login.NAME, POWER});
+        
+        setCards((cards) => {
+          const updated = { ...cards };
+          updated["DAILY_CNT"] = updated.DAILY_CNT - 1;
+          updated["CARDS"] = [ ...updated.CARDS, { ...mainCard, POWER } ];
+          return updated
+        });
 
-    console.log(cardObj);
+        setCookie("PREV_INFO", "", -1);
+      }else{
+        alert("카드는 최대 8개까지만 보유할 수 있습니다.");
+      }
+    }else{
+      const str = JSON.stringify(result).replace(/[\{\}\[\]\;|\~`\"]/g, "").replace("STATS:", "").replace(/https:/g, "");
+      setCookie("PREV_INFO", str, 1);
+      alert("로그인 후 보관하실 수 있습니다.\n로그인 페이지로 이동합니다.");
+      navigate("/login", { replace: true });
+    }
   }
-
 
   return (
     <HomePage onClick={handlePopup}>
       <SectionMain
-        handleCardUpdate={handleCardUpdate}
+        mainCard={mainCard}
+        setMainCard={setMainCard}
+        keepSelectedCard={keepSelectedCard}
         login={login} />
       <SectionFrdSearch 
         login={login}
         mainPopup={mainPopup}
         sOpen={selectBoxes.FRD.show}
         handleSelectBoxes ={handleSelectBoxes } />
-      <SectionStorage
+      {/* <SectionStorage
         cards={cards}
-        login={login}/>
+        login={login}/> */}
     </HomePage>
   )
 }

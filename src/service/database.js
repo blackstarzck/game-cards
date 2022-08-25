@@ -16,17 +16,17 @@ class Database {
         const docRef = doc(this.db, tableName, docName);
         const document = await getDoc(docRef);
         const result = document.data();
-        console.log(`2 [get] tableName: ${tableName}, docName: ${docName}`, result);
+        console.log(`[get] tableName: ${tableName}, docName: ${docName}`, result);
         func && func(result);
         return result;
     }
 
     writeNewData(tableName, docum, input, func){
         if(!docum){ alert(`${tableName} docName이 공백입니다.`); return  }
-        console.log(`0 [write2] tableName: ${tableName}, docName: ${docum} input: `, input);
+        // console.log(`0 [write2] tableName: ${tableName}, docName: ${docum} input: `, input);
 
         const docName = String(docum);
-        let obj;
+        let inputData, obj;
 
         this.getSingleData(tableName, docName)
         .then((result) => {
@@ -43,7 +43,7 @@ class Database {
                         }
                     }
                     if(!doubleCheck){
-                        const inputData = result ? 
+                        inputData = result ? 
                             [ ...result.data, { ALARM_TYPE : input.alarm_type, READ_STATE : "N",RESULT : "N",TIME_STAMP : new Date(),TRG_ID : input.id, TRG_NAME : input.name,TRG_UID : "" }] :
                             [ { ALARM_TYPE : input.alarm_type, READ_STATE : "N",RESULT : "N",TIME_STAMP : new Date(),TRG_ID : input.id, TRG_NAME : input.name,TRG_UID : "" }];
                         obj = {
@@ -56,7 +56,7 @@ class Database {
                     }
                 break;
                 case "USER_LOG" :
-                    const inputData = result ? 
+                    inputData = result ? 
                         [ ...result.LOG, { STATUS: input.inOut, TIME_STAMP: new Date() } ] :
                         [ { STATUS: input.inOut, TIME_STAMP: new Date() } ];
                     obj = {
@@ -80,6 +80,35 @@ class Database {
                         USER_NAME : input.name,
                         USER_PW : input.pwd ? input.pwd : ""
                     }
+                break;
+                case "USER_CARDS" :
+                    const { USER_ID, USER_NAME, POWER, NICK, JOB_KR, JOB_EN, LEVEL, EXP, GROUP_NO, STATS, REMAIN, CODE, DESCR, QUOTE, SELECTED, IMG_URL } = input;
+                    const { AGI, DEX, INT, STR, VIT, LUCK } = input.STATS;
+                    const idx = result ? (result.CARDS.length + 1) : 1;
+                    const newObj = { KEY: idx, GROUP_ORDER: idx, PREF_RANK: 0, POWER, NICK, JOB_KR, JOB_EN, LEVEL, EXP, GROUP_NO, REMAIN, CODE, DESCR, QUOTE, SELECTED, IMG_URL, AGI, DEX, INT, STR, VIT, LUCK };
+                    inputData = result ?  [ ...result.CARDS, newObj ] : [ newObj ];
+                    obj = {
+                        DAILY_CNT: 5,
+                        UID: "", USER_ID, USER_NAME,
+                        CARDS: inputData,
+                        GROUPS: {
+                            NO1 : {
+                                GROUP_POWER: 0,
+                                GROUP_RANK: 0,
+                                MEMBERS: []
+                            },
+                            NO2 : {
+                                GROUP_POWER: 0,
+                                GROUP_RANK: 0,
+                                MEMBERS: []
+                            },
+                            NO3 : {
+                                GROUP_POWER: 0,
+                                GROUP_RANK: 0,
+                                MEMBERS: []
+                            }
+                        }
+                    };
                 break;
             }
             
@@ -119,7 +148,7 @@ class Database {
             break;
         }
 
-        console.log(`[write2] tableName: ${tableName}, docName: ${docum} input: `, input, obj);
+        // console.log(`[write2] tableName: ${tableName}, docName: ${docum} input: `, input, obj);
       
         setDoc(doc(this.db, tableName, docum), obj).then(() => {
             func && func();

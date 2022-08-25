@@ -1,5 +1,4 @@
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut  } from "firebase/auth";
-import { setCookie } from "../util/util";
 import Database from "./database";
 
 const auth = getAuth();
@@ -9,10 +8,10 @@ export function firebaseLoginCheck(){
     return new Promise((resolve) => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                console.log("[O] 파이어베이스 로그인입니다.", user);
+                // console.log("[O] 파이어베이스 로그인입니다.", user);
                 resolve({ ...user, REGI_TYPE: "GOOGLE" });
             } else {
-                console.log("[X] 파이어베이스 로그인이 아닙니다.", user);
+                // console.log("[X] 파이어베이스 로그인이 아닙니다.", user);
             }
         });
     });
@@ -38,15 +37,14 @@ export function firebaseLogin(redirectFunc){
                 auto: false
             }
   
-            console.log("파이어베이스 유저정보: ", result);
+            // console.log("파이어베이스 유저정보: ", result);
 
-            // setCookie("U_INFO", JSON.stringify(userData).replace(/[\{\}\[\]\/?.;|\~`\"]/g, ""), 1);
             db.writeNewData("USER_LOG", result.user.email, data);
             db.writeNewData("USERS", result.user.email, data, redirectFunc);
             resolve({ ...result, REGI_TYPE: "GOOGLE" });
 
         }).catch((error) => {
-            console.log("파이어베이스 로그인 에러: ", error);
+            // console.log("파이어베이스 로그인 에러: ", error);
         });
     });
 }
@@ -55,12 +53,12 @@ export function firebaseLogOut(data){
     return new Promise((resolve)=> {
         signOut(auth).then(() => {
                 // Sign-out successful.
-                console.log("파이어베이스 로그아웃 data: ", data);
+                // console.log("파이어베이스 로그아웃 data: ", data);
                 db.writeNewData("USER_LOG", data.id, data);
                 resolve(true);
             }).catch((error) => {
                 // An error happened.
-                console.log("파이어베이스 로그아웃 에러: ", error);
+                // console.log("파이어베이스 로그아웃 에러: ", error);
             });
     });
 }

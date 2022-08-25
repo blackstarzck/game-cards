@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Background, PopupDescr, PopupMain } from "./Popups.elements";
+import { Background, NoticeStyle, PopupDescr, PopupMain } from "./Popups.elements";
 import { gsap } from "gsap"
 import { ButtonYes, ButtonNo } from "../Button/Button";
 import Database from "../../service/database";
+import { useInterval } from "../../hooks/hooks";
 
 const db = new Database();
 
@@ -69,7 +70,15 @@ export const DescrPopup = ({statName, visible, popup, setPopup}) => {
     );
 }
 
-export const MainPopup = ({login, data, popup, setPopup, handleSelectBoxes, mainPopup, searchResult}) => {
+export const MainPopup = ({
+        login,              // 로그인 여부
+        data,               // 팝업 내용 작성
+        popup,              // 매인팝업의 상태유무
+        setPopup,           // 메인팝업 제어
+        handleSelectBoxes,  // 셀렉트박스 제어
+        mainPopup,          // 메인팝업 요소 셀렉터
+        searchResult        // 친구찾기 결과 데이터
+    }) => {
     const handleClick = async (state) => {
         setPopup(false);
         const frdObj = { ...searchResult, alarm_type: "FRD_REQ_SENT" };
@@ -144,3 +153,47 @@ export const MainPopup = ({login, data, popup, setPopup, handleSelectBoxes, main
 }
 
 export const DimmbedBg = ({popup}) => <Background active={popup} className={`dimmed-bg}`}></Background>;
+
+export const Notice = ({notice, setNotice, mainCard}) => {
+    const init = 4;
+    const [ count, setCount ] = useState(init);
+    const noticeRef = useRef();
+    const boxRef = useRef();
+
+    const handleClose = () => {
+        setCount(init);
+        setNotice(false);
+    }
+    
+    useEffect(() => {
+        const countDown = notice && setTimeout(() => {
+            setCount(init + 1);
+            setNotice(false);
+        }, init * 1000);
+
+        const timer = notice && setInterval(() => {
+            setCount(value => {
+                if(value === 0){
+                    clearInterval(timer);
+                }else{
+                    return value - 1;
+                }
+            });
+        }, 1000);
+        return () => {
+            clearInterval(timer);
+            clearTimeout(countDown)
+        }
+    }, [notice]);
+
+
+    return(
+        <NoticeStyle ref={noticeRef} notice={notice} onClick={handleClose}>
+            <div className="inner-box">
+                <span className="main-text">
+                    <b className="strong">{mainCard.NICK}</b>를(을) <br /> 보관하였습니다.</span>
+                <span className="timer">{count}</span>
+            </div>
+        </NoticeStyle>
+    );
+}
