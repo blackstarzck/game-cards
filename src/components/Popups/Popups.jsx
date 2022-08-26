@@ -152,7 +152,7 @@ export const MainPopup = ({
     );
 }
 
-export const DimmbedBg = ({popup}) => <Background active={popup} className={`dimmed-bg}`}></Background>;
+export const DimmbedBg = ({popup}) => <Background active={popup} className={`dimmed-bg`}></Background>;
 
 export const Notice = ({notice, setNotice, mainCard}) => {
     const init = 4;

@@ -72,10 +72,9 @@ export const ButtonSaveTitle = ({handleEditState, updateCard, names, mainCard })
   );
 }
 
-export const ButtonTextClear = ({className, setInputVal, target, updateCard}) => {
+export const ButtonTextClear = ({className, setInputVal, target}) => {
   const onClick = () => {
     setInputVal("");
-    updateCard({ key: "NICK", value: "" });
   }
   return(
     <ClearButton className={className} name={target} onClick={onClick} >
@@ -122,9 +121,11 @@ export const ButtonViewInfo = ({imgLoaded, viewCardInfo}) => {
 }
 
 export const ButtonKeepCard = ({imgLoaded, mainCard, keepSelectedCard, notice, setNotice}) => {
-  const handleClick = () => {
-    imgLoaded && keepSelectedCard(mainCard);
-    imgLoaded && setNotice(!notice);
+  const handleClick = async () => {
+    const select = imgLoaded && await keepSelectedCard(mainCard);
+    select && setNotice(!notice);
+
+    console.log("보관결과(select): ", select);
   }
   return(
     <KeepButton imgLoaded={imgLoaded} onClick={handleClick}>보관하기</KeepButton>

@@ -23,10 +23,12 @@ function App() {
   const loginProcessCheck = () => {
     const sStorage = emailLoginCheck();
     if(sStorage && !login.state){
+      // console.log("이메일로 로그인했습니다. ")
       setLogin({ID: sStorage.id, NAME: sStorage.name, EMAIL: sStorage.email, REGI_TYPE: "EMAIL", state: true});
     }
 
     const kakao = kakaoLoginCheck().then((result) => {
+      // console.log("카카오로 로그인했습니다.", result)
       result && setLogin(login => {
         const updated = { ...login };
         updated["ID"] = result.id;
@@ -40,6 +42,7 @@ function App() {
     });
 
     const firebase = firebaseLoginCheck().then((result) => {
+      // console.log("파이어베이스로 로그인했습니다.", result)
       result && setLogin(login => {
         const updated = { ...login };
         updated["ID"] = result.email;
@@ -51,12 +54,30 @@ function App() {
       });
       return
     });
+
   }
 
   const getInitTableDatas = async () => { // 초기 데이터 설정
     const USER_ID = login.ID, USER_NAME = login.NAME; 
     const USER_CARDS = await db.getSingleData("USER_CARDS", USER_ID);
-    USER_CARDS && setCards({ ...USER_CARDS, USER_ID, USER_NAME });
+    const max = 8;
+    const set = USER_CARDS ? USER_CARDS.CARDS.length : 0;
+    const tempArray = [];
+
+    console.log("USER_CARDS: ", USER_CARDS);
+
+    // for(let i = 1; i <= set; i++){
+    //   let { KEY, CODE, QUOTE, DESCR, GROUP_NO, GROUP_ORDER, NICK, JOB_KR, JOB_EN, PREF_RANK, REMAIN, LEVEL, STATS, POWER } = USER_CARDS.CARDS[i-1];
+    //   tempArray.push({ KEY, CODE, QUOTE, DESCR, GROUP_NO, GROUP_ORDER, NICK, JOB_KR, JOB_EN, PREF_RANK, REMAIN, LEVEL, STATS, POWER });
+    // }
+    // for(let n = 1; n <= (max - set); n++){
+    //   tempArray.push({ KEY: (set ? set+n : n ), CODE: "", QUOTE: "", DESCR: "", GROUP_NO: 0, GROUP_ORDER: 0, NICK: "", JOB: "", JOB_KR: "", JOB_EN: "", PREF_RANK: 0, REMAIN: 0, LEVEL: 0, STATS: { STR: 0, AGI: 0, DEX: 0, VIT: 0, INT: 0, LUCK: 0 }, POWER: 0 });
+    // }
+    // console.log("tempArray: ", tempArray);
+    // setCards({ ...cards, USER_ID, USER_NAME, CARDS: tempArray });
+    if(USER_CARDS) setCards((cards) => USER_CARDS);
+    if(!USER_CARDS) setCards(setInitDatas("USER_CARDS"));
+    
   }
 
   useEffect(() => {
@@ -69,7 +90,7 @@ function App() {
 
     if(login.state){
       getInitTableDatas();
-      setCards({...cards, USER_ID: login.ID, USER_NAME: login.NAME })
+      // setCards({...cards, USER_ID: login.ID, USER_NAME: login.NAME })
     }
   }, [login]);
 

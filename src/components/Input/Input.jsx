@@ -87,7 +87,6 @@ export const JobLists = ({ list, clickState, handleDropDown, handleNames }) => {
     }, []);
 
     useEffect(() => {
-        console.log("toggle: ", toggle);
         toggle ? tl.current.play() : reverseFun();
     },[toggle]);
 

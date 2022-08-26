@@ -36,7 +36,11 @@ class Database {
                 case "ALARM_TABLE" :
                     if(result && result.data.length > 0){
                         for(let i = 0; i < result.data.length; i++){
-                            if(result.data[i].TRG_ID == input.id && result.data[i].TRG_NAME == input.name){
+                            if(
+                                result.data[i].TRG_ID == input.id &&
+                                result.data[i].TRG_NAME == input.name &&
+                                result.data[i].ALARM_TYPE == input.alarm_type
+                            ){
                                 doubleCheck = true;
                                 break;
                             }
@@ -82,33 +86,34 @@ class Database {
                     }
                 break;
                 case "USER_CARDS" :
-                    const { USER_ID, USER_NAME, POWER, NICK, JOB_KR, JOB_EN, LEVEL, EXP, GROUP_NO, STATS, REMAIN, CODE, DESCR, QUOTE, SELECTED, IMG_URL } = input;
-                    const { AGI, DEX, INT, STR, VIT, LUCK } = input.STATS;
-                    const idx = result ? (result.CARDS.length + 1) : 1;
-                    const newObj = { KEY: idx, GROUP_ORDER: idx, PREF_RANK: 0, POWER, NICK, JOB_KR, JOB_EN, LEVEL, EXP, GROUP_NO, REMAIN, CODE, DESCR, QUOTE, SELECTED, IMG_URL, AGI, DEX, INT, STR, VIT, LUCK };
-                    inputData = result ?  [ ...result.CARDS, newObj ] : [ newObj ];
-                    obj = {
-                        DAILY_CNT: 5,
-                        UID: "", USER_ID, USER_NAME,
-                        CARDS: inputData,
-                        GROUPS: {
-                            NO1 : {
-                                GROUP_POWER: 0,
-                                GROUP_RANK: 0,
-                                MEMBERS: []
-                            },
-                            NO2 : {
-                                GROUP_POWER: 0,
-                                GROUP_RANK: 0,
-                                MEMBERS: []
-                            },
-                            NO3 : {
-                                GROUP_POWER: 0,
-                                GROUP_RANK: 0,
-                                MEMBERS: []
-                            }
-                        }
-                    };
+                    // const { USER_ID, USER_NAME, POWER, NICK, JOB_KR, JOB_EN, LEVEL, EXP, GROUP_NO, STATS, REMAIN, CODE, DESCR, QUOTE, SELECTED, IMG_URL } = input;
+                    // // const { AGI, DEX, INT, STR, VIT, LUCK } = input.STATS;
+                    // const idx = result ? (result.CARDS.length + 1) : 1;
+                    // const newObj = { KEY: idx, GROUP_ORDER: idx, PREF_RANK: 0, POWER, NICK, JOB_KR, JOB_EN, LEVEL, EXP, GROUP_NO, REMAIN, CODE, DESCR, QUOTE, SELECTED, IMG_URL, STATS };
+                    // inputData = result ?  [ ...result.CARDS, newObj ] : [ newObj ];
+                    // obj = {
+                    //     DAILY_CNT: 5,
+                    //     UID: "", USER_ID, USER_NAME,
+                    //     CARDS: inputData,
+                    //     GROUPS: {
+                    //         NO1 : {
+                    //             GROUP_POWER: 0,
+                    //             GROUP_RANK: 0,
+                    //             MEMBERS: []
+                    //         },
+                    //         NO2 : {
+                    //             GROUP_POWER: 0,
+                    //             GROUP_RANK: 0,
+                    //             MEMBERS: []
+                    //         },
+                    //         NO3 : {
+                    //             GROUP_POWER: 0,
+                    //             GROUP_RANK: 0,
+                    //             MEMBERS: []
+                    //         }
+                    //     }
+                    // };
+                    obj = input;
                 break;
             }
             

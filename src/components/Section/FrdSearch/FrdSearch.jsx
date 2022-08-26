@@ -122,17 +122,25 @@ export const SrchResult = ({login, loading, sOpen, searchResult, setPopup, handl
 }
 
 export const ListBox = ({login, searchResult, setPopup, handleSelectBoxes, mainPopup}) => {
-    const dataArray = useData("ALARM_TABLE", login.ID);
+    const [ myHistory, setMyHistory ] = useState();
     const listRef = useRef(null);
+
+    const getAlarmHist = async () => {
+        const history = await data.getSingleData("ALARM_TABLE", login.ID);
+        setMyHistory(history);
+    }
 
     const handleClick = ()=> {
         console.log("listRef.current.value: ", listRef.current);
-        console.log("dataArray: ", dataArray);
+        console.log("myHistory: ", myHistory);
         console.log("searchResult: ", searchResult);
 
-        if(dataArray && dataArray.data.length > 0){
-            for(let i = 0; i < dataArray.data.length; i++){
-                if(dataArray.data[i].TRG_ID === searchResult.id){
+        if(myHistory && myHistory.data.length > 0){
+            for(let i = 0; i < myHistory.data.length; i++){
+                if(
+                    myHistory.data[i].TRG_ID === searchResult.id &&
+                    myHistory.data[i].ALARM_TYPE === "FRD_REQ_SENT"
+                ){
                     alert("이미 친구신청하였습니다.");
                     return;
                 }
@@ -146,6 +154,10 @@ export const ListBox = ({login, searchResult, setPopup, handleSelectBoxes, mainP
             mainPopup.current = true;
         }
     }
+
+    useEffect(() => {
+        getAlarmHist();
+    }, [searchResult]);
 
     return(
         <div className="list-wrapper">

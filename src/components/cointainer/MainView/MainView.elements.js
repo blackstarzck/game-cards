@@ -7,6 +7,7 @@ export const Wrapper = styled.div`
         background-color: ${ ({theme}) => theme.colors.realWhite };
         border-radius: 5px;
         position: relative;
+        box-shadow: ${ props => props.theme.boxShadow.default };
     }
     &.edit-wrapper, &.select-wrapper {
         /* display: flex; */

@@ -46,20 +46,35 @@ const Home = ({login, cards, setCards }) => {
 
   const keepSelectedCard = async (result) => {
     const POWER = mainCard.STATS.STR + mainCard.STATS.AGI + mainCard.STATS.DEX + mainCard.STATS.VIT + mainCard.STATS.INT + mainCard.STATS.LUCK;
+    let cnt = 0;
     if(login.state){
-      if(cards.CARDS.length < 8){
-        const write = await db.writeNewData("USER_CARDS", login.ID, {...mainCard, USER_ID: String(login.ID), USER_NAME: login.NAME, POWER});
+      cards.CARDS.map((card) => {
+        if(card.CODE) cnt++;
+      });
+
+      if(cnt < 8){
+        console.log("write mainCard: ", cards);
+        const write = await db.writeNewData("USER_CARDS", login.ID, {...cards});
         
         setCards((cards) => {
           const updated = { ...cards };
           updated["DAILY_CNT"] = updated.DAILY_CNT - 1;
-          updated["CARDS"] = [ ...updated.CARDS, { ...mainCard, POWER } ];
+
+          for(let i = 0; i < updated.CARDS.length; i++){
+            if(!updated.CARDS[i].CODE){
+              updated.CARDS[i] = { ...updated.CARDS[i], ...mainCard, POWER }
+              console.log(updated.CARDS[i]);
+              break;
+            }
+          }
           return updated
         });
 
         setCookie("PREV_INFO", "", -1);
+        return true
       }else{
         alert("카드는 최대 8개까지만 보유할 수 있습니다.");
+        return null;
       }
     }else{
       const str = JSON.stringify(result).replace(/[\{\}\[\]\;|\~`\"]/g, "").replace("STATS:", "").replace(/https:/g, "");
@@ -81,9 +96,10 @@ const Home = ({login, cards, setCards }) => {
         mainPopup={mainPopup}
         sOpen={selectBoxes.FRD.show}
         handleSelectBoxes ={handleSelectBoxes } />
-      {/* <SectionStorage
+      <SectionStorage
         cards={cards}
-        login={login}/> */}
+        setCards={setCards}
+        login={login}/>
     </HomePage>
   )
 }

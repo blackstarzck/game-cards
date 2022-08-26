@@ -37,7 +37,7 @@ export function firebaseLogin(redirectFunc){
                 auto: false
             }
   
-            // console.log("파이어베이스 유저정보: ", result);
+            console.log("파이어베이스 유저정보: ", result);
 
             db.writeNewData("USER_LOG", result.user.email, data);
             db.writeNewData("USERS", result.user.email, data, redirectFunc);

@@ -7,13 +7,91 @@ import { ButtonCardDelete, ButtonCardInfo, ButtonSelectCard } from '../../Button
 import { gsap } from "gsap"
 import { faCirclePlus } from '@fortawesome/pro-solid-svg-icons'
 import { detectGIF } from '../../../util/util'
+import Database from '../../../service/database'
 
-const Card = ({login, info}) => {
+const db = new Database();
+
+const Card = ({login, info, cards, setCards}) => {
     const [ detailVisible, setDetailVisible ] = useState(false);
     const [ groupVisible, setGroupVisible ] = useState(false);
 
     const showCardDetail = () => setDetailVisible(!detailVisible);
-    const showGroupSelectBox = () => { login.state && setGroupVisible(!groupVisible); }
+
+    const showGroupSelectBox = (number) => { 
+        if(login.state){
+            setGroupVisible(!groupVisible);
+
+            const copied = {...cards};
+            console.log(copied);
+            
+            if(typeof number === "number"){
+                const { KEY, CODE, POWER } = info;
+                const { STR, AGI, DEX, VIT, INT, LUCK } = info.STATS;
+                // const copied = { ...cards };
+                const obj = { ...info, GROUP_NO: number }; // CARDS에 넣을 정보: 선택한 카드의 그룹 넘버를 우선 변경해야 한다.
+                const newObj =  { KEY, CODE, POWER, STR, AGI, DEX, VIT, INT, LUCK }; // GROUP에 넣을 정보
+                const cards = copied["CARDS"];
+                const power = copied["GROUPS"][`NO${number}`]["GROUP_POWER"];
+                const members = copied["GROUPS"][`NO${number}`]["MEMBERS"];
+                const groups = [ "NO1", "NO2", "NO3" ];
+                let newMembers = [];
+                let powerSum = 0;
+                let temp;
+
+                if(members.length < 3){
+                    for(let n = 0; n < cards.length; n++){
+                        if(cards[n]["KEY"] === info["KEY"]){
+                            cards[n] = obj;
+                        }
+                    }
+
+                    for(let m = 0; m < groups.length; m++){
+                        if(groups[m] !== `NO${number}`){
+                            let sum = 0;
+                            temp = copied["GROUPS"][`${groups[m]}`]["MEMBERS"];
+
+                            for(let z = 0; z < temp.length; z++){
+                                if(temp[z]["KEY"] === newObj["KEY"]){
+                                    copied["GROUPS"][`${groups[m]}`]["MEMBERS"].splice(z, 1);   
+                                }
+                                sum = sum + (temp[z] ? temp[z]["POWER"] : 0 );
+                                // console.log("temp: ", temp[z]);
+                            }
+                            copied["GROUPS"][`${groups[m]}`]["GROUP_POWER"] = sum;
+                        }
+                    }
+                    
+                    if(members.length > 0){
+                        for(let t = 0; t < members.length; t++){
+                            if(members[t]["KEY"] !== newObj["KEY"]){
+                                newMembers = [ ...members, newObj ];
+                            }else{
+                                newMembers = members;
+                            }
+                        }
+                    }else{
+                        newMembers = [ ...members, newObj ]
+                    }
+
+                    for(let i = 0; i < newMembers.length; i++ ){
+                        powerSum = powerSum + newMembers[i]["POWER"];
+                    }
+
+                    copied["CARDS"] = cards;
+                    copied["GROUPS"][`NO${number}`]["MEMBERS"] = newMembers;
+                    copied["GROUPS"][`NO${number}`]["GROUP_POWER"] = powerSum;
+
+                    console.log(copied);
+                    setCards(cards => cards = copied);
+                    db.writeNewData("USER_CARDS", login.ID, copied);
+                }else{
+                    if(info["GROUP_NO"] !== number){
+                        alert(`그룹 ${number}번에 추가할 수 없습니다.`);
+                    }
+                }
+            }
+        }
+    }
 
     const [ load, setLoad ] = useState({ url: "", state: false });
 
@@ -23,6 +101,8 @@ const Card = ({login, info}) => {
                 login={login}
                 info={info}
                 load={load}
+                cards={cards}
+                setCards={setCards}
                 setLoad={setLoad}
                 groupVisible={groupVisible}
                 showGroupSelectBox={showGroupSelectBox}
@@ -81,7 +161,7 @@ export const CardView = ({login, info, detailVisible, groupVisible, showGroupSel
                 {/* 카드 정보 */}
                 { login.state && <CardDetails
                     info={info}
-                    detailVisible={detailVisible}/> }
+                    detailVisible={detailVisible} /> }
             </div>
         </ViewStyle>
     );
@@ -122,9 +202,9 @@ export const GrounpSelect = ({info, groupVisible, showGroupSelectBox}) => {
             </div>
             <div ref={el} className="group-select-box">
                 <ul>
-                    <li onClick={showGroupSelectBox} className="group-numb">1</li>
-                    <li onClick={showGroupSelectBox} className="group-numb">2</li>
-                    <li onClick={showGroupSelectBox} className="group-numb">3</li>
+                    <li onClick={() => showGroupSelectBox(1)} className="group-numb">1</li>
+                    <li onClick={() => showGroupSelectBox(2)} className="group-numb">2</li>
+                    <li onClick={() => showGroupSelectBox(3)} className="group-numb">3</li>
                 </ul>
             </div>
         </div>
@@ -164,12 +244,12 @@ export const CardDetails = ({info, detailVisible}) => {
                 <div className="top">
                     <div className="left">
                         <ul>
-                            <li className="row"><span>STR</span><span>{info.STR}</span></li>
-                            <li className="row"><span>AGI</span><span>{info.AGI}</span></li>
-                            <li className="row"><span>DEX</span><span>{info.DEX}</span></li>
-                            <li className="row"><span>VIT</span><span>{info.VIT}</span></li>
-                            <li className="row"><span>INT</span><span>{info.INT}</span></li>
-                            <li className="row"><span>LUCK</span><span>{info.LUCK}</span></li>
+                            <li className="row"><span>STR</span><span>{info.STATS.STR}</span></li>
+                            <li className="row"><span>AGI</span><span>{info.STATS.AGI}</span></li>
+                            <li className="row"><span>DEX</span><span>{info.STATS.DEX}</span></li>
+                            <li className="row"><span>VIT</span><span>{info.STATS.VIT}</span></li>
+                            <li className="row"><span>INT</span><span>{info.STATS.INT}</span></li>
+                            <li className="row"><span>LUCK</span><span>{info.STATS.LUCK}</span></li>
                         </ul>
                     </div>
                     <div className="right">
@@ -195,7 +275,7 @@ export const CardText = ({login, info, load}) => {
                         <>
                             <div className="name-wrapper">
                                 <span className="nick-name">{info.NICK || "-"}</span>
-                                <span className="job-name">{info.JOB || "-"}</span>
+                                <span className="job-name">{info.JOB_EN || "-"}</span>
                             </div>
                             <div className="level-wrapper">
                                 <span><b>Lv.</b>{info.LEVEL}</span>

@@ -33,7 +33,7 @@ export const FilterContainer = styled.div`
     display: flex;
 
     .heading {
-        width: 65px;
+        width: 75px;
         font-size: 18px;
         line-height: 40px;
         height: 40px;
@@ -57,6 +57,9 @@ export const FilterContainer = styled.div`
 export const FilterWrapper = styled.ul`
     width: 490px;
     display: flex;
+    margin-left: 15px;
+    
+    button.active { font-weight: 700 }; 
 
     li {
         width: calc(100% / 6);

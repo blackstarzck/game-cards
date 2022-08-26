@@ -7,11 +7,13 @@ const db = new Database;
 export function kakaoLoginCheck(){
     return new Promise((resolve) => {
         const token = Kakao.Auth.getAccessToken();
+        console.log("카카오 토큰정보: ", token);
         if(token){
             // console.log("[O] 카카오로 로그인하였습니다.");
             Kakao.API.request({
                 url: '/v2/user/me',
                 success: function(result) {
+                    console.log("카카오 유저 정보: ", result);
                     resolve({ ...result, REGI_TYPE: "KAKAO" });
                 }
             });

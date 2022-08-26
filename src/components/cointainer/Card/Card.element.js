@@ -6,6 +6,7 @@ export const CardContainer = styled.li`
     height: 390px;
     background-color: ${ props => props.theme.colors.realWhite };
     border-radius: 5px;
+    box-shadow: ${ props => props.theme.boxShadow.default };
 
     @media screen and (max-width: 1200px){
         & { width: 100%; }
@@ -83,7 +84,7 @@ export const ViewStyle = styled.div`
         img {
             opacity: 0;
             vertical-align: top;
-            height: 80%;
+            max-height: 80%;
             animation: show .5s ease;
             animation-fill-mode: forwards;
         }
@@ -105,6 +106,7 @@ export const ViewStyle = styled.div`
     }
 
     .card-details-wrapper {
+        width: 100%;
         font-family: "Montserrat", sans-serif;
         background-color: rgba(0, 0, 0, .7);
         border-radius: 5px;
@@ -145,8 +147,9 @@ export const ViewStyle = styled.div`
         .bottom {
             padding: 0 16px 16px 16px;
             font-family: "Noto Sans KR", sans-serif;
+            text-align: center;
 
-            span.quote { display: block; width: 100%; font-size: 18px; font-weight: 500; text-align: center; border-top: 1px solid #ffffff; padding-top: 20px; };
+            span.quote { display: block; width: 100%; font-size: 18px; font-weight: 500; border-top: 1px solid #ffffff; padding-top: 20px; };
             p.descr { width: 100%; font-size: 14px; font-weight: 300; line-height: 22px; color: #d7d7d7; word-break: break-all; margin-top: 20px; }
         }
     }
