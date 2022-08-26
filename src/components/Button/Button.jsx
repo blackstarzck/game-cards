@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { UploadButton, RecruitButton, GetButton, EditTitleButton, SaveTitleButton, ClearButton, ArrowDownButton, AddButton, RemoveButton, ResetButton, SaveButton, ViewButton, KeepButton, LevelUpButton, StatButton, SkillButton, SearchButton, YesButton, NoButton, LoginButton, GoogleButton, KakaoButton, NaverButton, EyeOpenButton, EyeCloseButton, SignButton, InfoButton, DeleteButton, SelectCardButton } from './Button.elements'
+import { UploadButton, RecruitButton, GetButton, EditTitleButton, SaveTitleButton, ClearButton, ArrowDownButton, AddButton, RemoveButton, ResetButton, SaveButton, ViewButton, KeepButton, LevelUpButton, StatButton, SkillButton, SearchButton, YesButton, NoButton, LoginButton, GoogleButton, KakaoButton, NaverButton, EyeOpenButton, EyeCloseButton, SignButton, InfoButton, DeleteButton, SelectCardButton, BattleButton } from './Button.elements'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFolderMagnifyingGlass, faCards, faCardClub, faPenToSquare, faFloppyDiskPen, faArrowRotateLeft, faFloppyDiskCircleArrowRight, faTrashCan, faMagnifyingGlassPlus } from '@fortawesome/pro-thin-svg-icons'
@@ -228,5 +228,11 @@ export const ButtonCardDelete = () => {
 export const ButtonSelectCard = () => {
   return(
     <SelectCardButton>Lv UP</SelectCardButton>
+  );
+}
+
+export const ButtonBattle = () => {
+  return(
+    <BattleButton>대결준비</BattleButton>
   );
 }

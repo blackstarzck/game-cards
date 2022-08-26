@@ -5,7 +5,6 @@ import { SearchInput } from '../../Input/Input'
 import { FilterContainer, FilterWrapper, StorageSection } from './Storage.element'
 
 const SectionStorage = ({login, cards, setCards}) => {
-    console.log(cards.CARDS);
     return (
         <StorageSection>
             <div className="top">
@@ -29,20 +28,17 @@ const SectionStorage = ({login, cards, setCards}) => {
 
 export default SectionStorage
 
-export const Filter = ({cards, setCards}) => {
+export const Filter = ({login, cards, setCards}) => {
     const [ order, setOrder ] = useState("");
 
     const handleOrder = (priority) => {
-        const tempArr = cards.CARDS.sort(function(a, b) { // 오름차순
+        const tempArr = cards.CARDS.sort(function(a, b) { // 정렬
             return a.STATS[priority] > b.STATS[priority] ? -1 : a.STATS[priority] < b.STATS[priority] ? 1 : 0;
         });
 
         setCards({...cards, CARDS: tempArr });
-        setOrder(order => order = priority);
-        console.log(tempArr);
+        login.state && setOrder(order => order = priority);
     }
-
-    const active = { fontWeight: 700 }
 
     return(
         <FilterContainer>

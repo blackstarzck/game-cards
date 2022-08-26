@@ -10,6 +10,7 @@ export const StorageSection = styled.section`
         align-items: center;
         flex-wrap: wrap;
         padding: 16px 0 16px 16px;
+        margin-bottom: 55px;
     }
     .body {
         width: 100%;

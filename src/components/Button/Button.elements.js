@@ -295,3 +295,14 @@ export const SelectCardButton = styled.button`
     border-radius: 25px;
     box-shadow: ${ props => props.theme.boxShadow.default };
 `;
+
+export const BattleButton = styled.button`
+    width: 100%;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 56px;
+    text-align: center;
+    color: ${ props => props.theme.colors.realWhite };
+    background: ${ props => props.theme.colors.primaryColor };
+    border-radius: 5px;
+`;

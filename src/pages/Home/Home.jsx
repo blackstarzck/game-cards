@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import styled from "styled-components"
 import SectionFrdSearch from '../../components/Section/FrdSearch/FrdSearch';
+import SectionGroup from '../../components/Section/Group/Group';
 import SectionMain from '../../components/Section/Main/Section';
 import SectionStorage from '../../components/Section/Storage/Storage';
 import { setInitDatas } from '../../data/data';
@@ -96,6 +97,10 @@ const Home = ({login, cards, setCards }) => {
         mainPopup={mainPopup}
         sOpen={selectBoxes.FRD.show}
         handleSelectBoxes ={handleSelectBoxes } />
+      <SectionGroup
+        login={login}
+        cards={cards}
+        setCards={setCards} />
       <SectionStorage
         cards={cards}
         setCards={setCards}
