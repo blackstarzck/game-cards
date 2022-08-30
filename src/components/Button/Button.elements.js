@@ -5,6 +5,20 @@ export const DefaultButton = styled.button`
     box-shadow: ${ ({ theme }) => theme.boxShadow.default };
 `;
 
+export const ScrollUpButton = styled.button`
+    position: fixed;
+    right: 20px;
+    bottom: 100px;
+    width: 70px;
+    height: 70px;
+    background-color: ${ props => props.theme.colors.realWhite };
+    border-radius: 50%;
+    box-shadow: ${ props => props.theme.boxShadow.default };
+    z-index: 4;
+
+    svg { width: 60%; height: 60% }
+`;
+
 export const UploadButton = styled(DefaultButton)`
     width: 248px;
     height: 75px;
@@ -303,6 +317,7 @@ export const BattleButton = styled.button`
     line-height: 56px;
     text-align: center;
     color: ${ props => props.theme.colors.realWhite };
-    background: ${ props => props.theme.colors.primaryColor };
+    background: ${ props => props.active ? props.theme.colors.primaryColor : props.theme.colors.inActive };
     border-radius: 5px;
+    box-shadow: ${ props => props.theme.boxShadow.default };
 `;

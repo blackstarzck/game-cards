@@ -27,10 +27,6 @@ const Navbar = ({login, setLogin, setCards, goToHome}) => {
     goToHome();
   }
 
-  useEffect(() => {
-
-  });
-
   if(location.pathname === "/login") return;
 
   return (

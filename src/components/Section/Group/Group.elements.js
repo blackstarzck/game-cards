@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const GroupSection = styled.section`
     max-width: ${ props => props.theme.size.desktop };
@@ -7,12 +7,17 @@ export const GroupSection = styled.section`
     justify-content: space-between;
     height: 330px;
     margin-top: 187px;
+
+    .btn-prev, .btn-next, .group-no { color: ${ props => props.login ? props.theme.colors.commonBlack : props.theme.colors.inActiveButtonBg } }
 `;
 
 export const ViewContainerStyles = styled.article`
     width: 687px;
+    height: 100%;
     display: flex;
     align-items: center;
+
+    .mySwiper { width: 100%; height: 100%; }
 
     .btns-wrapper {
         display: flex;
@@ -46,7 +51,7 @@ export const ViewStyles = styled.div`
     display: flex;
     align-items: center;
 
-    .info {
+    .no-data {
         text-align: center;
         position: absolute;
         top: 50%; left: 50%;
@@ -56,10 +61,12 @@ export const ViewStyles = styled.div`
 `;
 
 export const GroupStyles = styled.ul`
+    width: 100%;
     height: 100%;
     display: flex;
     justify-content: space-around;
     align-items: center;
+    position: relative;
 `;
 
 export const CardStyles = styled.li`
@@ -71,6 +78,10 @@ export const CardStyles = styled.li`
     border-radius: 5px;
     position: relative;
     overflow: hidden;
+    ${ props => props.ready &&
+        css`
+            outline: 4px solid ${ props => props.theme.colors.purple }
+    `};
 
     .btn-remove {
         width: 40px;
@@ -86,6 +97,7 @@ export const CardStyles = styled.li`
         display: flex;
         justify-content: center;
         align-items: center;
+        transition: all .2s ease;
 
         img { max-height: 80%; }
     }
@@ -149,14 +161,16 @@ export const DetailContainerStyles = styled.article`
             cursor: pointer;
             transition: all .2s ease;
 
-            &:hover {
-                background-color: ${ props => props.theme.colors.realBlack};
-                color: ${ props => props.theme.colors.realWhite };
-            }
-            &.active {
-                background-color: ${ props => props.theme.colors.realBlack};
-                color: ${ props => props.theme.colors.realWhite };
-            }
+            ${ props => props.login && css`
+                &:hover {
+                    background-color: ${ props => props.theme.colors.realBlack};
+                    color: ${ props => props.theme.colors.realWhite };
+                }
+                &.active {
+                    background-color: ${ props => props.theme.colors.realBlack};
+                    color: ${ props => props.theme.colors.realWhite };
+                }
+            `}; 
         }
     }
     
@@ -172,9 +186,13 @@ export const DetailContainerStyles = styled.article`
         display: flex;
         justify-content: space-between;
     }
+
     .stat-name {
         font-weight: 700;
-        color: #555555;
+        color: ${ props => props.login ? "#555555" : props.theme.colors.inActiveButtonBg }
+    }
+    .stat-points{
+        color: ${ props => props.login ? props.theme.colors.commonBlack : props.theme.colors.inActiveButtonBg }
     }
 
     .rank, .power {
@@ -184,6 +202,8 @@ export const DetailContainerStyles = styled.article`
         font-weight: 700;
         letter-spacing: -1px;
         text-align: center;
+        color: ${ props => props.login ? props.theme.colors.commonBlack : props.theme.colors.inActive };
+    
         svg { font-size: 34px; margin-right: 12px }
     }
 

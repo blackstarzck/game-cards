@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { memo, useEffect, useRef, useState } from 'react'
 import { ButtonWrapper, CardContainer, TextStyle, ViewStyle } from './Card.element'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUsersMedical } from '@fortawesome/pro-light-svg-icons'
@@ -8,81 +8,64 @@ import { gsap } from "gsap"
 import { faCirclePlus } from '@fortawesome/pro-solid-svg-icons'
 import { detectGIF } from '../../../util/util'
 import Database from '../../../service/database'
+import { setInitDatas } from '../../../data/data'
 
 const db = new Database();
 
-const Card = ({login, info, cards, setCards}) => {
+const Card = ({login, info, cards, setCards, setReady, deleteSelectedCard}) => {
     const [ detailVisible, setDetailVisible ] = useState(false);
     const [ groupVisible, setGroupVisible ] = useState(false);
 
     const showCardDetail = () => setDetailVisible(!detailVisible);
 
-    const showGroupSelectBox = (number) => { 
+    const showGroupSelectBox = (number) => {
         if(login.state){
             setGroupVisible(!groupVisible);
-
-            const copied = {...cards};
-            console.log(copied);
-            
+  
             if(typeof number === "number"){
-                const { KEY, CODE, POWER } = info;
+                const copied = {...cards};
+                const { KEY, CODE, POWER, QUOTE, LEVEL, NICK, IMG_URL } = info;
                 const { STR, AGI, DEX, VIT, INT, LUCK } = info.STATS;
-                // const copied = { ...cards };
-                const obj = { ...info, GROUP_NO: number }; // CARDS에 넣을 정보: 선택한 카드의 그룹 넘버를 우선 변경해야 한다.
-                const newObj =  { KEY, CODE, POWER, STR, AGI, DEX, VIT, INT, LUCK }; // GROUP에 넣을 정보
-                const cards = copied["CARDS"];
-                const power = copied["GROUPS"][`NO${number}`]["GROUP_POWER"];
-                const members = copied["GROUPS"][`NO${number}`]["MEMBERS"];
+                const newMember =  { KEY, CODE, POWER, QUOTE, LEVEL, NICK, IMG_URL, STR, AGI, DEX, VIT, INT, LUCK }; // GROUP에 넣을 정보
+                const copiedCards = copied["CARDS"];
+                let members = copied["GROUPS"][`NO${number}`]["MEMBERS"];
                 const groups = [ "NO1", "NO2", "NO3" ];
-                let newMembers = [];
                 let powerSum = 0;
                 let temp;
 
                 if(members.length < 3){
-                    for(let n = 0; n < cards.length; n++){
-                        if(cards[n]["KEY"] === info["KEY"]){
-                            cards[n] = obj;
+                    for(let m = 0; m < groups.length; m++){
+                        // let sum = 0;
+                        temp = copied["GROUPS"][`${groups[m]}`]["MEMBERS"];
+                        for(let t = 0; t < temp.length; t++){
+                            if(temp[t]["KEY"] === info["KEY"]){
+                                console.log("중복되는 곳: ", `${groups[m]}`);
+                                copied["GROUPS"][`${groups[m]}`]["MEMBERS"].splice(t, 1); // 중복 전부 삭제
+                            }
+                        }
+                    }
+
+                    members = copied["GROUPS"][`NO${number}`]["MEMBERS"]; // splice되었기 때문에 다시 선언
+
+                    copied["GROUPS"][`NO${number}`]["MEMBERS"] = [ ...members, newMember ]; // 그룹지정
+
+                    for(let n = 0; n < copiedCards.length; n++){ // 그룹 지정
+                        if(copiedCards[n]["GROUP_NO"] !== number && copiedCards[n]["KEY"] === info["KEY"]){
+                            copiedCards[n]["GROUP_NO"] = number;
                         }
                     }
 
                     for(let m = 0; m < groups.length; m++){
-                        if(groups[m] !== `NO${number}`){
-                            let sum = 0;
-                            temp = copied["GROUPS"][`${groups[m]}`]["MEMBERS"];
-
-                            for(let z = 0; z < temp.length; z++){
-                                if(temp[z]["KEY"] === newObj["KEY"]){
-                                    copied["GROUPS"][`${groups[m]}`]["MEMBERS"].splice(z, 1);   
-                                }
-                                sum = sum + (temp[z] ? temp[z]["POWER"] : 0 );
-                                // console.log("temp: ", temp[z]);
-                            }
-                            copied["GROUPS"][`${groups[m]}`]["GROUP_POWER"] = sum;
+                        let sum = 0;
+                        temp = copied["GROUPS"][`${groups[m]}`]["MEMBERS"];
+                        for(let t = 0; t < temp.length; t++){
+                            sum = sum + (temp.length > 0 ? temp[t]["POWER"] : 0 ); // 멤버들 전투력 합산
                         }
-                    }
-                    
-                    if(members.length > 0){
-                        for(let t = 0; t < members.length; t++){
-                            if(members[t]["KEY"] !== newObj["KEY"]){
-                                newMembers = [ ...members, newObj ];
-                            }else{
-                                newMembers = members;
-                            }
-                        }
-                    }else{
-                        newMembers = [ ...members, newObj ]
+                        copied["GROUPS"][`${groups[m]}`]["GROUP_POWER"] = sum;
                     }
 
-                    for(let i = 0; i < newMembers.length; i++ ){
-                        powerSum = powerSum + newMembers[i]["POWER"];
-                    }
-
-                    copied["CARDS"] = cards;
-                    copied["GROUPS"][`NO${number}`]["MEMBERS"] = newMembers;
-                    copied["GROUPS"][`NO${number}`]["GROUP_POWER"] = powerSum;
-
-                    console.log(copied);
                     setCards(cards => cards = copied);
+                    setReady(setInitDatas("BLT_DT", "DETAIL")); // reset
                     db.writeNewData("USER_CARDS", login.ID, copied);
                 }else{
                     if(info["GROUP_NO"] !== number){
@@ -95,6 +78,7 @@ const Card = ({login, info, cards, setCards}) => {
 
     const [ load, setLoad ] = useState({ url: "", state: false });
 
+
     return (
         <CardContainer>
             <CardView
@@ -102,7 +86,6 @@ const Card = ({login, info, cards, setCards}) => {
                 info={info}
                 load={load}
                 cards={cards}
-                setCards={setCards}
                 setLoad={setLoad}
                 groupVisible={groupVisible}
                 showGroupSelectBox={showGroupSelectBox}
@@ -111,18 +94,19 @@ const Card = ({login, info, cards, setCards}) => {
                 login={login}
                 load={load}
                 info={info} />
-            { (login.state && load.state) && 
+            { (login.state && load.state && info.CODE) && 
                 <ButtonContainer
                     info={info}
                     detailVisible={detailVisible}
-                    showCardDetail={showCardDetail} /> }
+                    showCardDetail={showCardDetail}
+                    deleteSelectedCard={deleteSelectedCard} /> }
         </CardContainer>
     )
-}
+};
 
 export default Card
 
-export const CardView = ({login, info, detailVisible, groupVisible, showGroupSelectBox, setLoad, load}) => {
+export const CardView = ({login, info, detailVisible, groupVisible, showGroupSelectBox, setLoad, load, ready, setReady}) => {
     const setImgURL = () => {
         if(info.CODE){
             const fileName = detectGIF(info.CODE);
@@ -147,6 +131,8 @@ export const CardView = ({login, info, detailVisible, groupVisible, showGroupSel
                 <GrounpSelect
                     info={info}
                     groupVisible={groupVisible}
+                    ready={ready}
+                    setReady={setReady}
                     showGroupSelectBox={showGroupSelectBox}/> }
 
                  {/* 이미지 */}
@@ -159,15 +145,15 @@ export const CardView = ({login, info, detailVisible, groupVisible, showGroupSel
                  </div>
 
                 {/* 카드 정보 */}
-                { login.state && <CardDetails
+                <CardDetails
                     info={info}
-                    detailVisible={detailVisible} /> }
+                    detailVisible={detailVisible} />
             </div>
         </ViewStyle>
     );
 }
 
-export const GrounpSelect = ({info, groupVisible, showGroupSelectBox}) => {
+export const GrounpSelect = ({info, groupVisible, showGroupSelectBox, ready, setReady}) => {
     const el = useRef(null);
     const tl = useRef(null);
 
@@ -288,12 +274,15 @@ export const CardText = ({login, info, load}) => {
     );
 }
 
-export const ButtonContainer = ({detailVisible, showCardDetail}) => {
+export const ButtonContainer = ({info, detailVisible, showCardDetail, deleteSelectedCard}) => {
+
+    const handleClick = () => deleteSelectedCard(info);
+
     return(
         <ButtonWrapper>
             <ButtonCardInfo detailVisible={detailVisible} onClick={showCardDetail} />
             <ButtonSelectCard />
-            <ButtonCardDelete />
+            <ButtonCardDelete handleClick={handleClick} />
         </ButtonWrapper>
     );
 }

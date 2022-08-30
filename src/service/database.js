@@ -1,5 +1,6 @@
 import { firebaseApp } from "./firebase"
 import { getFirestore, collection, doc, getDoc , getDocs, setDoc } from 'firebase/firestore';
+import { time } from "../util/util";
 
 class Database {
     constructor(){ this.db = getFirestore(firebaseApp); }
@@ -48,8 +49,8 @@ class Database {
                     }
                     if(!doubleCheck){
                         inputData = result ? 
-                            [ ...result.data, { ALARM_TYPE : input.alarm_type, READ_STATE : "N",RESULT : "N",TIME_STAMP : new Date(),TRG_ID : input.id, TRG_NAME : input.name,TRG_UID : "" }] :
-                            [ { ALARM_TYPE : input.alarm_type, READ_STATE : "N",RESULT : "N",TIME_STAMP : new Date(),TRG_ID : input.id, TRG_NAME : input.name,TRG_UID : "" }];
+                            [ ...result.data, { ALARM_TYPE : input.alarm_type, READ_STATE : "N",RESULT : "N",TIME_STAMP : time(),TRG_ID : input.id, TRG_NAME : input.name,TRG_UID : "" }] :
+                            [ { ALARM_TYPE : input.alarm_type, READ_STATE : "N",RESULT : "N",TIME_STAMP : time(),TRG_ID : input.id, TRG_NAME : input.name,TRG_UID : "" }];
                         obj = {
                             UID: "",
                             USER_ID: String(input.id),
@@ -61,8 +62,8 @@ class Database {
                 break;
                 case "USER_LOG" :
                     inputData = result ? 
-                        [ ...result.LOG, { STATUS: input.inOut, TIME_STAMP: new Date() } ] :
-                        [ { STATUS: input.inOut, TIME_STAMP: new Date() } ];
+                        [ ...result.LOG, { STATUS: input.inOut, TIME_STAMP: time() } ] :
+                        [ { STATUS: input.inOut, TIME_STAMP: time() } ];
                     obj = {
                         UID: "",
                         REGI_TYPE: input.regi_type,
@@ -75,7 +76,7 @@ class Database {
                     obj = {
                         ACCOUNT_STATE : "Y",
                         AUTO_LOGIN : false,
-                        ENTER_DATE : result?.ENTER_DATE || new Date(),
+                        ENTER_DATE : result?.ENTER_DATE || time(),
                         LEAVE_DATE : "",
                         REGI_TYPE : input.regi_type,
                         UID : "",
@@ -86,34 +87,10 @@ class Database {
                     }
                 break;
                 case "USER_CARDS" :
-                    // const { USER_ID, USER_NAME, POWER, NICK, JOB_KR, JOB_EN, LEVEL, EXP, GROUP_NO, STATS, REMAIN, CODE, DESCR, QUOTE, SELECTED, IMG_URL } = input;
-                    // // const { AGI, DEX, INT, STR, VIT, LUCK } = input.STATS;
-                    // const idx = result ? (result.CARDS.length + 1) : 1;
-                    // const newObj = { KEY: idx, GROUP_ORDER: idx, PREF_RANK: 0, POWER, NICK, JOB_KR, JOB_EN, LEVEL, EXP, GROUP_NO, REMAIN, CODE, DESCR, QUOTE, SELECTED, IMG_URL, STATS };
-                    // inputData = result ?  [ ...result.CARDS, newObj ] : [ newObj ];
-                    // obj = {
-                    //     DAILY_CNT: 5,
-                    //     UID: "", USER_ID, USER_NAME,
-                    //     CARDS: inputData,
-                    //     GROUPS: {
-                    //         NO1 : {
-                    //             GROUP_POWER: 0,
-                    //             GROUP_RANK: 0,
-                    //             MEMBERS: []
-                    //         },
-                    //         NO2 : {
-                    //             GROUP_POWER: 0,
-                    //             GROUP_RANK: 0,
-                    //             MEMBERS: []
-                    //         },
-                    //         NO3 : {
-                    //             GROUP_POWER: 0,
-                    //             GROUP_RANK: 0,
-                    //             MEMBERS: []
-                    //         }
-                    //     }
-                    // };
                     obj = input;
+                break;
+                case "ALARM_TABLE" :
+
                 break;
             }
             
@@ -141,7 +118,7 @@ class Database {
                 obj = {
                     ACCOUNT_STATE : "Y",
                     AUTO_LOGIN : false,
-                    ENTER_DATE : new Date(),
+                    ENTER_DATE : time(),
                     LEAVE_DATE : "",
                     REGI_TYPE : input.regi_type,
                     UID : "",
@@ -150,6 +127,9 @@ class Database {
                     USER_NAME : input.name,
                     USER_PW : input.pwd
                 };
+            break;
+            case "ALARM_TABLE" :
+                obj = input;
             break;
         }
 

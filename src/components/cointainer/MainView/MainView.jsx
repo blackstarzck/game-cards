@@ -6,7 +6,7 @@ import { BookMark, CardImg, StatHeading, StatItem, StatPoints, Wrapper } from '.
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBookmark } from '@fortawesome/pro-solid-svg-icons'
 import { gsap } from "gsap"
-import { CardKeepPopup, DescrPopup, MainPopup, Notice } from '../../Popups/Popups'
+import { DescrPopup, Notice } from '../../Popups/Popups'
 import loadingSrc from '../../../assets/images/loading.png'
 
 const MainView = ({...props}) => {
@@ -42,7 +42,6 @@ const MainView = ({...props}) => {
                 active={!editState} 
                 mainCard={props.mainCard} 
                 updateCard={props.updateCard} 
-                onChange={props.onChange} 
                 handleEditState={handleEditState} />
 
             <Wrapper className="body">
@@ -224,14 +223,6 @@ export const MainViewEditName = ({handleEditState, updateCard, mainCard, active,
             return updated;
         });
     }
-
-    useEffect(() => {
-
-    }, [names]);
-
-    useEffect(() => {
-
-    }, [mainCard]);
 
     return(
         <Wrapper className='select-wrapper' active={active} >

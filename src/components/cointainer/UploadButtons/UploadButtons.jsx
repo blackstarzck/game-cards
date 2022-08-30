@@ -32,18 +32,17 @@ const UploadButtons = ({...props}) => {
         props.imgSrc && loadModels();
     }, [props.imgSrc]);
 
-    const onChange = evt => {
-        let src = URL.createObjectURL(evt.target.files[0]);
-    
-        // const reader = new FileReader();
-        // reader.readAsDataURL(evt.target.files[0]);
-        // reader.onload = function(event){
-        //   src = event.target.result;
-        //   console.log(1, src)
-        // }
-
-        props.setImgSrc(src);
-     }
+    const onChange =  evt => {
+        // let src = URL.createObjectURL(evt.target.files[0]);
+        let src;
+        const reader = new FileReader();
+        reader.readAsDataURL(evt.target.files[0]);
+        reader.onload = function(event){
+            src = event.target.result;
+            // console.log(1, src)
+            props.setImgSrc(src);
+        }
+    }
 
      const detect = async () => {
         const keyNames = [ "angry", "disgusted", "fearful", "happy", "neutral", "sad", "surprised"  ];

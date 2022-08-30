@@ -4,7 +4,7 @@ import Card from '../../cointainer/Card/Card'
 import { SearchInput } from '../../Input/Input'
 import { FilterContainer, FilterWrapper, StorageSection } from './Storage.element'
 
-const SectionStorage = ({login, cards, setCards}) => {
+const SectionStorage = ({login, cards, setCards, setReady, deleteSelectedCard}) => {
     return (
         <StorageSection>
             <div className="top">
@@ -12,7 +12,7 @@ const SectionStorage = ({login, cards, setCards}) => {
                     login={login}
                     cards={cards}
                     setCards={setCards} />
-                {/* <SearchInput login={login} /> */}
+                {/* <SearchInput login={login} /> 보유카드 검색 기능*/}
             </div>
             <ul className="body">
                 { cards.CARDS.map((item) => <Card 
@@ -20,7 +20,9 @@ const SectionStorage = ({login, cards, setCards}) => {
                     info={item}
                     cards={cards}
                     setCards={setCards}
-                    key={item.KEY} /> ) }
+                    key={item.KEY}
+                    setReady={setReady}
+                    deleteSelectedCard={deleteSelectedCard} /> ) }
             </ul>
         </StorageSection>
     )
@@ -49,6 +51,7 @@ export const Filter = ({login, cards, setCards}) => {
                 <li><button className={order === "AGI" ? "active" : ""} onClick={() => handleOrder("AGI")}>AGI</button></li>
                 <li><button className={order === "DEX" ? "active" : ""} onClick={() => handleOrder("DEX")}>DEX</button></li>
                 <li><button className={order === "VIT" ? "active" : ""} onClick={() => handleOrder("VIT")}>VIT</button></li>
+                <li><button className={order === "INT" ? "active" : ""} onClick={() => handleOrder("INT")}>INT</button></li>
                 <li><button className={order === "LUCK" ? "active" : ""} onClick={() => handleOrder("LUCK")}>LUCK</button></li>
             </FilterWrapper>
         </FilterContainer>

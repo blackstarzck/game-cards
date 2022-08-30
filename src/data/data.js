@@ -162,7 +162,7 @@ export function randomName(){
     return generate(exampleName, exampleLocation);
 }
 
-export function setInitDatas(name){
+export function setInitDatas(name, listObj){
     let DATA;
     switch(name){
         case "USER_CARDS" :
@@ -224,6 +224,36 @@ export function setInitDatas(name){
                 { key: 8, EN: 'Data Engineer', KR: '데이터 엔지니어' },
                 { key: 9, EN: 'Project Manager', KR: '기획자' }
             ]
+        break;
+        case "BLT_DT" :
+            if(listObj){
+                DATA = {
+                    BET_DESCR : "",
+                    CONTENDER_GROUP_NO : 0,
+                    CONTENDER_GROUP_POWER : 0,
+                    CONTENDER_GROUP_MEMBERS : [],
+                    CONTENDER_MSG: "",
+
+                    DEFENDER_GROUP_NO : 0,
+                    DEFENDER_GROUP_POWER : 0,
+                    DEFENDER_GROUP_MEMBERS : [],
+                    DEFENDER_ID : "",
+                    DEFENDER_NAME : "",
+                    DEFFENDER_MSG : "",
+
+                    RESULT : "",
+                    TIME_STAMP : ""
+                }
+            }else{
+                DATA = { UID: "", USER_ID: "", USER_NAME: "",DETAIL: [] }
+            }
+        break;
+        case "USER_FRDS" :
+            DATA = {
+                USER_NAME: "", USER_ID: "", UID: "",
+                FRDS_INFO: []
+            }
+            // DATA = {FRD_ID: "", FRD_NAME: "", FRD_UID: "", LOGIN: "", POWER: 0, RANK: 0 }
         break;
     }
 

@@ -6,11 +6,9 @@ export const StorageSection = styled.section`
 
     .top {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        padding: 16px 0 16px 16px;
-        margin-bottom: 55px;
+        justify-content: center;
+        margin-bottom: 35px;
+        padding: 16px 16px 0;
     }
     .body {
         width: 100%;

@@ -101,3 +101,29 @@ export function rememberCardData(){
         return null;
     }
 }
+
+export function getDateFromSec(milliSecond){
+    const data = new Date(milliSecond);
+
+    const year = data.getFullYear();
+    const month = data.getMonth() + 1;
+    const date = data.getDate();
+
+    console.log(`${year}.${month}.${date}`);
+
+    return `${year}.${month}.${date}`;
+}
+
+export function time() {
+    const date = new Date()
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const day = date.getDate();
+    const hour = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    const result = `${year}.${month}.${day} ${hour}:${minutes}:${seconds}`
+    
+    console.log(result);
+    return result;
+}

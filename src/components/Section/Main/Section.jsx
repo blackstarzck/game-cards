@@ -10,7 +10,7 @@ import { randomName, setInitDatas } from '../../../data/data'
 
 const data = new Database();
 
-const SectionMain = ({login, handleCardUpdate, mainCard, setMainCard, keepSelectedCard}) => {
+const SectionMain = ({login, cards, mainCard, setMainCard, keepSelectedCard}) => {
     const [ imgSrc, setImgSrc ] = useState("");
     const [ imgLoaded, setImgLoaded ] = useState(false);
     const [ expression, setExpression ] = useState({
@@ -30,20 +30,23 @@ const SectionMain = ({login, handleCardUpdate, mainCard, setMainCard, keepSelect
       setMainCard({ ...mainCard, [name]: value });
     }
   
-    const updateCard = (data) => { // 클릭에 이벤트
+    const updateCard = (data) => {
         setMainCard(mainCard => (
             { ...mainCard, [data.key]: data.value }
         ));
     }
 
-    const getFaceResult = (result) => setExpression(result);
+    const getFaceResult = (result) => {
+        setExpression(expression => expression = result);
 
-    useEffect(() => {
         const lists = setInitDatas("JOBS");
         const random = Math.floor((Math.random() * ((lists.length) - 1)) + 1);
+        const nickName = randomName();
+        const jobKR = lists[random].KR;
+        const jobEN = lists[random].EN;
 
-        if(expression.age !== 0 && expression.gender !== ""){
-            const resultCardCode = getCardCode(expression);
+        if(result.age !== 0 && result.gender !== ""){
+            const resultCardCode = getCardCode(result);
             if(!resultCardCode.CODE){
                 alert("다른 이미지를 업로드해주세요.");
                 setImgSrc("");
@@ -53,15 +56,14 @@ const SectionMain = ({login, handleCardUpdate, mainCard, setMainCard, keepSelect
             
             data.getSingleData("CARDS_INFO", resultCardCode.CODE)
             .then((result) => {
-                setImgLoaded(true);                
-                updateCard({ key: "NICK", value: randomName() });
-                updateCard({ key: "JOB_KR", value: lists[random].KR });
-                updateCard({ key: "JOB_EN", value: lists[random].EN });
-
+                setImgLoaded(true);
                 setMainCard((mainCard) => {
                     const keyArray = [ "STR", "AGI", "DEX", "VIT", "INT", "LUCK" ];
                     const max = 5;
-                    const updated = {...mainCard};
+                    const updated = setInitDatas("MAIN_CARD");
+                    updated["NICK"] = nickName;
+                    updated["JOB_KR"] = jobKR;
+                    updated["JOB_EN"] = jobEN;
                     updated["CODE"] = resultCardCode.CODE;
                     updated["IMG_URL"] = resultCardCode.IMG_URL;
                     updated["QUOTE"] = result.QUOTE;
@@ -76,11 +78,11 @@ const SectionMain = ({login, handleCardUpdate, mainCard, setMainCard, keepSelect
                 });
             });
         }
-    }, [expression]);
+    }
 
     useEffect(() => {
         const prevData = rememberCardData();
-        if(prevData) setMainCard(prevData); 
+        if(prevData) setMainCard(prevData)
       }, []);
 
     useEffect(() => {
@@ -136,7 +138,6 @@ const SectionMain = ({login, handleCardUpdate, mainCard, setMainCard, keepSelect
             });
 
             if(range[i-1].min <= value && range[i-1].max >= value){
-                console.log("i:", i);
                 cardCode = `${code}-${i}`;
                 fileName = detectGIF(cardCode);
                 IMG_URL = `https://firebasestorage.googleapis.com/v0/b/card-maker-89016.appspot.com/o/${dir}%2F${cardCode}.${fileName}?alt=media`;

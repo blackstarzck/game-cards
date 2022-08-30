@@ -15,8 +15,8 @@ const db = new Database();
 
 function App() {
   const [ login, setLogin] = useState({ID: "", NAME: "", EMAIL: "", REGI_TYPE: "", state: false}); // 로그인 true, 로그아웃 false
-  const [ alarm, setAlarm ] = useState({ ID: "", NAME: "" });
   const [ cards, setCards ] = useState(setInitDatas("USER_CARDS"));
+  const [ frd, setFrd ] = useState(setInitDatas("USER_FRDS"));
 
   const navigate = useNavigate();
 
@@ -31,7 +31,7 @@ function App() {
       // console.log("카카오로 로그인했습니다.", result)
       result && setLogin(login => {
         const updated = { ...login };
-        updated["ID"] = result.id;
+        updated["ID"] = String(result.id);
         updated["EMAIL"] = result.kakao_account.email;
         updated["NAME"] = result.kakao_account.profile.nickname;
         updated["REGI_TYPE"] = result.REGI_TYPE;
@@ -58,26 +58,15 @@ function App() {
   }
 
   const getInitTableDatas = async () => { // 초기 데이터 설정
-    const USER_ID = login.ID, USER_NAME = login.NAME; 
-    const USER_CARDS = await db.getSingleData("USER_CARDS", USER_ID);
-    const max = 8;
-    const set = USER_CARDS ? USER_CARDS.CARDS.length : 0;
-    const tempArray = [];
-
-    console.log("USER_CARDS: ", USER_CARDS);
-
-    // for(let i = 1; i <= set; i++){
-    //   let { KEY, CODE, QUOTE, DESCR, GROUP_NO, GROUP_ORDER, NICK, JOB_KR, JOB_EN, PREF_RANK, REMAIN, LEVEL, STATS, POWER } = USER_CARDS.CARDS[i-1];
-    //   tempArray.push({ KEY, CODE, QUOTE, DESCR, GROUP_NO, GROUP_ORDER, NICK, JOB_KR, JOB_EN, PREF_RANK, REMAIN, LEVEL, STATS, POWER });
-    // }
-    // for(let n = 1; n <= (max - set); n++){
-    //   tempArray.push({ KEY: (set ? set+n : n ), CODE: "", QUOTE: "", DESCR: "", GROUP_NO: 0, GROUP_ORDER: 0, NICK: "", JOB: "", JOB_KR: "", JOB_EN: "", PREF_RANK: 0, REMAIN: 0, LEVEL: 0, STATS: { STR: 0, AGI: 0, DEX: 0, VIT: 0, INT: 0, LUCK: 0 }, POWER: 0 });
-    // }
-    // console.log("tempArray: ", tempArray);
-    // setCards({ ...cards, USER_ID, USER_NAME, CARDS: tempArray });
-    if(USER_CARDS) setCards((cards) => USER_CARDS);
-    if(!USER_CARDS) setCards(setInitDatas("USER_CARDS"));
+    const USER_ID = login.ID || "", USER_NAME = login.NAME || ""; 
     
+    const USER_CARDS = await db.getSingleData("USER_CARDS", USER_ID);
+    if(USER_CARDS) setCards({ ...cards, ...USER_CARDS, USER_ID, USER_NAME });
+    if(!USER_CARDS) setCards({ ...cards, USER_ID, USER_NAME });
+
+    const USER_FRDS = await db.getSingleData("USER_FRDS", USER_ID);
+    if(USER_FRDS) setFrd({ ...frd, ...USER_FRDS, USER_ID, USER_NAME });
+    if(!USER_FRDS) setFrd({ ...frd, USER_ID, USER_NAME });
   }
 
   useEffect(() => {
@@ -97,7 +86,6 @@ function App() {
 
   const goToHome = (user) => navigate("/", { replace: false, state: user });
 
-
   return (
     <>
       <div className="blur-img"></div>
@@ -112,8 +100,9 @@ function App() {
           element={
             <Home
               login={login}
+              frd={frd}
               cards={cards}
-              setCards={setCards}/> } />
+              setCards={setCards} /> } />
         <Route path="/login" element={ <Login login={login} setLogin={setLogin} goToHome={goToHome} /> }/>
         <Route path="/join/:depends" element={ <Join login={login} setLogin={setLogin} goToHome={goToHome} /> }/>
       </Routes>
