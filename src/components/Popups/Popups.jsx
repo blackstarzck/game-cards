@@ -3,11 +3,16 @@ import { Background, NoticeStyle, PopupDescr, PopupMain } from "./Popups.element
 import { gsap } from "gsap"
 import { ButtonYes, ButtonNo } from "../Button/Button";
 import Database from "../../service/database";
-import { useInterval } from "../../hooks/hooks";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faQuoteLeft, faQuoteRight } from '@fortawesome/pro-solid-svg-icons'
+import { time } from "../../util/util";
+
+library.add(faQuoteLeft, faQuoteRight);
 
 const db = new Database();
 
-export const DescrPopup = ({statName, visible, popup, setPopup}) => {
+export const DescrPopup = ({statName, visible, popup, setPopup, setCards}) => {
     const el = useRef(null);
     const tl = useRef(null);
 
@@ -30,10 +35,8 @@ export const DescrPopup = ({statName, visible, popup, setPopup}) => {
     useEffect(() => {
         if(popup){
             tl.current.play();
-            // console.log(`%c열기: ${statName} | ${popup}`, "color: red");
         }else{
             reverseFunc();
-            // console.log(`%c1. 닫기: ${statName} | ${popup}`, "color: blue");
         }
     }, [popup]);
 
@@ -71,64 +74,174 @@ export const DescrPopup = ({statName, visible, popup, setPopup}) => {
 }
 
 export const MainPopup = ({
-        login,              // 로그인 여부
-        data,               // 팝업 내용 작성
-        popup,              // 매인팝업의 상태유무
-        setPopup,           // 메인팝업 제어
-        handleSelectBoxes,  // 셀렉트박스 제어
-        mainPopup,          // 메인팝업 요소 셀렉터
-        searchResult        // 친구찾기 결과 데이터
+        login,
+        type,               // 알람 타입
+        mainPopup,              // (useState) 매인팝업의 상태유무
+        setMainPopup,           // (useState) 메인팝업 제어
+        handleSelectBoxes,  // (useState) 셀렉트박스 제어
+        cards,
+        setCards,
+        alarm,
+        setAlarm,
+        frd,
+        setFrd
     }) => {
     const handleClick = async (state) => {
-        setPopup(false);
-        const frdObj = { ...searchResult, alarm_type: "FRD_REQ_SENT" };
-        const myObj = {
-            proc: "waiting", 
-            result: "success", 
-            alarm_type: "FRD_REQ_RECV"
+        setMainPopup({ ...mainPopup, state: false }); // 초기화
+        let frdObj, myObj;
+        const refresh = async () => { // 리프레쉬
+            const newData = await db.getSingleData("ALARM_TABLE", login.ID);
+            setAlarm({ ...alarm, ...newData });
         }
-
         if(state === "YES"){
-            const frd = await db.getSingleData("ALARM_TABLE", frdObj.id);
-            myObj.id = login.ID;
-            myObj.name = login.NAME;
-            myObj.email = login.EMAIL;
+            switch(mainPopup.type){
+                case "FRD_REQ_SENT" :
+                    frdObj = { alarm_type: "FRD_REQ_RECV", email: mainPopup.data.email, id: mainPopup.data.id, name: mainPopup.data.name, TRG_ID: login.ID, TRG_NAME: login.NAME, TRG_EMAIL: login.EMAIL };
+                    myObj = { alarm_type: "FRD_REQ_SENT", email: login.EMAIL, id: login.ID, name: login.NAME, TRG_ID: mainPopup.data.id, TRG_NAME: mainPopup.data.name, TRG_EMAIL: mainPopup.data.email };
+                    const write1 = await db.writeNewData("ALARM_TABLE", login.ID, myObj); // 내 알림에 기록
+                    const write2 = await db.writeNewData("ALARM_TABLE", frdObj.id, frdObj, refresh); // 친구 알림에 기록
+                break;
+                case "DELETE_CARD" :
+                    const copied = { ...cards };
+                    let groupNo, deleNumb, temp;
+                
+                    copied.CARDS.map((item, i) => {
+                        if(item.KEY === mainPopup.data.KEY){ 
+                            groupNo = item.GROUP_NO;
+                            deleNumb = i;
+                        }
+                    });
+                
+                    temp = copied.CARDS[deleNumb];
+                    temp = { ...temp, CODE: "", QUOTE: "", DESCR: "", GROUP_NO: 0, GROUP_ORDER: 0, NICK: "", JOB: "", JOB_KR: "", JOB_EN: "", PREF_RANK: 0, REMAIN: 0, LEVEL: 0, STATS: { STR: 0, AGI: 0, DEX: 0, VIT: 0, INT: 0, LUCK: 0 }, POWER: 0 }
+                    copied.CARDS.splice(deleNumb, 1);
+                    copied.CARDS.push(temp);
+                
+                    if(groupNo !== 0){
+                        copied["GROUPS"][`NO${groupNo}`]["MEMBERS"].map((item, i) => {
+                            if(item.KEY ===  mainPopup.data.KEY) copied["GROUPS"][`NO${groupNo}`]["MEMBERS"].splice(i, 1); 
+                        });
+                    }
+                
+                    const write = await setCards(() => {
+                        const updated = { ...cards };
+                        updated["CARDS"] = copied.CARDS;
+                        if(groupNo !== 0) updated["GROUPS"][`NO${groupNo}`]["MEMBERS"] = copied["GROUPS"][`NO${groupNo}`]["MEMBERS"];
+                        db.writeNewData("USER_CARDS", login.ID, updated);
+                        return updated;
+                    });
+                break;
+                case "FRD_REQ_RECV" :
+                    frdObj = { alarm_type: "FRD_AGR", email: mainPopup.data.email, id: mainPopup.data.id, name: mainPopup.data.name, TRG_ID: login.ID, TRG_NAME: login.NAME, TRG_EMAIL: login.EMAIL };
+                    myObj = { ALARM_TYPE: "FRD_AGR", READ_STATE: "Y", RESULT: "N", TIME_STAMP: time(), TRG_ID: mainPopup.data.id, TRG_NAME: mainPopup.data.name, TRG_UID: "", TRG_EMAIL: mainPopup.data.email };
+                    setAlarm((alarm) => {
+                        const copied = { ...alarm  };
+                        for(let i = 0; i < copied.data.length; i++){
+                            if(copied.data[i].ALARM_TYPE === mainPopup.type){ // 사용자가 수락 후 다시 클릭할 수 없도록
+                                copied.data[i].RESULT = "Y";
+                                break;
+                            }
+                        }
+                        copied.data = [ ...copied.data, myObj];
+                        db.writeNewDataV2("ALARM_TABLE", login.ID, copied); // 내 알림에 기록
+                        return copied
+                    });
+                    db.writeNewData("ALARM_TABLE", frdObj.id, frdObj); // 친구 알림에 기록
 
-            console.log("frdObj: ", frdObj);
-            console.log("myObj: ", myObj);
+                    // 친구목록에 추가
+                    const newFrd = { FRD_ID: mainPopup.data.id, FRD_NAME: mainPopup.data.name, POWER: "", LOGIN: "", FRD_UID: "", RANK: "", FRD_EMAIL: mainPopup.data.email };
+                    db.writeNewData("USER_FRDS", login.ID, { id: login.ID, name: login.NAME, ...newFrd });
+                    db.writeNewData("USER_FRDS", frdObj.id, { id: mainPopup.data.id, name: mainPopup.data.name, FRD_ID: login.ID, FRD_NAME: login.NAME, POWER: "", LOGIN: "", FRD_UID: "", RANK: "", FRD_EMAIL: login.EMAIL }, refresh);
+                    setFrd({ ...frd, FRDS_INFO: [ ...frd.FRDS_INFO, newFrd ]});
+                break;
+                case "BTL_REQ_SENT" :
+                    frdObj = {
+                        alarm_type: "BTL_REQ_RECV",
+                        id: mainPopup.data.DEFENDER_ID, name: mainPopup.data.DEFENDER_NAME,
+                        TRG_ID: login.ID, TRG_NAME: login.NAME,
+                        KEY: mainPopup.data.KEY
+                    };
+                    myObj = {
+                        alarm_type: "BTL_REQ_SENT",
+                        id: login.ID, name: login.NAME,
+                        TRG_ID: mainPopup.data.DEFENDER_ID, TRG_NAME: mainPopup.data.DEFENDER_NAME,
+                        KEY: mainPopup.data.KEY
+                    };
 
-            db.writeNewData("ALARM_TABLE", login.ID, frdObj); // 내 알림에 기록
-            db.writeNewData("ALARM_TABLE", frdObj.id, myObj); // 친구 알림에 기록
+                    db.writeNewData("BTL_DT", login.ID, { ...mainPopup.data, email: login.EMAIL, id: login.ID, name: login.NAME });
+                    db.writeNewData("ALARM_TABLE", login.ID, myObj, refresh);
+                    db.writeNewData("ALARM_TABLE", mainPopup.data.DEFENDER_ID, frdObj);
+                break;
+            }
+        }else if(state === "NO"){
+            switch(mainPopup.type){
+                case "FRD_REQ_RECV" :
+                    frdObj = { alarm_type: "FRD_DSAGR", email: mainPopup.data.email, id: mainPopup.data.id, name: mainPopup.data.name, TRG_ID: login.ID, TRG_NAME: login.NAME };
+                    myObj = { alarm_type: "FRD_DSAGR", email: login.EMAIL, id: login.ID, name: login.NAME, TRG_ID: login.ID, TRG_NAME: login.NAME };
+                    db.writeNewData("ALARM_TABLE", login.ID, myObj); // 내 알림에 기록
+                    db.writeNewData("ALARM_TABLE", login.ID, frdObj, refresh); // 친구 알림에 기록
+                break;
+            }
         }
         
         setTimeout(() => {
             handleSelectBoxes({name: "FRD", state: false});
-            mainPopup.current = false;
+            setMainPopup({ state: false, type: "", data: "" }); // 초기화
         }, 400);
+
+        
     }
 
+    const mainMsgRef = useRef(null);
+    const subMsg1gRef = useRef(null);
+    const subMsg2gRef = useRef(null);
     const el = useRef(null);
     const tl = useRef(null);
 
     useEffect(() => {
         tl.current = gsap.timeline({ pause: true });
         tl.current.fromTo(el.current, { y: -5, opacity: 0 },{
-            y: 0, opacity: 1, duration: .3,
+            y: 0, opacity: 1, duration: .4,
             onStart: function(){
                 el.current.style.visibility = "visible"
-                el.current.style.zIndex = 3;
+                el.current.style.zIndex = 10;
             }
         });
     }, []);
 
-    useEffect(() => {
-        popup ? tl.current.play() : reverseFun();
-        if(popup){
-            document.body.style.overflow = "hidden";
-        }else{
-            document.body.style.overflow = "";
+    useEffect(() => { // 팝업 오픈시 스크롤바 제어
+        mainPopup.state ? tl.current.play() : reverseFun();
+        if(mainPopup.state) document.body.style.overflow = "hidden";
+        if(!mainPopup.state) document.body.style.overflow = "";
+
+        let mainMsg = "", subMsg1 = "", subMsg2 = "";
+
+        switch(mainPopup.type){
+            case "DELETE_CARD" :
+                mainMsg = `<h4 ><b>${mainPopup.data.NICK}님</b>를(을) 삭제하시겠습니까?</h4>`;
+            break;
+            case "FRD_REQ_SENT" :
+                mainMsg = `<h4 ><b>${mainPopup.data.id}님</b>에게<br/>친구신청하시겠습니까?</h4>`;
+            break;
+            case "FRD_REQ_RECV" :
+                mainMsg = `<h4 ><b>${mainPopup.data.id}(${mainPopup.data.name})님</b>의 친구요청을</br>수락하시겠습니까?</h4>`;
+            break;
+            case "BTL_REQ_SENT" :
+                subMsg1 = `<b>${mainPopup.data.DEFENDER_NAME}님</b>께</br>대결을 신청하시겠습니까?`;
+                mainMsg = `<span class="msg" style="display: block;margin: 15px 0">${mainPopup.data.CONTENDER_MSG || "발송메시지 X"}</span>`;
+            break;
+            case "BTL_REQ_RECV" :
+                subMsg1 = `<b>${mainPopup.data.id}</b>께서</br>대결을 신청하셨습니다.`;
+                mainMsg = `<span class="msg">${mainPopup.data.CONTENDER_MSG}</span>`;
+                subMsg2 = `수락하시겠습니까?`;
+            break;
         }
-    },[popup]);
+
+        mainMsgRef.current.innerHTML = mainMsg;
+        subMsg1gRef.current.innerHTML = subMsg1;
+        subMsg2gRef.current.innerHTML = subMsg2;
+
+    },[mainPopup.state]);
 
     const reverseFun = () => {
         tl.current.reverse();
@@ -140,9 +253,15 @@ export const MainPopup = ({
 
     return(
         <>
-            <DimmbedBg popup={popup}/>
+            <DimmbedBg popup={mainPopup.state}/>
             <PopupMain ref={el}>
-                <h4><b>{data.id}</b>님에게<br/>친구신청하시겠습니까?</h4>
+                <div  className="msg-area">
+                    <div ref={subMsg1gRef} className="sub-msg"></div>
+                    { (mainPopup && type === "BTL_REQ_SENT" || type === "BTL_REQ_RECV") && <div className="quotes-up"><FontAwesomeIcon icon="fa-solid fa-quote-left" /></div> }
+                    <div ref={mainMsgRef} className="main-msg"></div>
+                    { (mainPopup && type === "BTL_REQ_SENT" || type === "BTL_REQ_RECV") && <div className="quotes-dwn"><FontAwesomeIcon icon="fa-solid fa-quote-right" /></div> }
+                    <div ref={subMsg2gRef} className="sub-msg"></div>
+                </div>
                 <div className="btn-wrapper">
                     <ButtonYes handleClick={() => handleClick("YES")}/>
                     <ButtonNo handleClick={() => handleClick("NO")}/>

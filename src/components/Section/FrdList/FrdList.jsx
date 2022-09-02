@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserGroup, faSquarePollVertical, faArrowRotateRight, faSquareArrowDown, faSword, faMessages } from '@fortawesome/pro-light-svg-icons'
-import { faCircleXmark  } from '@fortawesome/pro-solid-svg-icons'
-import React, { useRef, useState } from 'react'
+import { faChevronDown, faCircleXmark  } from '@fortawesome/pro-solid-svg-icons'
+import React, { memo, useRef, useState } from 'react'
 import { ChatBoxStyles, FrdListSection, FrdListStyles, MessageBoxStyles, RowStyles, SelectBoxStyles, StaticRowStyles, StatisticsStyles } from './FrdList.elements'
 import { useEffect } from 'react'
 import Database from '../../../service/database'
@@ -11,10 +11,14 @@ import { setInitDatas } from '../../../data/data'
 const db = new Database();
 
 
-const SectionFrdList = ({login, frd}) => {
+const SectionFrdList = ({login, frd, requestBattle, ready}) => {
     return (
         <FrdListSection>
-            <FrdList login={login} frd={frd} />
+            <FrdList
+                login={login}
+                ready={ready}
+                requestBattle={requestBattle}
+                frd={frd} />
             <Statistics login={login} frd={frd} />
         </FrdListSection>
     )
@@ -22,10 +26,12 @@ const SectionFrdList = ({login, frd}) => {
 
 export default SectionFrdList
 
-const FrdList = ({login, frd}) => {
+const FrdList = memo(({login, frd, requestBattle, ready}) => {
     const [ pos, setPos ] = useState({ vis: false, x: 0, y: 0, width: 0 });
-    const [ selectItems, setSelectItems ] = useState([]);
+    const [ selectItems, setSelectItems ] = useState({ type: "", item: [] });
     const [ chatBox, setChatBox ] = useState(false);
+    const [ myBattleState, setMyBattleState ] = useState({ CONTENDER_MSG: "" }); 
+    const cmmtRef = useRef(null);
 
     const handleSelectBox = (elem, type) => {
         const width = (type === "bet") ? 172 : 95;
@@ -43,13 +49,21 @@ const FrdList = ({login, frd}) => {
             let data;
             let temp = [];
             if(type === "bet") data = ([ "커피내기", "심부름 내기", "저녁내기" ]);
+
             if(type === "friend"){
-                frd.map((item) => temp.push(item.FRD_NAME));
+                frd.FRDS_INFO.map((item) => temp.push(item.FRD_NAME));
                 data = temp;
             }
-            return data
+            const updated = { type, item: data }
+            return updated
         });
     }
+
+    const handleChage = () => {
+        let msg = cmmtRef.current.value;
+        setMyBattleState({ CONTENDER_MSG: msg });
+    }
+
 
     return(
         <FrdListStyles>
@@ -58,7 +72,7 @@ const FrdList = ({login, frd}) => {
                 <h3 className="title"><FontAwesomeIcon icon={faUserGroup} />친구목록</h3>
                 <div className="input-wrapper">
                     <div className="heading">코멘트 발송</div>
-                    <input type="text" placeholder=""/>
+                    <input ref={cmmtRef}  onChange={handleChage} type="text" placeholder="친구에게 메시지를 보내보세요."/>
                     <button className="btn-txt-clear"><FontAwesomeIcon icon={faCircleXmark} /></button>
                 </div>
             </div>
@@ -67,21 +81,24 @@ const FrdList = ({login, frd}) => {
                 <ul className="thead">
                     <li className="th">접속상태<FontAwesomeIcon icon={faSquareArrowDown} /></li>
                     <li className="th btn-frd" onClick={(e) => handleSelectBox(e.target, "friend")}>친구</li>
-                    <li className="th">순위<FontAwesomeIcon icon={faSquareArrowDown} /></li>
-                    <li className="th">전투력<FontAwesomeIcon icon={faSquareArrowDown} /></li>
-                    <li className="th">대결내용<FontAwesomeIcon icon={faSquareArrowDown} /></li>
+                    {/* <li className="th">순위<FontAwesomeIcon icon={faSquareArrowDown} /></li>
+                    <li className="th">전투력<FontAwesomeIcon icon={faSquareArrowDown} /></li> */}
+                    <li className="th">대결내용</li>
                     <li className="th"><FontAwesomeIcon icon={faArrowRotateRight} /></li>
                 </ul>
                 <div className="outer">
                     <div className="tbody">
-                        {(login.state && frd?.FRDS_INFO?.length > 0) ? frd?.FRDS_INFO?.map((friend) => 
+                        {(login.state && frd?.FRDS_INFO?.length > 0) ? frd?.FRDS_INFO?.map((friend, i) => 
                             <FrdRow 
-                                key={friend.KEY}
+                                login={login}
+                                key={i}
+                                requestBattle={requestBattle}
+                                myBattleState={myBattleState}
                                 chatBox={chatBox}
                                 setChatBox={setChatBox}
+                                ready={ready}
                                 friend={friend}
-                                online={friend.LOGIN === "Y" ? true : false} 
-                                handleSelectBox={handleSelectBox} 
+                                online={friend.LOGIN ? true : false} 
                                 receive={true} /> ) :
                             <span className="standby">친구를 등록하고 친구와 내기를 해보세요!</span>
                         }
@@ -96,53 +113,64 @@ const FrdList = ({login, frd}) => {
             </div>
         </FrdListStyles>
     );
-}
+});
 
-const ChatBox = ({visiblie, chatBox, setChatBox}) => {
+const ChatBox = memo(({visiblie, chatBox, setChatBox}) => {
     return(
         <ChatBoxStyles onClick={() => setChatBox(!chatBox)} visiblie={visiblie}>채팅하기<FontAwesomeIcon icon={faMessages}/></ChatBoxStyles>
     );
-}
+});
 
-const SelectBox = ({login, pos, setPos, selectItems}) => {
-    const handleClick = (e) => {
-        setPos({ vis: false, x: 0, y: 0 })
-        console.log("text: ", e.target.innerHTML);
-    }
+const SelectBox = memo(({login, pos, setPos, selectItems}) => {
+    const handleClick = (e) => setPos({ vis: false, x: 0, y: 0 });
+
     return(
-        <SelectBoxStyles pos={pos} height={selectItems?.length * 30 + 22}>
-            { selectItems.map((item, i) => <li key={i} onClick={(e) => login.state && handleClick(e)} className="item">{item}</li>) }
+        <SelectBoxStyles pos={pos} height={selectItems.item.length * 30 + 22}>
+            { selectItems.item.map((item, i) => <li key={i} onClick={(e) => login.state && handleClick(e)} className="item">{item}</li>) }
         </SelectBoxStyles>
     );
-}
+});
 
-const FrdRow = ({friend, online, receive, handleSelectBox, chatBox, setChatBox}) => {
+const FrdRow = memo(({login, friend, online, receive,chatBox, setChatBox, myBattleState, requestBattle, ready}) => {
     const [ visiblie, setVisible ] = useState(false);
-    const [ myState, setMyState ] = useState(); // 대길신청을 위한
-    
-    const handleChatbox = (e) => setVisible(!visiblie);
+    const [ request, setRequest ] = useState({ BET_DESCR: "커피내기", DEFENDER_ID: friend.FRD_ID, DEFENDER_NAME: friend.FRD_NAME });
+    const selectRef = useRef(null);
 
-    const setSelectBox = (e) => {
-        handleSelectBox(e.target, "bet");
+    const handleChatbox = (e) => setVisible(!visiblie);
+    const handleChange = () => setRequest({ ...request, BET_DESCR: selectRef.current.value });
+    const handleClick = () => {
+        if(!ready.CONTENDER_GROUP_NO){
+            const groupSect = document.querySelector(".group-section").offsetTop;
+            alert("대결준비를 눌러주세요.");
+            window.scrollTo(0, groupSect - 170); 
+            return
+        }
+        requestBattle({ ...myBattleState, ...request });
     }
     
     return(
         <RowStyles online={online} receive={receive} >
             <li className="td"><div className="onOff"></div></li>
             <li className="td frd-name" onClick={handleChatbox}>{friend.FRD_NAME}{ online && <ChatBox visiblie={visiblie} chatBox={chatBox} setChatBox={setChatBox} /> }</li>
-            <li className="td numb">{friend.RANK || "-"}</li>
-            <li className="td numb">{friend.POWER || "-"}</li>
+            {/* <li className="td numb">{friend.RANK || "-"}</li>
+            <li className="td numb">{friend.POWER || "-"}</li> */}
             <li className="td">
                 <div className="selectBox">
-                    <div onClick={(e) => setSelectBox(e)} className="selected-item">점심내기</div>
+                    <select ref={selectRef} disabled={(login.state && friend.LOGIN === "Y") ? false : true} onChange={handleChange} name="bet" id="">
+                        <option value="커피내기">커피내기</option>
+                        <option value="심부름 내기">심부름 내기</option>
+                        <option value="저녁내기">저녁내기</option>
+                    </select>
+                    <div className="icon"><FontAwesomeIcon icon={faChevronDown} /></div>                    
+                    {/* <div onClick={(e) => setSelectBox(e)} className="selected-item">점심내기</div> */}
                 </div>
             </li>
-            <li className="td"><button className="btn-req"><FontAwesomeIcon icon={faSword} /></button></li>
+            <li className="td"><button onClick={() => (login.state && friend.LOGIN === "Y") && handleClick()} className="btn-req"><FontAwesomeIcon icon={faSword} /></button></li>
         </RowStyles>
     );
-}
+});
 
-const MessageBox = ({chatBox, setChatBox}) => {
+const MessageBox = memo(({chatBox, setChatBox}) => {
     const el = useRef(null);
     const tl = useRef(null);
 
@@ -203,11 +231,11 @@ const MessageBox = ({chatBox, setChatBox}) => {
             </div>
         </MessageBoxStyles>
     );
-}
+});
 
-const Statistics = ({login, frd}) => {
+const Statistics = memo(({login, frd}) => {
     const [ pos, setPos ] = useState({ vis: false, x: 0, y: 0, width: 0 });
-    const [ selectItems, setSelectItems ] = useState([]);
+    const [ selectItems, setSelectItems ] = useState({ type: "", item: [] });
 
     const handleSelectBox = (elem, type) => {
         const width = (type === "bet") ? 172 : 95;
@@ -225,11 +253,13 @@ const Statistics = ({login, frd}) => {
             let data;
             let temp = [];
             if(type === "bet") data = ([ "커피내기", "심부름 내기", "저녁내기" ]);
+
             if(type === "friend"){
-                frd.map((item) => temp.push(item.FRD_NAME));
+                frd.FRDS_INFO.map((item) => temp.push(item.FRD_NAME));
                 data = temp;
             }
-            return data
+            const updated = { type, item: data }
+            return updated
         });
     }
 
@@ -266,9 +296,9 @@ const Statistics = ({login, frd}) => {
             </div>
         </StatisticsStyles>
     );
-}
+});
 
-const StaticRow = () => {
+const StaticRow = memo(() => {
     return(
         <StaticRowStyles>
             <li className="td date">2022-07-18</li>
@@ -277,4 +307,4 @@ const StaticRow = () => {
             <li className="td">커피내기</li>
         </StaticRowStyles>
     );
-}
+});

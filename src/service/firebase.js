@@ -9,7 +9,8 @@ const firebaseConfig = {
   storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.REACT_APP_FIREBASE_MSG_SENDER_ID,
   appId: process.env.REACT_APP_FIREBASE_APP_ID,
-  measurementId: process.env.REACT_APP_FIREBASE_MESUREMENT_ID
+  measurementId: process.env.REACT_APP_FIREBASE_MESUREMENT_ID,
+  databaseURL: "https://card-maker-89016-default-rtdb.asia-southeast1.firebasedatabase.app"
 };
 
 // Initialize Firebase

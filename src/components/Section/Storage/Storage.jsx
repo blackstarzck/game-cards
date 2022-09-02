@@ -4,9 +4,9 @@ import Card from '../../cointainer/Card/Card'
 import { SearchInput } from '../../Input/Input'
 import { FilterContainer, FilterWrapper, StorageSection } from './Storage.element'
 
-const SectionStorage = ({login, cards, setCards, setReady, deleteSelectedCard}) => {
+const SectionStorage = ({login, cards, setCards, setReady, mainPopup, setMainPopup}) => {
     return (
-        <StorageSection>
+        <StorageSection className="storage-section">
             <div className="top">
                 <Filter
                     login={login}
@@ -22,7 +22,8 @@ const SectionStorage = ({login, cards, setCards, setReady, deleteSelectedCard}) 
                     setCards={setCards}
                     key={item.KEY}
                     setReady={setReady}
-                    deleteSelectedCard={deleteSelectedCard} /> ) }
+                    mainPopup={mainPopup}
+                    setMainPopup ={setMainPopup} /> ) }
             </ul>
         </StorageSection>
     )

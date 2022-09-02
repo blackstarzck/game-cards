@@ -14,7 +14,7 @@ import { useData } from '../../../hooks/hooks'
 
 const data = new Database();
 
-const SectionFrdSearch = ({login, sOpen, handleSelectBoxes, mainPopup}) => {
+const SectionFrdSearch = ({login, sOpen, handleSelectBoxes, mainPopup, setMainPopup}) => {
     const [ searchResult, setStatus ] = useState({ // waiting -> pending -> finished( 성공 / 실패 )
         proc: "waiting", 
         result: "success", 
@@ -22,7 +22,6 @@ const SectionFrdSearch = ({login, sOpen, handleSelectBoxes, mainPopup}) => {
         name: "",
         email: "",
     });
-    const [ popup, setPopup ] = useState(false); // 매인팝업의 상태유무
     const [ loading, setLoading ] = useState(true);
 
     const searchFunc = (frdId) => {
@@ -67,27 +66,18 @@ const SectionFrdSearch = ({login, sOpen, handleSelectBoxes, mainPopup}) => {
                     login={login}
                     sOpen={sOpen}
                     handleSelectBoxes={handleSelectBoxes}
-                    setPopup={setPopup}
+                    setMainPopup={setMainPopup}
                     mainPopup={mainPopup}
                     loading={loading}
                     searchResult={searchResult}/> }
             </Wrapper>
-            <MainPopup 
-                login={login}
-                searchResult={searchResult} 
-                mainPopup={mainPopup} 
-                popup={popup} 
-                type={"FRD-REQ"} 
-                data={searchResult} 
-                handleSelectBoxes={handleSelectBoxes}
-                setPopup={setPopup} />
         </FrdSearchSection>
     );
 }
 
 export default SectionFrdSearch;
 
-export const SrchResult = ({login, loading, sOpen, searchResult, setPopup, handleSelectBoxes, mainPopup}) => {
+export const SrchResult = ({login, loading, sOpen, searchResult, setMainPopup, handleSelectBoxes, mainPopup}) => {
     const el = useRef(null);
 
     useEffect(() => {
@@ -114,14 +104,14 @@ export const SrchResult = ({login, loading, sOpen, searchResult, setPopup, handl
                             login={login}
                             mainPopup={mainPopup}
                             searchResult={searchResult}
-                            setPopup={setPopup}
+                            setMainPopup={setMainPopup}
                             handleSelectBoxes={handleSelectBoxes}/> : <FailBox />) }
             </ResultBody>
         </Container>
     );
 }
 
-export const ListBox = ({login, searchResult, setPopup, handleSelectBoxes, mainPopup}) => {
+export const ListBox = ({login, searchResult, setMainPopup, handleSelectBoxes, mainPopup}) => {
     const [ myHistory, setMyHistory ] = useState();
     const listRef = useRef(null);
 
@@ -131,11 +121,9 @@ export const ListBox = ({login, searchResult, setPopup, handleSelectBoxes, mainP
     }
 
     const handleClick = ()=> {
-        console.log("listRef.current.value: ", listRef.current);
-        console.log("myHistory: ", myHistory);
-        console.log("searchResult: ", searchResult);
-
+        console.log(1, myHistory);
         if(myHistory && myHistory.data.length > 0){
+            
             for(let i = 0; i < myHistory.data.length; i++){
                 if(
                     myHistory.data[i].TRG_ID === searchResult.id &&
@@ -149,14 +137,13 @@ export const ListBox = ({login, searchResult, setPopup, handleSelectBoxes, mainP
         if(login.ID === searchResult.id){
             alert("사용자 자신을 친구신청할 수 없습니다.");
         }else{
-            setPopup(true);
+            setMainPopup({ state: true, type: "FRD_REQ_SENT", data: searchResult });
             handleSelectBoxes({name: "FRD", state: true});
-            mainPopup.current = true;
         }
     }
 
     useEffect(() => {
-        getAlarmHist();
+        login.state && getAlarmHist();
     }, [searchResult]);
 
     return(

@@ -62,6 +62,7 @@ export const PopupMain = styled.div`
     position: fixed;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
+    word-break: keep-all;
 
     h4 {
         font-size: 22px;
@@ -69,7 +70,14 @@ export const PopupMain = styled.div`
         line-height: 32px;
         padding: 0 18px;
     }
-    b { font-weight: 800; }
+    b { font-weight: 700; }
+    .main-msg {
+        padding: 0 20px;
+        .msg { font-size: 26px; font-weight: 800; }
+    }
+    .sub-msg { font-size: 18px; line-height: 28px; }
+    .quotes-up { margin-top: 14px; }
+    .quotes-dwn { margin-bottom: 14px; }
     .btn-wrapper {
         padding: 40px 24px 23px; 
         display: flex; 
@@ -79,13 +87,14 @@ export const PopupMain = styled.div`
 
 export const Background = styled.div`
     visibility: ${ props => props.active ? "visible" : "hidden" };
+    opacity: ${ props => props.active ? 1 : 0 };
     width: 100%;
     height: 100%;
     position: fixed;
     top: 0; left: 0;
     background-color: rgba(0,0,0,.8);
-    transition: .2s;
-    z-index: 2;
+    transition: .3s;
+    z-index: 10;
 `;
 
 export const NoticeStyle = styled.div`

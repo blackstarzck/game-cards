@@ -1,9 +1,37 @@
 import { firebaseApp } from "./firebase"
 import { getFirestore, collection, doc, getDoc , getDocs, setDoc } from 'firebase/firestore';
+import { getDatabase, onValue, ref, remove, set } from "firebase/database";
 import { time } from "../util/util";
 
 class Database {
-    constructor(){ this.db = getFirestore(firebaseApp); }
+    constructor(){
+        this.db = getFirestore(firebaseApp);
+        this.realtimeDB = getDatabase();
+    }
+
+    loginCheck(userId, name, email, login) {
+        const emailRef = userId.indexOf("@");
+        const id = (emailRef > -1) ? userId.substr(0, emailRef) : userId;
+
+        set(ref(this.realtimeDB, `users/${id}`), {
+            online: login,
+            username: name,
+            email: email,
+        });
+    }
+
+    frdOnlineCheck(userId, updateFunc){
+        const emailRef = userId.indexOf("@");
+        const id = (emailRef > -1) ? userId.substr(0, emailRef) : userId;
+        const onlineRef = ref(this.realtimeDB, 'users/' + id + '/online');
+        console.log("step3");
+        onValue(onlineRef, (snapshot) => {
+            const data = snapshot.val();
+            console.log("step4, [database] data: ", data, snapshot);
+            data && updateFunc(data);
+        });
+        return () => onlineRef.off();
+    }
 
     async getDatas(tableName){
         const docRef = collection(this.db, tableName);
@@ -43,21 +71,20 @@ class Database {
                                 result.data[i].ALARM_TYPE == input.alarm_type
                             ){
                                 doubleCheck = true;
-                                break;
+                                return;
                             }
                         }
                     }
-                    if(!doubleCheck){
-                        inputData = result ? 
-                            [ ...result.data, { ALARM_TYPE : input.alarm_type, READ_STATE : "N",RESULT : "N",TIME_STAMP : time(),TRG_ID : input.id, TRG_NAME : input.name,TRG_UID : "" }] :
-                            [ { ALARM_TYPE : input.alarm_type, READ_STATE : "N",RESULT : "N",TIME_STAMP : time(),TRG_ID : input.id, TRG_NAME : input.name,TRG_UID : "" }];
-                        obj = {
-                            UID: "",
-                            USER_ID: String(input.id),
-                            USER_EMAIL: input.email,
-                            USER_NAME: input.name,
-                            data: inputData
-                        }
+
+                    inputData = result ? 
+                        [ ...result.data, { KEY: input.KEY || "", ALARM_TYPE : input.alarm_type, READ_STATE : "N",RESULT : "N",TIME_STAMP : time(),TRG_ID : input.TRG_ID, TRG_NAME : input.TRG_NAME,TRG_UID : "", TRG_EMAIL: input.TRG_EMAIL ? input.TRG_EMAIL : "" }] :
+                        [ { KEY: input.KEY || "", ALARM_TYPE : input.alarm_type, READ_STATE : "N",RESULT : "N",TIME_STAMP : time(),TRG_ID : input.TRG_ID, TRG_NAME : input.TRG_NAME, TRG_UID : "", TRG_EMAIL: input.TRG_EMAIL ? input.TRG_EMAIL : "" }];
+                    obj = {
+                        UID: "",
+                        USER_ID: String(input.id),
+                        USER_EMAIL: input.email || "",
+                        USER_NAME: input.name,
+                        data: inputData
                     }
                 break;
                 case "USER_LOG" :
@@ -89,8 +116,28 @@ class Database {
                 case "USER_CARDS" :
                     obj = input;
                 break;
-                case "ALARM_TABLE" :
-
+                case "BTL_DT" :
+                    inputData = result ? 
+                        [ ...result.DETAIL, input ] :
+                        [ input ];
+                    obj = {
+                        UID: "",
+                        USER_ID: String(input.id),
+                        USER_EMAIL: input.email,
+                        USER_NAME: input.name,
+                        DETAIL: inputData
+                    }
+                break;
+                case "USER_FRDS" :
+                    inputData = result ? 
+                        [ ...result.FRDS_INFO, input ] :
+                        [ input ];
+                    obj = {
+                        UID: "",
+                        USER_ID: String(input.id),
+                        USER_NAME: input.name,
+                        FRDS_INFO: inputData
+                    };
                 break;
             }
             
@@ -129,6 +176,9 @@ class Database {
                 };
             break;
             case "ALARM_TABLE" :
+                obj = input;
+            break;
+            case "BTL_DT" :
                 obj = input;
             break;
         }

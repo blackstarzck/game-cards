@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 import { useEffect } from 'react'
 import { AlarmListStyles, AlarmStyles } from './Alarm.elements'
 import Database from '../../../service/database'
-import { updateDoc } from 'firebase/firestore'
+import { setInitDatas } from '../../../data/data'
 
 library.add(faBan, faXmark, faArrowRotateRight, faBells, faSword, faCommentDots, faFaceHeadBandage, faHandshakeSimple, faPersonCircleCheck, faTrophy);
 
@@ -13,30 +13,23 @@ const db = new Database();
 // db.getSingleData("ALARM_TABLE", "chanki1004");
 
 
-const Alarm = ({login}) => {
+const Alarm = ({login, mainPopup, setMainPopup, alarm, setAlarm}) => {
     const [ bullet, setBullet ] = useState(false);
     const [ step1, setStep1 ] = useState(false);
     const [ step2, setStep2 ] = useState(false);
     const [ close, setClose ] = useState(false);
     const [ className, setClassName ] = useState({ class: "" });
-    const [ alarm, setAlarm ] = useState();
-
-    const refresh = async () => {
-        const result = await db.getSingleData("ALARM_TABLE", login.ID);
-        let cnt = 0;
-        result.data.map((item) => item.READ_STATE === "N" && cnt++);
-        cnt > 0 ? setBullet(true) : setBullet(false);
-        setAlarm(result);
-    }
 
     const readAllAlarms = async () => {
         setBullet(false);
         const write = await setAlarm((alarm) => {
             const copied = { ...alarm };
             copied.data.map((item) => item.READ_STATE = "Y" );
+
+            console.log("copied: ", copied);
+            db.writeNewDataV2("ALARM_TABLE", login.ID, copied);
             return copied;
         });
-        db.writeNewDataV2("ALARM_TABLE", login.ID, alarm);
     }
 
     const showStep1 = () => setStep1(!step1); 
@@ -54,33 +47,48 @@ const Alarm = ({login}) => {
     }
 
     useEffect(() => {
-        const class1 = step1 ? "active-step1" : "";
-        const class2 = step2 ? "active-step2" : "";
-        const class3 = close ? "close" : "";
-        const showBullet = bullet ? "new-alarm" : "";
-
-        setClassName({ class: `${showBullet} ${class1} ${class2} ${class3}` });
-    }, [step1, step2, bullet]);
+        console.log("alarm: ", alarm);
+        for(let i = 0; i < alarm.data.length; i++){
+            if(alarm.data[i].READ_STATE === "N") setBullet(true);
+            break;
+        }
+    }, [alarm])
 
     useEffect(() => {
-        login.state && refresh();
-    },[login]);
+        let class1 = "", class2 = "", class3 = "", showBullet = "";
+
+        if(login.state){
+            class1 = step1 ? "active-step1" : "";
+            class2 = step2 ? "active-step2" : "";
+            class3 = close ? "close" : "";
+            showBullet = bullet ? "new-alarm" : "";
+        }else{
+            setStep1(false);
+            setStep2(false);
+        }
+
+        setClassName({ class: `${showBullet} ${class1} ${class2} ${class3}` });
+    }, [login, step1, step2, bullet]);
 
     return (
         <>
-            <AlarmStyles className={className.class}>
+            <AlarmStyles className={className.class} login={login.state}>
                 { (step1 && step2) ?
-                    <button className="btn-close" onClick={closeAll}><FontAwesomeIcon icon={faXmark}/></button> :
-                    <button className="btn-alarm" onClick={showStep1}><FontAwesomeIcon icon={faBells}/></button> }
-                <div className="title-wrapper" onClick={showStep2}>
+                    <button className="btn-close" onClick={() => login.state && closeAll()}><FontAwesomeIcon icon={faXmark}/></button> :
+                    <button className="btn-alarm" onClick={() => login.state && showStep1()}><FontAwesomeIcon icon={faBells}/></button> }
+                <div className="title-wrapper" onClick={() => login.state && showStep2()}>
                     <span className="alarm-title">알림내역</span>
                     <span className="alarm-total">총 <b>{alarm?.data?.length}</b>개</span>
                 </div>
                 <div className="lists-wrapper">
-                    <button className="btn-refresh" onClick={refresh}>새로고침<FontAwesomeIcon icon={faArrowRotateRight} /></button>
                     <div className="outer">
                         <ul className="inner">
-                            { alarm?.data?.map((item, i) => <AlarmList key={i} alarm={item} /> ) }
+                            { alarm?.data?.map((item, i) =>
+                                <AlarmList
+                                    mainPopup={mainPopup}
+                                    setMainPopup={setMainPopup}
+                                    key={i}
+                                    alarm={item} /> ) }
                         </ul>
                     </div>
                 </div>
@@ -91,11 +99,24 @@ const Alarm = ({login}) => {
 
 export default Alarm
 
-const AlarmList = ({alarm}) => {
+const AlarmList = ({alarm, mainPopup, setMainPopup}) => {
     const [ msg, setMsg ] = useState({ icon: "", msg1: "", msg2: "", state: "" }); 
+
+    const handleClick = (type) => {
+        // RULE: 수신한 알람에 대해서만 팝업을 노출해야 한다.
+        // BTL_REQ_RECV - 발송인의 이름/이메일, 메시지
+        // FRD_REQ_RECV - 발송인의 이름/이메일
+        // MSG_RECV - 친구목록 컨텐츠로 스크롤 이동시켜준다.
+        if(type !== "BTL_REQ_RECV" && type !== "FRD_REQ_RECV" && type !== "MSG_RECV") return;
+
+        const data = { id: alarm.TRG_ID, email: alarm.TRG_EMAIL, name: alarm.TRG_NAME, msg: alarm.MSG, date: alarm.TIME_STAMP };
+
+        setMainPopup({ state: true, type: "FRD_REQ_RECV", data });
+    }
 
     useEffect(() => {
         if(alarm.ALARM_TYPE === "BTL_REQ_SENT") setMsg({ icon: "fa-sword", msg1: "님께 대결을 신청하셨습니다.", msg2: "", state: "발송" });
+        if(alarm.ALARM_TYPE === "BTL_REQ_RECV") setMsg({ icon: "fa-sword", msg1: "님께서 대결을 신청하셨습니다.", msg2: "", state: "수신" });
         if(alarm.ALARM_TYPE === "BTL_REQ_DENIED") setMsg({ icon: "fa-ban", msg1: "님께서 대결을 ", msg2: "거절", msg3: "하셨습니다.", state: "수신" });
         if(alarm.ALARM_TYPE === "BTL_VICT") setMsg({ icon: "fa-trophy", msg1: "님과의 대결에서 ", msg2: "승리", msg3: "하셨습니다.", state: "수신" });
         if(alarm.ALARM_TYPE === "BTL_DFT") setMsg({ icon: "fa-face-head-bandage", msg1: "님과의 대결에서 ", msg2: "패배", msg3: "하셨습니다.", state: "수신" });
@@ -107,7 +128,7 @@ const AlarmList = ({alarm}) => {
     }, [alarm]);
     
     return(
-        <AlarmListStyles>
+        <AlarmListStyles onClick={(e) => alarm.RESULT === "N" && handleClick(alarm.ALARM_TYPE, alarm.TRG_ID, alarm.TRG_NAME )}>
             <div className="msg-wrapper">
                 <div className="icon">
                     { msg.icon && <FontAwesomeIcon icon={`fa-light ${msg.icon}`} /> }

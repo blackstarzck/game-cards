@@ -90,7 +90,7 @@ const SectionGroup = ({login, cards, swiper, setSwiper, removeCardFromGroup, set
     }, [cards]);
 
     return (
-        <GroupSection  login={login.state}>
+        <GroupSection login={login.state} className="group-section">
             {/* left */}
             <ViewContainer
                 login={login}

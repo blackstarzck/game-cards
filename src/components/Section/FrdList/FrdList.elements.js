@@ -5,6 +5,7 @@ export const FrdListSection = styled.section`
     height: 340px;
     margin: 147px auto 0;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
 
     h3.title {
@@ -38,6 +39,7 @@ export const Content = styled.article`
     
     & > .top {
         display: flex;
+        flex-wrap: wrap;
         justify-content: space-between;
         align-items: center;
         padding: 0 5px 14px;
@@ -51,7 +53,8 @@ export const Content = styled.article`
 `;
 
 export const FrdListStyles = styled(Content)`
-    width: 688px;
+    /* width: 688px; */
+    width: calc((100% / 2) - 15px);
     position: relative;
 
     .input-wrapper {
@@ -105,7 +108,7 @@ export const FrdListStyles = styled(Content)`
         width: 100%;
         display: flex;
         justify-content: space-between;
-        padding-right: 12px;
+        /* padding-right: 12px; */
 
         .th {
             height: 40px;
@@ -119,17 +122,17 @@ export const FrdListStyles = styled(Content)`
 
             &.btn-frd {
                 text-align: left;
-                background: url("./icon/arr-dwn-2.svg") no-repeat center right 16px / 18px;
-                padding-left: 7px;
+                background: url("./icon/arr-dwn-2.svg") no-repeat center right 4px / 18px;
+                padding-left: 18px;
             }
             &:last-child svg { margin-left: 0; }
 
             &:nth-child(1){ width: 100px; }
             &:nth-child(2){ width: 80px; }
-            &:nth-child(3){ width: 72px; }
+            &:nth-child(3){ width: 162px; }
             &:nth-child(4){ width: 92px; }
-            &:nth-child(5){ width: 133px; }
-            &:nth-child(6){ width: 92px; }
+            /* &:nth-child(5){ width: 133px; }
+            &:nth-child(6){ width: 92px; } */
         }
     }
     .tbody {
@@ -137,9 +140,9 @@ export const FrdListStyles = styled(Content)`
         display: flex;
         flex-direction: column;
         font-size: 1rem;
-        padding-right: 10px;
 
         .standby {
+            text-align: center;
             position: absolute;
             top: 55%; left:50%;
             transform: translate(-50%, -50%)
@@ -163,10 +166,10 @@ export const RowStyles = styled.ul`
 
         &:nth-child(1){ width: 100px; }
         &:nth-child(2){ width: 80px; }
-        &:nth-child(3){ width: 72px; }
+        &:nth-child(3){ width: 162px; }
         &:nth-child(4){ width: 92px; }
-        &:nth-child(5){ width: 133px; }
-        &:nth-child(6){ width: 92px; }
+        /* &:nth-child(5){ width: 133px; }
+        &:nth-child(6){ width: 92px; } */
 
         ${(props) => props.online ?
         css`
@@ -207,6 +210,27 @@ export const RowStyles = styled.ul`
         } 
         .selectBox {
             width: 100%;
+            position: relative;
+            
+            select {
+                width: 100%;
+                height: 30px;
+                font-family: "Noto Sans KR", sans-serif;
+                font-size: 1rem;
+                border: 1px solid ${ props => props.online ? props.theme.colors.commonBlack : "#BFBFBF" };
+                border-radius: 5px;
+                outline: none;
+                padding-left: 15px;
+                
+            }
+            .icon {
+                width: 15px;
+                height: 15px;
+                position: absolute;
+                top: 0; right: 15px; bottom: 0; margin: auto;
+                svg { display: block }
+            }
+            /* width: 100%;
             height: 30px;
             line-height: 30px;
             border: 1px solid ${ props => props.online ? props.theme.colors.commonBlack : "#BFBFBF" };
@@ -223,7 +247,7 @@ export const RowStyles = styled.ul`
                 background-image: url(${ props => props.online ? "./icon/active-arr-dwn.png" : "./icon/inactive-arr-dwn.png" });
                 background-repeat: no-repeat;
                 background-position: center right 10px;
-            }
+            } */
         }
         .btn-req {
             width: 100%;
@@ -409,7 +433,8 @@ export const MessageBoxStyles = styled.div`
 `;
 
 export const StatisticsStyles = styled(Content)`
-    width: 482px;
+    /* width: 482px; */
+    width: calc((100% / 2) - 15px);
 
     .victory {
         font-size: 22px;
@@ -449,7 +474,7 @@ export const StatisticsStyles = styled(Content)`
             cursor: pointer;
             &:not(:last-child){ background: url("./icon/arr-dwn-2.svg") no-repeat center right 0 / 18px; }
             
-            &:nth-child(1){ width: 95px; padding-left: 17px; background-position: center right 17px; }
+            &:nth-child(1){ width: 110px; padding-left: 17px; background-position: center right 17px; }
             &:nth-child(2){ width: 110px; padding-left: 8px; background-position: center right 7px; }
             &:nth-child(3){ width: 75px; padding-left: 8px; background-position: center right 7px; }
             &:nth-child(4){ width: 135px; text-align: center; }
@@ -476,7 +501,7 @@ export const StaticRowStyles = styled.ul`
 
         &.date { font-family: "Montserrat", sans-serif }
 
-        &:nth-child(1){ width: 95px; }
+        &:nth-child(1){ width: 110px; }
         &:nth-child(2){ width: 110px; }
         &:nth-child(3){ width: 75px; }
         &:nth-child(4){ width: 135px; }

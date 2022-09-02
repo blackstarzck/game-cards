@@ -44,7 +44,7 @@ export const AlarmStyles = styled.div`
         z-index: 4;
         svg { width: 60%; height: 60%; }
     }
-    .btn-alarm { color: ${ props => props.theme.colors.realRed }; }
+    .btn-alarm { color: ${ props => props.login ? props.theme.colors.realRed : props.theme.colors.inActive }; }
     .btn-close {
         svg { width: 40%; height: 40%; }
         color: ${ props => props.theme.colors.commonBlack };

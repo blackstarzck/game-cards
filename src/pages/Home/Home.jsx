@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from "styled-components"
 import { ButtonScrollUp } from '../../components/Button/Button';
 import Alarm from '../../components/cointainer/Alarm/Alarm';
+import { MainPopup } from '../../components/Popups/Popups';
 import SectionFrdList from '../../components/Section/FrdList/FrdList';
 import SectionFrdSearch from '../../components/Section/FrdSearch/FrdSearch';
 import SectionGroup from '../../components/Section/Group/Group';
@@ -10,17 +11,20 @@ import SectionMain from '../../components/Section/Main/Section';
 import SectionStorage from '../../components/Section/Storage/Storage';
 import { setInitDatas } from '../../data/data';
 import Database from '../../service/database';
-import { setCookie } from '../../util/util';
+import { setCookie, time } from '../../util/util';
 
 const db = new Database();
 
-const Home = ({login, frd, cards, setCards}) => {
+const Home = ({login, frd, setFrd, cards, setCards, alarm, setAlarm}) => {
   const [ mainCard, setMainCard ] = useState(setInitDatas("MAIN_CARD"));
-  const [ battleDetail, setBattleDetail ] = useState(setInitDatas("BLT_DT"));
-  const [ ready, setReady ] = useState(setInitDatas("BLT_DT", "DETAIL"));
+  const [ battleDetail, setBattleDetail ] = useState(setInitDatas("BTL_DT"));
+  const [ ready, setReady ] = useState(setInitDatas("BTL_DT", "DETAIL"));
 
   const [ selectBoxes, setSelectBox ] = useState({ FRD : { show: false } });
-  const mainPopup = useRef(false);
+  const [ mainPopup, setMainPopup ] = useState({ // 매인팝업의 상태유무
+    state: false, type: "", data: ""
+  });
+  // const mainPopup = useRef(false);
   const navigate = useNavigate();
 
   const handlePopup = (evt) => {
@@ -28,7 +32,7 @@ const Home = ({login, frd, cards, setCards}) => {
       const targetEle = evt.target.className;
       const targetTag = evt.target.tagName;
       
-      if(mainPopup.current === false &&
+      if(mainPopup.state === false &&
         (selectBoxes["FRD"].show &&
         (targetEle !== "frd-id" &&
         targetEle !== "dimmed-bg" &&
@@ -108,53 +112,57 @@ const Home = ({login, frd, cards, setCards}) => {
 
       updated["GROUPS"][`${groupNo}`]["GROUP_POWER"] = members.length ? sum : 0;
 
-      setReady(setInitDatas("BLT_DT", "DETAIL")); // reset
+      setReady(setInitDatas("BTL_DT", "DETAIL")); // reset
       db.writeNewData("USER_CARDS", login.ID, updated);
       return updated
     });
   }
 
-  const deleteSelectedCard = async (card) => {
-    const copied = { ...cards };
-    let groupNo, deleNumb, temp;
-
-    copied.CARDS.map((item, i) => {
-      if(item.KEY === card.KEY){ 
-        groupNo = item.GROUP_NO;
-        deleNumb = i;
-      }
-    });
-
-    temp = copied.CARDS[deleNumb];
-    temp = { ...temp, CODE: "", QUOTE: "", DESCR: "", GROUP_NO: 0, GROUP_ORDER: 0, NICK: "", JOB: "", JOB_KR: "", JOB_EN: "", PREF_RANK: 0, REMAIN: 0, LEVEL: 0, STATS: { STR: 0, AGI: 0, DEX: 0, VIT: 0, INT: 0, LUCK: 0 }, POWER: 0 }
-    copied.CARDS.splice(deleNumb, 1);
-    copied.CARDS.push(temp);
-
-    if(groupNo !== 0){
-      copied["GROUPS"][`NO${groupNo}`]["MEMBERS"].map((item, i) => {
-        if(item.KEY ===  card.KEY) copied["GROUPS"][`NO${groupNo}`]["MEMBERS"].splice(i, 1); 
-      });
-    }
-
-    const write = await setCards(() => {
-      const updated = { ...cards };
-      updated["CARDS"] = copied.CARDS;
-     if(groupNo !== 0) updated["GROUPS"][`NO${groupNo}`]["MEMBERS"] = copied["GROUPS"][`NO${groupNo}`]["MEMBERS"];
-      db.writeNewData("USER_CARDS", login.ID, updated);
-      return updated;
-    });
-  }
-
   const setReadyForBattle = (groupNo, detail) => {
     const active = (ready.CONTENDER_GROUP_NO !== groupNo) ? groupNo : 0;
+    const uniqueKey = new Date().getTime().toString(36)
 
     setReady({
       ...ready,
+      KEY: active ? uniqueKey : "",
       CONTENDER_GROUP_NO: active,
       CONTENDER_GROUP_POWER: active ? detail.GROUP_POWER : 0,
-      CONTENDER_GROUP_MEMBERS: active ? detail.MEMBERS : []
+      CONTENDER_GROUP_MEMBERS: active ? detail.MEMBERS : [],
+      TIME_STAMP: active ? time() : ""
+      // CONTENDER_MSG: !active && "",
+      // BET_DESCR: !active && "",
+      // DEFENDER_ID: !active && "",
+      // DEFENDER_NAME: !active && ""
     });
   }
+
+  const requestBattle = async (userInfo) => { // DEFENDER 정보
+    setReady((ready) => {
+      const updated  = { ...ready, ...userInfo };
+      setMainPopup({ state: true, type: "BTL_REQ_SENT", data: updated });
+      return updated
+    });
+
+    setBattleDetail((battleDetail) => {
+      const copied = { ...battleDetail };
+      copied.DETAIL = [ ...copied.DETAIL, ready ];
+      
+      console.log("copied: ", copied);
+      return copied;
+    });
+  }
+
+  const getInitTableDatas = async () => {
+    const USER_ID = login.ID || "", USER_NAME = login.NAME || ""; 
+
+    const BTL_DT = await db.getSingleData("BTL_DT", USER_ID);
+    if(BTL_DT) setBattleDetail({ ...battleDetail, ...BTL_DT, USER_ID, USER_NAME });
+    if(!BTL_DT) setBattleDetail({ ...battleDetail, USER_ID, USER_NAME });
+  }
+
+  useEffect(() => {
+    login.state && getInitTableDatas();
+  }, [login]);
 
   const [ swiper, setSwiper ] = useState(null);
 
@@ -169,10 +177,13 @@ const Home = ({login, frd, cards, setCards}) => {
       <SectionFrdSearch 
         login={login}
         mainPopup={mainPopup}
+        setMainPopup ={setMainPopup}
         sOpen={selectBoxes.FRD.show}
         handleSelectBoxes ={handleSelectBoxes } />
       <SectionFrdList
         frd={frd}
+        ready={ready}
+        requestBattle={requestBattle}
         login={login}/>
       <SectionGroup
         login={login}
@@ -189,9 +200,26 @@ const Home = ({login, frd, cards, setCards}) => {
         setCards={setCards}
         ready={ready}
         setReady={setReady}
-        deleteSelectedCard={deleteSelectedCard} />
+        mainPopup={mainPopup}
+        setMainPopup ={setMainPopup} />
         {/* <ButtonScrollUp /> */}
-        <Alarm login={login} />
+        <Alarm
+          login={login}
+          alarm={alarm}
+          setAlarm={setAlarm}
+          mainPopup={mainPopup} 
+          setMainPopup={setMainPopup} />
+        <MainPopup
+            login={login}
+            frd={frd}
+            setFrd={setFrd}
+            alarm={alarm}
+            setAlarm={setAlarm}
+            handleSelectBoxes={handleSelectBoxes}
+            mainPopup={mainPopup} 
+            setMainPopup={setMainPopup}
+            cards={cards}
+            setCards={setCards} />
     </HomePage>
   )
 }

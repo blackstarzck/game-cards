@@ -225,9 +225,10 @@ export function setInitDatas(name, listObj){
                 { key: 9, EN: 'Project Manager', KR: '기획자' }
             ]
         break;
-        case "BLT_DT" :
+        case "BTL_DT" :
             if(listObj){
                 DATA = {
+                    KEY: "",
                     BET_DESCR : "",
                     CONTENDER_GROUP_NO : 0,
                     CONTENDER_GROUP_POWER : 0,
@@ -254,6 +255,12 @@ export function setInitDatas(name, listObj){
                 FRDS_INFO: []
             }
             // DATA = {FRD_ID: "", FRD_NAME: "", FRD_UID: "", LOGIN: "", POWER: 0, RANK: 0 }
+        break;
+        case "ALARM_TABLE" :
+            DATA = {
+                UID: "", USER_ID: "", USER_EMAIL: "", USER_NAME: "",
+                data: []
+            }
         break;
     }
 

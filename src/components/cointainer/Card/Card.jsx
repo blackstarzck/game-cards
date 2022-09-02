@@ -12,7 +12,7 @@ import { setInitDatas } from '../../../data/data'
 
 const db = new Database();
 
-const Card = ({login, info, cards, setCards, setReady, deleteSelectedCard}) => {
+const Card = ({login, info, cards, setCards, setReady, deleteSelectedCard, mainPopup, setMainPopup}) => {
     const [ detailVisible, setDetailVisible ] = useState(false);
     const [ groupVisible, setGroupVisible ] = useState(false);
 
@@ -65,7 +65,7 @@ const Card = ({login, info, cards, setCards, setReady, deleteSelectedCard}) => {
                     }
 
                     setCards(cards => cards = copied);
-                    setReady(setInitDatas("BLT_DT", "DETAIL")); // reset
+                    setReady(setInitDatas("BTL_DT", "DETAIL")); // reset
                     db.writeNewData("USER_CARDS", login.ID, copied);
                 }else{
                     if(info["GROUP_NO"] !== number){
@@ -97,6 +97,8 @@ const Card = ({login, info, cards, setCards, setReady, deleteSelectedCard}) => {
             { (login.state && load.state && info.CODE) && 
                 <ButtonContainer
                     info={info}
+                    mainPopup={mainPopup}
+                    setMainPopup ={setMainPopup}
                     detailVisible={detailVisible}
                     showCardDetail={showCardDetail}
                     deleteSelectedCard={deleteSelectedCard} /> }
@@ -131,8 +133,6 @@ export const CardView = ({login, info, detailVisible, groupVisible, showGroupSel
                 <GrounpSelect
                     info={info}
                     groupVisible={groupVisible}
-                    ready={ready}
-                    setReady={setReady}
                     showGroupSelectBox={showGroupSelectBox}/> }
 
                  {/* 이미지 */}
@@ -153,7 +153,7 @@ export const CardView = ({login, info, detailVisible, groupVisible, showGroupSel
     );
 }
 
-export const GrounpSelect = ({info, groupVisible, showGroupSelectBox, ready, setReady}) => {
+export const GrounpSelect = ({info, groupVisible, showGroupSelectBox}) => {
     const el = useRef(null);
     const tl = useRef(null);
 
@@ -274,9 +274,11 @@ export const CardText = ({login, info, load}) => {
     );
 }
 
-export const ButtonContainer = ({info, detailVisible, showCardDetail, deleteSelectedCard}) => {
+export const ButtonContainer = ({info, detailVisible, showCardDetail, mainPopup, setMainPopup}) => {
 
-    const handleClick = () => deleteSelectedCard(info);
+    const handleClick = () => {
+        setMainPopup({ state: true, type: "DELETE_CARD", data: info });
+    }
 
     return(
         <ButtonWrapper>
