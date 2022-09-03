@@ -8,10 +8,11 @@ import { firebaseLogOut } from '../../../service/firebaseLogin';
 import Database from '../../../service/database';
 import { emailLogOut } from '../../../service/emailLogin';
 import { setInitDatas } from '../../../data/data';
+import { setCookie } from '../../../util/util';
 
 const db = new Database();
 
-const Navbar = ({login, setLogin, setCards, goToHome}) => {
+const Navbar = ({login, setLogin, setCards, setFrd, setAlarm, goToHome}) => {
   const location = useLocation();
 
   const handleLogOut = (e) => {
@@ -24,6 +25,10 @@ const Navbar = ({login, setLogin, setCards, goToHome}) => {
 
     setLogin({ ID: "", NAME: "", EMAIL: "", REGI_TYPE: "", state: false });
     setCards(setInitDatas("USER_CARDS"));
+    setFrd(setInitDatas("USER_FRDS"));
+    setAlarm(setInitDatas("ALARM_TABLE"));
+
+    setCookie("PREV_INFO", "", -1);
     goToHome();
   }
 

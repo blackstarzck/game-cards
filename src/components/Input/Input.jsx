@@ -133,7 +133,7 @@ export const InputFrdSrch = ({login, searchFunc, sOpen}) => {
                 placeholder={login.state ? "친구를 검색해보세요" : "로그인 후 이용가능합니다."}
                 value={inputVal || ""}
                 onChange={onChnage} 
-                onKeyPress={(e) => e.key === "Enter" && searchFunc(inputVal)} />
+                onKeyPress={(e) => { (e.key === "Enter" && inputVal) && searchFunc(inputVal)} } />
 
             { inputVal && <ButtonTextClear
                 className={"btn-clear"}

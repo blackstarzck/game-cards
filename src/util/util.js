@@ -123,7 +123,5 @@ export function time() {
     const minutes = date.getMinutes();
     const seconds = date.getSeconds();
     const result = `${year}.${month}.${day} ${hour}:${minutes}:${seconds}`
-    
-    console.log(result);
     return result;
 }

@@ -125,14 +125,12 @@ const Home = ({login, frd, setFrd, cards, setCards, alarm, setAlarm}) => {
     setReady({
       ...ready,
       KEY: active ? uniqueKey : "",
+      CONTENDER_ID : active ? login.ID : "",
+      CONTENDER_NAME : active ? login.NAME : "",
       CONTENDER_GROUP_NO: active,
       CONTENDER_GROUP_POWER: active ? detail.GROUP_POWER : 0,
       CONTENDER_GROUP_MEMBERS: active ? detail.MEMBERS : [],
       TIME_STAMP: active ? time() : ""
-      // CONTENDER_MSG: !active && "",
-      // BET_DESCR: !active && "",
-      // DEFENDER_ID: !active && "",
-      // DEFENDER_NAME: !active && ""
     });
   }
 
@@ -182,8 +180,11 @@ const Home = ({login, frd, setFrd, cards, setCards, alarm, setAlarm}) => {
         handleSelectBoxes ={handleSelectBoxes } />
       <SectionFrdList
         frd={frd}
+        setFrd={setFrd}
         ready={ready}
         requestBattle={requestBattle}
+        battleDetail={battleDetail}
+        setBattleDetail={setBattleDetail}
         login={login}/>
       <SectionGroup
         login={login}
@@ -213,6 +214,9 @@ const Home = ({login, frd, setFrd, cards, setCards, alarm, setAlarm}) => {
             login={login}
             frd={frd}
             setFrd={setFrd}
+            ready={ready}
+            battleDetail={battleDetail}
+            setBattleDetail={setBattleDetail}
             alarm={alarm}
             setAlarm={setAlarm}
             handleSelectBoxes={handleSelectBoxes}

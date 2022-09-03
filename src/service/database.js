@@ -1,6 +1,6 @@
 import { firebaseApp } from "./firebase"
 import { getFirestore, collection, doc, getDoc , getDocs, setDoc } from 'firebase/firestore';
-import { getDatabase, onValue, ref, remove, set } from "firebase/database";
+import { getDatabase, onValue, ref, set, push, onChildAdded, onChildChanged } from "firebase/database";
 import { time } from "../util/util";
 
 class Database {
@@ -16,7 +16,7 @@ class Database {
         set(ref(this.realtimeDB, `users/${id}`), {
             online: login,
             username: name,
-            email: email,
+            email: email
         });
     }
 
@@ -24,13 +24,34 @@ class Database {
         const emailRef = userId.indexOf("@");
         const id = (emailRef > -1) ? userId.substr(0, emailRef) : userId;
         const onlineRef = ref(this.realtimeDB, 'users/' + id + '/online');
-        console.log("step3");
         onValue(onlineRef, (snapshot) => {
             const data = snapshot.val();
-            console.log("step4, [database] data: ", data, snapshot);
-            data && updateFunc(data);
+            updateFunc(data);
+        })
+    }
+
+    messageSend(data){
+        const emailRef = data.id.indexOf("@");
+        const id = (emailRef > -1) ? data.id.substr(0, emailRef) : data.id;
+        const postListRef = ref(this.realtimeDB, `/messages/${data.key}`);
+        const newMessage = push(postListRef);
+        set(newMessage, { sender: id, msg: data.msg, time: time() });
+    }
+
+    messageLogInit(key, updateFunc){
+        const dbRef = ref(this.realtimeDB, `/messages/${key}`);
+        onValue(dbRef, (log) => {
+            updateFunc(log);
+        }, {
+            onlyOnce: true
         });
-        return () => onlineRef.off();
+    }
+
+    messageAddCheck(key, updateFunc){
+        const dbRef = ref(this.realtimeDB, `/messages/${key}`);
+        onChildAdded(dbRef, (newMsg) => {
+            updateFunc(newMsg.val());
+        });
     }
 
     async getDatas(tableName){
@@ -77,8 +98,8 @@ class Database {
                     }
 
                     inputData = result ? 
-                        [ ...result.data, { KEY: input.KEY || "", ALARM_TYPE : input.alarm_type, READ_STATE : "N",RESULT : "N",TIME_STAMP : time(),TRG_ID : input.TRG_ID, TRG_NAME : input.TRG_NAME,TRG_UID : "", TRG_EMAIL: input.TRG_EMAIL ? input.TRG_EMAIL : "" }] :
-                        [ { KEY: input.KEY || "", ALARM_TYPE : input.alarm_type, READ_STATE : "N",RESULT : "N",TIME_STAMP : time(),TRG_ID : input.TRG_ID, TRG_NAME : input.TRG_NAME, TRG_UID : "", TRG_EMAIL: input.TRG_EMAIL ? input.TRG_EMAIL : "" }];
+                        [ ...result.data, { KEY: input.KEY || "", ALARM_TYPE : input.alarm_type, READ_STATE : "N",RESULT : "N",TIME_STAMP : time(),TRG_ID : input.TRG_ID, TRG_NAME : input.TRG_NAME, TRG_UID : "", TRG_EMAIL: input.TRG_EMAIL || "", MSG: input.MSG || "", BET_DESCR: input.BET_DESCR ||"" }] :
+                        [ { KEY: input.KEY || "", ALARM_TYPE : input.alarm_type, READ_STATE : "N",RESULT : "N",TIME_STAMP : time(),TRG_ID : input.TRG_ID, TRG_NAME : input.TRG_NAME, TRG_UID : "", TRG_EMAIL: input.TRG_EMAIL || "", MSG: input.MSG || "", BET_DESCR: input.BET_DESCR ||"" }];
                     obj = {
                         UID: "",
                         USER_ID: String(input.id),
@@ -123,7 +144,7 @@ class Database {
                     obj = {
                         UID: "",
                         USER_ID: String(input.id),
-                        USER_EMAIL: input.email,
+                        USER_EMAIL: input.email || "",
                         USER_NAME: input.name,
                         DETAIL: inputData
                     }
@@ -183,7 +204,7 @@ class Database {
             break;
         }
 
-        // console.log(`[write2] tableName: ${tableName}, docName: ${docum} input: `, input, obj);
+        console.log(`[write2] tableName: ${tableName}, docName: ${docum} input: `, input, obj);
       
         setDoc(doc(this.db, tableName, docum), obj).then(() => {
             func && func();

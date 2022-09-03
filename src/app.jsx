@@ -64,15 +64,12 @@ function App() {
   const onlineCheck = (USER_FRDS) => {
     if(!login.ID) return;
     const copied = { ...USER_FRDS };
-    console.log("step1");
-    copied.FRDS_INFO.map((frd) => {
-      console.log("step2");
+    copied?.FRDS_INFO?.map((frd) => {
       db.frdOnlineCheck(frd.FRD_ID, status => {
-        console.log("step5, status:", status);
         if(status === true) frd.LOGIN = true;
+        if(status === false) frd.LOGIN = false;
       });
     });
-    console.log("copied: ", copied);
     return copied
   }
 
@@ -112,6 +109,9 @@ function App() {
     return () => {
       login.ID && loginRecord(login.ID, login.NAME, login.EMAIL, false);
       onlineCheck();
+      setCards(setInitDatas("USER_CARDS"));
+      setFrd(setInitDatas("USER_FRDS"));
+      setAlarm(setInitDatas("ALARM_TABLE"));
     }
   }, [login]);
 
@@ -124,6 +124,8 @@ function App() {
       <Navbar
         login={login}
         setCards={setCards} //로그아웃 시 모든 state의 ID, NAME 초기화 필요!
+        setFrd={setFrd}
+        setAlarm={setAlarm}
         setLogin={setLogin}
         goToHome={goToHome} />
       <Routes>

@@ -50,7 +50,7 @@ export const PopupDescr = styled.div`
 
 export const PopupMain = styled.div`
     visibility: hidden;
-    width: 410px;
+    min-width: 410px;
     font-family: "Noto Sans KR", sans-serif;
     text-align: center;
     color: ${ ({theme}) => theme.colors.commonBlack };
@@ -76,8 +76,16 @@ export const PopupMain = styled.div`
         .msg { font-size: 26px; font-weight: 800; }
     }
     .sub-msg { font-size: 18px; line-height: 28px; }
-    .quotes-up { margin-top: 14px; }
-    .quotes-dwn { margin-bottom: 14px; }
+    .quotes-up {
+        margin-top: 14px;
+        
+        svg { width: 20px; height: auto; }
+    }
+    .quotes-dwn {
+        margin-bottom: 14px;
+        
+        svg { width: 20px; height: auto; } 
+    }
     .btn-wrapper {
         padding: 40px 24px 23px; 
         display: flex; 

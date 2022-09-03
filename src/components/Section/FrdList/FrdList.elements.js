@@ -117,14 +117,8 @@ export const FrdListStyles = styled(Content)`
             font-weight: 600;
             text-align: center;
             letter-spacing: -1px;
-            cursor: pointer;
             svg { margin-left: 8px; }
 
-            &.btn-frd {
-                text-align: left;
-                background: url("./icon/arr-dwn-2.svg") no-repeat center right 4px / 18px;
-                padding-left: 18px;
-            }
             &:last-child svg { margin-left: 0; }
 
             &:nth-child(1){ width: 100px; }
@@ -133,6 +127,12 @@ export const FrdListStyles = styled(Content)`
             &:nth-child(4){ width: 92px; }
             /* &:nth-child(5){ width: 133px; }
             &:nth-child(6){ width: 92px; } */
+
+            .btn-refresh {
+                width: 100%;
+                height: 100%;
+                svg { width: 50%; height: 50%; }
+            }
         }
     }
     .tbody {
@@ -230,24 +230,6 @@ export const RowStyles = styled.ul`
                 top: 0; right: 15px; bottom: 0; margin: auto;
                 svg { display: block }
             }
-            /* width: 100%;
-            height: 30px;
-            line-height: 30px;
-            border: 1px solid ${ props => props.online ? props.theme.colors.commonBlack : "#BFBFBF" };
-            border-radius: 5px;
-            cursor: pointer;
-            svg { margin-left: 6px; }
-
-            .selected-item {
-                display: flex;
-                align-items: center;
-                padding: 0 15px;
-                width: 100%;
-                height: 100%;
-                background-image: url(${ props => props.online ? "./icon/active-arr-dwn.png" : "./icon/inactive-arr-dwn.png" });
-                background-repeat: no-repeat;
-                background-position: center right 10px;
-            } */
         }
         .btn-req {
             width: 100%;
@@ -313,7 +295,7 @@ export const ChatBoxStyles = styled.span`
 
     &:hover {
         color: ${ props => props.theme.colors.realWhite };
-        background-color: rgba(0, 0, 0, .5);
+        background-color: rgba(0, 0, 0, .8);
     }
 
     svg { margin-left: 5px; }
@@ -471,13 +453,12 @@ export const StatisticsStyles = styled(Content)`
             line-height: 40px;
             font-weight: 600;
             letter-spacing: -1px;
-            cursor: pointer;
-            &:not(:last-child){ background: url("./icon/arr-dwn-2.svg") no-repeat center right 0 / 18px; }
-            
-            &:nth-child(1){ width: 110px; padding-left: 17px; background-position: center right 17px; }
-            &:nth-child(2){ width: 110px; padding-left: 8px; background-position: center right 7px; }
-            &:nth-child(3){ width: 75px; padding-left: 8px; background-position: center right 7px; }
-            &:nth-child(4){ width: 135px; text-align: center; }
+            text-align: center;
+
+            &:nth-child(1){ width: 110px; }
+            &:nth-child(2){ width: 110px; }
+            &:nth-child(3){ width: 75px; }
+            &:nth-child(4){ width: 135px; }
         }
     }
 `;

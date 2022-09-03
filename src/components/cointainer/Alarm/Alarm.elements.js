@@ -51,6 +51,7 @@ export const AlarmStyles = styled.div`
     }
 
     .title-wrapper {
+        visibility: hidden;
         width: 100%;
         height: 100px;
         display: flex;
@@ -117,6 +118,8 @@ export const AlarmStyles = styled.div`
     &.active-step1 {
         width: 220px;
         border-radius: 5px;
+
+        .title-wrapper { visibility: visible; }
 
         .alarm-title { 
             animation: show .3s ease forwards;

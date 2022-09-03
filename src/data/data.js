@@ -233,6 +233,8 @@ export function setInitDatas(name, listObj){
                     CONTENDER_GROUP_NO : 0,
                     CONTENDER_GROUP_POWER : 0,
                     CONTENDER_GROUP_MEMBERS : [],
+                    CONTENDER_ID : "",
+                    CONTENDER_NAME : "",
                     CONTENDER_MSG: "",
 
                     DEFENDER_GROUP_NO : 0,

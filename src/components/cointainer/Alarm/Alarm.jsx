@@ -1,13 +1,13 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faArrowRotateRight, faBells, faCommentDots, faFaceHeadBandage, faHandshakeSimple, faPersonCircleCheck, faSword, faTrophy, faXmark, faBan } from '@fortawesome/pro-light-svg-icons'
+import { faArrowRotateRight, faBells, faCommentDots, faFaceHeadBandage, faHandshakeSimple, faPersonCircleCheck, faSword, faTrophy, faXmark, faBan, faDove } from '@fortawesome/pro-light-svg-icons'
 import React, { useState } from 'react'
 import { useEffect } from 'react'
 import { AlarmListStyles, AlarmStyles } from './Alarm.elements'
 import Database from '../../../service/database'
 import { setInitDatas } from '../../../data/data'
 
-library.add(faBan, faXmark, faArrowRotateRight, faBells, faSword, faCommentDots, faFaceHeadBandage, faHandshakeSimple, faPersonCircleCheck, faTrophy);
+library.add(faBan, faXmark, faArrowRotateRight, faBells, faSword, faCommentDots, faFaceHeadBandage, faHandshakeSimple, faPersonCircleCheck, faTrophy, faDove);
 
 const db = new Database();
 // db.getSingleData("ALARM_TABLE", "chanki1004");
@@ -50,7 +50,6 @@ const Alarm = ({login, mainPopup, setMainPopup, alarm, setAlarm}) => {
         console.log("alarm: ", alarm);
         for(let i = 0; i < alarm.data.length; i++){
             if(alarm.data[i].READ_STATE === "N") setBullet(true);
-            break;
         }
     }, [alarm])
 
@@ -109,9 +108,16 @@ const AlarmList = ({alarm, mainPopup, setMainPopup}) => {
         // MSG_RECV - 친구목록 컨텐츠로 스크롤 이동시켜준다.
         if(type !== "BTL_REQ_RECV" && type !== "FRD_REQ_RECV" && type !== "MSG_RECV") return;
 
-        const data = { id: alarm.TRG_ID, email: alarm.TRG_EMAIL, name: alarm.TRG_NAME, msg: alarm.MSG, date: alarm.TIME_STAMP };
-
-        setMainPopup({ state: true, type: "FRD_REQ_RECV", data });
+        const data = {
+            id: alarm.TRG_ID,
+            email: alarm.TRG_EMAIL,
+            name: alarm.TRG_NAME,
+            msg: alarm.MSG, date:
+            alarm.TIME_STAMP,
+            key: alarm.KEY,
+            bet: alarm.BET_DESCR
+        };
+        setMainPopup({ state: true, type, data });
     }
 
     useEffect(() => {
@@ -120,15 +126,16 @@ const AlarmList = ({alarm, mainPopup, setMainPopup}) => {
         if(alarm.ALARM_TYPE === "BTL_REQ_DENIED") setMsg({ icon: "fa-ban", msg1: "님께서 대결을 ", msg2: "거절", msg3: "하셨습니다.", state: "수신" });
         if(alarm.ALARM_TYPE === "BTL_VICT") setMsg({ icon: "fa-trophy", msg1: "님과의 대결에서 ", msg2: "승리", msg3: "하셨습니다.", state: "수신" });
         if(alarm.ALARM_TYPE === "BTL_DFT") setMsg({ icon: "fa-face-head-bandage", msg1: "님과의 대결에서 ", msg2: "패배", msg3: "하셨습니다.", state: "수신" });
+        if(alarm.ALARM_TYPE === "BTL_DRAW") setMsg({ icon: "fa-dove", msg1: "님과의 대결에서 ", msg2: "무승부", msg3: "하셨습니다.", state: "수신" });
         if(alarm.ALARM_TYPE === "FRD_REQ_SENT") setMsg({ icon: "fa-handshake-simple", msg1: "님께 친구요청을 하셨습니다.", msg2: "", state: "발송" });
         if(alarm.ALARM_TYPE === "FRD_REQ_RECV") setMsg({ icon: "fa-handshake-simple", msg1: "님께서 친구요청을 하셨습니다.", msg2: "", state: "수신" });
-        if(alarm.ALARM_TYPE === "FRD_AGR") setMsg({ icon: "fa-person-circle-check", msg1: "님께서 친구요청을 ", msg2: "수락", msg3: "하셨습니다", state: "수신" });
-        if(alarm.ALARM_TYPE === "FRD_DSAGR") setMsg({ icon: "fa-ban", msg1: "님께서 친구요청을 ", msg2: "거절", msg3: "하셨습니다.", state: "수신" });
+        if(alarm.ALARM_TYPE === "FRD_AGR") setMsg({ icon: "fa-person-circle-check", msg1: "님과 친구가되었습니다. ", msg2: "", msg3: "", state: "수신" });
+        if(alarm.ALARM_TYPE === "FRD_DSAGR") setMsg({ icon: "fa-ban", msg1: "님과 친구가되지 못하였습니다.", msg2: "", msg3: "", state: "수신" });
         if(alarm.ALARM_TYPE === "MSG_RECV") setMsg({ icon: "fa-comment-dots", msg1: "님께서 메시지를 보내셨습니다.", msg2: "", state: "수신" });
     }, [alarm]);
     
     return(
-        <AlarmListStyles onClick={(e) => alarm.RESULT === "N" && handleClick(alarm.ALARM_TYPE, alarm.TRG_ID, alarm.TRG_NAME )}>
+        <AlarmListStyles onClick={(e) => alarm.RESULT === "N" && handleClick(alarm.ALARM_TYPE)}>
             <div className="msg-wrapper">
                 <div className="icon">
                     { msg.icon && <FontAwesomeIcon icon={`fa-light ${msg.icon}`} /> }
