@@ -1,19 +1,18 @@
-import { setCookie } from "../util/util";
 import Database from "./database";
 
 const { Kakao } = window;
-const db = new Database;
+const db = new Database();
 
 export function kakaoLoginCheck(){
     return new Promise((resolve) => {
         const token = Kakao.Auth.getAccessToken();
-        console.log("카카오 토큰정보: ", token);
+        // console.log("카카오 토큰정보: ", token);
         if(token){
             // console.log("[O] 카카오로 로그인하였습니다.");
             Kakao.API.request({
                 url: '/v2/user/me',
                 success: function(result) {
-                    console.log("카카오 유저 정보: ", result);
+                    // console.log("카카오 유저 정보: ", result);
                     resolve({ ...result, REGI_TYPE: "KAKAO" });
                 }
             });
@@ -41,12 +40,6 @@ export function kakaoLogin(redirectFunc){
                             inOut: "IN",
                             email: result.kakao_account.email
                         };
-                        const userData = {
-                            user_email: result.kakao_account.email,
-                            user_id: String(result.id),
-                            user_name: result.kakao_account.profile.nickname,
-                            auto: false
-                        }
 
                         // console.log("카카오 유저 정보: ", result);
                         // step3

@@ -82,10 +82,10 @@ const SectionGroup = ({login, cards, swiper, setSwiper, removeCardFromGroup, set
 
         if(initSetting){
             let groupNo;
-            if(JSON.stringify(prev.NO1.MEMBERS) !== JSON.stringify(cards.GROUPS.NO1.MEMBERS)) groupNo = 0;
-            if(JSON.stringify(prev.NO2.MEMBERS) !== JSON.stringify(cards.GROUPS.NO2.MEMBERS)) groupNo = 1;
-            if(JSON.stringify(prev.NO3.MEMBERS) !== JSON.stringify(cards.GROUPS.NO3.MEMBERS)) groupNo = 2;
-            (groupNo !== undefined) && handlePage(groupNo);
+            if(JSON.stringify(prev.NO1.MEMBERS) != JSON.stringify(cards.GROUPS.NO1.MEMBERS)) groupNo = 0;
+            if(JSON.stringify(prev.NO2.MEMBERS) != JSON.stringify(cards.GROUPS.NO2.MEMBERS)) groupNo = 1;
+            if(JSON.stringify(prev.NO3.MEMBERS) != JSON.stringify(cards.GROUPS.NO3.MEMBERS)) groupNo = 2;
+            (groupNo != undefined) && handlePage(groupNo);
         }
     }, [cards]);
 

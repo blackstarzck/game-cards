@@ -199,7 +199,7 @@ const FrdRow = memo(({login, friend, online, chatBox, setChatBox, myBattleState,
     useEffect(() => {
         const sync = async () => {
             const get = await db.newMessageCheck(friend.MSG_KEY, newMsg => {
-                if(newMsg.sender !== login.ID) setIncomeMsg(true);
+                if(newMsg.sender != login.ID) setIncomeMsg(true);
             });
         }
         login.state && sync();
@@ -439,8 +439,8 @@ const StaticRow = memo(({login, item, visible, setVisible}) => {
             <li className="td date">{item.TIME_STAMP.split(" ")[0].replace(/\./g, "-")}</li>
             <li className="td opponent">
                 <span onClick={ () => item.DEFFENDER_MSG && handleVisible()}>
-                { (item.CONTENDER_NAME !== login.NAME) && item.CONTENDER_NAME }
-                { (item.DEFENDER_NAME !== login.NAME) && item.DEFENDER_NAME }
+                { (item.CONTENDER_NAME != login.NAME) && item.CONTENDER_NAME }
+                { (item.DEFENDER_NAME != login.NAME) && item.DEFENDER_NAME }
                 </span>
                 <DescrPopup
                     item={item}

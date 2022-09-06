@@ -38,8 +38,8 @@ const Home = ({login, frd, setFrd, cards, setCards, alarm, setAlarm}) => {
       
       if(mainPopup.state === false &&
         (selectBoxes["FRD"].show &&
-        (targetEle !== "frd-id" &&
-        targetEle !== "dimmed-bg" &&
+        (targetEle != "frd-id" &&
+        targetEle != "dimmed-bg" &&
         targetTag != "INPUT" && 
         targetTag != "BUTTON" && 
         targetTag != "path" && 
@@ -101,7 +101,7 @@ const Home = ({login, frd, setFrd, cards, setCards, alarm, setAlarm}) => {
   const upgradeCard = (card) => {
     const copied = { ...card }
 
-    if(copied.KEY && copied.DAILY_CNT !== 0){
+    if(copied.KEY && copied.DAILY_CNT != 0){
       const income = 5;
       const limit = 10 + (copied.LEVEL * 2);
       let EXP_PER = Math.round(((copied.EXP + income) / limit) * 100);
@@ -116,12 +116,12 @@ const Home = ({login, frd, setFrd, cards, setCards, alarm, setAlarm}) => {
 
         upgradeCard(RESULT);
         setMainCard(RESULT);
-        console.log(`1 LEVEL: ${RESULT.LEVEL}, EXP: ${RESULT.EXP} (${ Math.round((RESULT.EXP / limit) * 100)}%) LIMIT: ${limit} REMAIN: ${REMAIN}`);
+        // console.log(`1 LEVEL: ${RESULT.LEVEL}, EXP: ${RESULT.EXP} (${ Math.round((RESULT.EXP / limit) * 100)}%) LIMIT: ${limit} REMAIN: ${REMAIN}`);
       }else{
         RESULT = { ...copied, EXP, EXP_PER };
 
         setMainCard(RESULT);
-        console.log(`2 LEVEL: ${RESULT.LEVEL}, EXP: ${RESULT.EXP} (${ Math.round((RESULT.EXP / limit) * 100)}%) LIMIT: ${limit} REMAIN: ${RESULT.REMAIN}`);
+        // console.log(`2 LEVEL: ${RESULT.LEVEL}, EXP: ${RESULT.EXP} (${ Math.round((RESULT.EXP / limit) * 100)}%) LIMIT: ${limit} REMAIN: ${RESULT.REMAIN}`);
       }
 
       setCards((cards) => {
@@ -166,7 +166,7 @@ const Home = ({login, frd, setFrd, cards, setCards, alarm, setAlarm}) => {
   }
 
   const setReadyForBattle = (groupNo, detail) => {
-    const active = (ready.CONTENDER_GROUP_NO !== groupNo) ? groupNo : 0;
+    const active = (ready.CONTENDER_GROUP_NO != groupNo) ? groupNo : 0;
     const uniqueKey = new Date().getTime().toString(36)
 
     setReady({

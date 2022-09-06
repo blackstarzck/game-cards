@@ -32,7 +32,8 @@ const Navbar = ({login, setLogin, setCards, setFrd, setAlarm, goToHome}) => {
     goToHome();
   }
 
-  if(location.pathname === "/login") return;
+
+  if(location.pathname === "/login" || location.pathname.indexOf("join") > -1) return;
 
   return (
     <NavContainer>

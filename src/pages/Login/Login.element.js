@@ -19,7 +19,13 @@ export const Wrapper = styled.div`
 
     &.input-wrapper { margin-bottom: 27px; };
     &.btns-wrapper { margin-top:  15px; };
-    &.sns-wrapper { width: 200px; display: flex; justify-content: space-between;margin: 40px auto 0 };
+    &.sns-wrapper {
+        width: 200px;
+        display: flex;
+        justify-content: center;
+        margin: 40px auto 0;
+        button { margin: 0 15px; }
+    };
 
 
     label {

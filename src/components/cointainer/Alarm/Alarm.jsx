@@ -103,7 +103,7 @@ const AlarmList = ({alarm, mainPopup, setMainPopup}) => {
         // BTL_REQ_RECV - 발송인의 이름/이메일, 메시지
         // FRD_REQ_RECV - 발송인의 이름/이메일
         // MSG_RECV - 친구목록 컨텐츠로 스크롤 이동시켜준다.
-        if(type !== "BTL_REQ_RECV" && type !== "FRD_REQ_RECV" && type !== "MSG_RECV") return;
+        if(type != "BTL_REQ_RECV" && type != "FRD_REQ_RECV" && type != "MSG_RECV") return;
 
         const data = {
             id: alarm.TRG_ID,

@@ -3,17 +3,16 @@ import { Logo } from '../../components/Logo/Logo'
 import { Wrapper, LoginContainer, NewLink } from './Login.element'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/pro-solid-svg-icons'
-import { ButtonGoogle, ButtonKakao, ButtonLogin, ButtonNaver } from '../../components/Button/Button'
+import { ButtonGoogle, ButtonKakao, ButtonLogin } from '../../components/Button/Button'
 import { useEffect } from 'react'
 import { InputEmail, InputPwd } from '../../components/Input/Input'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Database from '../../service/database'
 import { handleSessionItem, rememberUserData, setCookie } from '../../util/util'
 
-const db = new Database;
+const db = new Database();
 
 const Login = ({login, setLogin, goToHome}) => {
-    let location = useLocation();
     const emailRef = useRef(null);
     const pwedRef = useRef(null);
     const formRef = useRef(null);
@@ -34,7 +33,7 @@ const Login = ({login, setLogin, goToHome}) => {
 
         const user = await db.getSingleData("USERS", id);
 
-        if(!user || (user && user.USER_PW !== pwd)){ // 실패
+        if(!user || (user && user.USER_PW != pwd)){ // 실패
             alert("이메일 또는 비밀번호를 다시 확인하세요.\n회원등록이 되어 있지 않은 이메일이거나 이메일 또는 비밀번호를 잘못 입력하셨습니다.");
             return;
         }
@@ -99,7 +98,7 @@ const Login = ({login, setLogin, goToHome}) => {
             <Wrapper className="sns-wrapper">
                 <ButtonGoogle login={login} setLogin={setLogin} redirect={goToHome}/>
                 <ButtonKakao login={login} setLogin={setLogin} redirect={goToHome}/>
-                <ButtonNaver login={login} setLogin={setLogin} redirect={goToHome}/>
+                {/* <ButtonNaver login={login} setLogin={setLogin} redirect={goToHome}/> */}
             </Wrapper>
         </LoginContainer>
     )

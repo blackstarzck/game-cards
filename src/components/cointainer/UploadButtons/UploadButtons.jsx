@@ -16,10 +16,10 @@ const UploadButtons = ({...props}) => {
             .then(() => {
                 detect()
                 .catch((error) => {
-                    console.log("얼굴/표정 감지 실패", error);
+                    // console.log("얼굴/표정 감지 실패", error);
                 })
                 .then((result) => {
-                    console.log("얼굴/표정 감지 성공", result);
+                    // console.log("얼굴/표정 감지 성공", result);
                     if(!result){
                         alert("다른 이미지를 업로드해주세요.");
                         props.setImgSrc("");

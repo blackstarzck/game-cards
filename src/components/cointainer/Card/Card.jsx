@@ -39,7 +39,6 @@ const Card = ({login, info, cards, setCards, setReady, deleteSelectedCard, mainP
                         temp = copied["GROUPS"][`${groups[m]}`]["MEMBERS"];
                         for(let t = 0; t < temp.length; t++){
                             if(temp[t]["KEY"] === info["KEY"]){
-                                console.log("중복되는 곳: ", `${groups[m]}`);
                                 copied["GROUPS"][`${groups[m]}`]["MEMBERS"].splice(t, 1); // 중복 전부 삭제
                             }
                         }
@@ -50,7 +49,7 @@ const Card = ({login, info, cards, setCards, setReady, deleteSelectedCard, mainP
                     copied["GROUPS"][`NO${number}`]["MEMBERS"] = [ ...members, newMember ]; // 그룹지정
 
                     for(let n = 0; n < copiedCards.length; n++){ // 그룹 지정
-                        if(copiedCards[n]["GROUP_NO"] !== number && copiedCards[n]["KEY"] === info["KEY"]){
+                        if(copiedCards[n]["GROUP_NO"] != number && copiedCards[n]["KEY"] === info["KEY"]){
                             copiedCards[n]["GROUP_NO"] = number;
                         }
                     }
@@ -68,7 +67,7 @@ const Card = ({login, info, cards, setCards, setReady, deleteSelectedCard, mainP
                     setReady(setInitDatas("BTL_DT", "DETAIL")); // reset
                     db.writeNewData("USER_CARDS", login.ID, copied);
                 }else{
-                    if(info["GROUP_NO"] !== number){
+                    if(info["GROUP_NO"] != number){
                         alert(`그룹 ${number}번에 추가할 수 없습니다.`);
                     }
                 }
@@ -220,7 +219,6 @@ export const CardDetails = ({info, detailVisible}) => {
     useEffect(() => {
         if(info.CODE){
             let sortArray = [];
-            console.log("info:", info);
             sortArray.push({ name: "STR", stat: info.STATS.STR });
             sortArray.push({ name: "AGI", stat: info.STATS.AGI });
             sortArray.push({ name: "DEX", stat: info.STATS.DEX });
@@ -230,7 +228,6 @@ export const CardDetails = ({info, detailVisible}) => {
             const strongStat = sortArray.sort((a, b) => { return a.stat > b.stat ? -1 : a.stat < b.stat ? 1 : 0; })[0].name;
             document.querySelectorAll(`.card-${info.KEY} .point`).forEach(item => item.classList.remove("active") );
             document.querySelector(`.card-${info.KEY} .point-${strongStat}`).classList.add("active");
-            console.log("strongStat: ", strongStat);
         }
     }, [info]);
 

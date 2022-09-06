@@ -59,6 +59,16 @@ export const Wrapper = styled.div`
             
             button:first-child { margin-right: 6px; }
         }
+        li:first-child .heading { position: relative; }
+        li:first-child .heading::after {
+            content: "";
+            display: block;
+            width: 14px;
+            height: 14px;
+            background: url("./icon/info.png") no-repeat center /contain;
+            position: absolute;
+            top: 0; right: -2px; bottom: 0; margin: auto;
+        }
     }
     &.view-wrapper { width: 232px; position: relative; }
     &.custom-wrapper { 

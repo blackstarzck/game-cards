@@ -109,7 +109,7 @@ export function getDateFromSec(milliSecond){
     const month = data.getMonth() + 1;
     const date = data.getDate();
 
-    console.log(`${year}.${month}.${date}`);
+    // console.log(`${year}.${month}.${date}`);
 
     return `${year}.${month}.${date}`;
 }

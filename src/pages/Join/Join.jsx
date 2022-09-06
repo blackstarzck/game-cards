@@ -56,7 +56,7 @@ const Join = ({login, setLogin, goToHome}) => {
         const value = type === "id" ? idRef.current.value : emailRef.current.value;;
 
         if(type === "id"){
-            if(idState.id1 && value !== ""){
+            if(idState.id1 && value != ""){
                 db.getSingleData("USERS", value, getIdResult);
             }else{
                 alert("입력하신 아이디가 유효하지 않습니다.");
@@ -64,7 +64,7 @@ const Join = ({login, setLogin, goToHome}) => {
             }
         }
         if(type=== "email"){
-            if(emailState.reg && value !== ""){
+            if(emailState.reg && value != ""){
                 db.getSingleData("USERS", value, getEmailResult);
             }else{
                 alert("입력하신 이메일 주소가 유효하지 않습니다.");
@@ -153,9 +153,9 @@ const Join = ({login, setLogin, goToHome}) => {
                 <h2 className={styles.title}>회원가입</h2>
                 <span className={styles.snsHeading}>SNS계정으로 간편하게 회원가입</span>
                 <div className={styles.snsWrapper}>
-                    <ButtonGoogle setLogin={setLogin} redirect={goToHome}/>
-                    <ButtonKakao setLogin={setLogin} redirect={goToHome}/>
-                    <ButtonNaver setLogin={setLogin} redirect={goToHome}/>
+                    <ButtonGoogle login={login} setLogin={setLogin} redirect={goToHome}/>
+                    <ButtonKakao login={login} setLogin={setLogin} redirect={goToHome}/>
+                    {/* <ButtonNaver setLogin={setLogin} redirect={goToHome}/> */}
                 </div>
 
                 <span className={styles.text}><b className={styles.red}>*</b>필수입력사항</span>
@@ -190,7 +190,7 @@ const Join = ({login, setLogin, goToHome}) => {
                                     <td>
                                         <div className={styles.inputWrapper}>
                                             <InputForm validate="pw-cfrm" inputRef={pw2Ref} setPwState={setPwState} pwState={pwState} />
-                                            { (pwState.result !== "" && !pwState.dup) && <span className={`${styles.descr} ${styles.warning}`} ref={pwText4Ref} > 동일한 비밀번호를 입력해주세요</span> }
+                                            { (pwState.result != "" && !pwState.dup) && <span className={`${styles.descr} ${styles.warning}`} ref={pwText4Ref} > 동일한 비밀번호를 입력해주세요</span> }
                                         </div>
                                     </td>
                                 </tr>

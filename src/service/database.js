@@ -1,6 +1,6 @@
 import { firebaseApp } from "./firebase"
 import { getFirestore, collection, doc, getDoc , getDocs, setDoc } from 'firebase/firestore';
-import { getDatabase, onValue, ref, set, push, onChildAdded, onChildChanged } from "firebase/database";
+import { getDatabase, onValue, ref, set, push, onChildAdded } from "firebase/database";
 import { time } from "../util/util";
 
 class Database {
@@ -73,7 +73,7 @@ class Database {
         const docRef = doc(this.db, tableName, docName);
         const document = await getDoc(docRef);
         const result = document.data();
-        console.log(`[get] tableName: ${tableName}, docName: ${docName}`, result);
+        // console.log(`[get] tableName: ${tableName}, docName: ${docName}`, result);
         func && func(result);
         return result;
     }
@@ -87,23 +87,8 @@ class Database {
 
         this.getSingleData(tableName, docName)
         .then((result) => {
-            let doubleCheck = false;
-
             switch(tableName){
                 case "ALARM_TABLE" :
-                    if(result && result.data.length > 0){
-                        for(let i = 0; i < result.data.length; i++){
-                            if(
-                                result.data[i].TRG_ID == input.id &&
-                                result.data[i].TRG_NAME == input.name &&
-                                result.data[i].ALARM_TYPE == input.alarm_type
-                            ){
-                                doubleCheck = true;
-                                return;
-                            }
-                        }
-                    }
-
                     inputData = result ? 
                         [ ...result.data, { KEY: input.KEY || "", ALARM_TYPE : input.alarm_type, READ_STATE : "N",RESULT : "N",TIME_STAMP : time(),TRG_ID : input.TRG_ID, TRG_NAME : input.TRG_NAME, TRG_UID : "", TRG_EMAIL: input.TRG_EMAIL || "", MSG: input.MSG || "", BET_DESCR: input.BET_DESCR ||"" }] :
                         [ { KEY: input.KEY || "", ALARM_TYPE : input.alarm_type, READ_STATE : "N",RESULT : "N",TIME_STAMP : time(),TRG_ID : input.TRG_ID, TRG_NAME : input.TRG_NAME, TRG_UID : "", TRG_EMAIL: input.TRG_EMAIL || "", MSG: input.MSG || "", BET_DESCR: input.BET_DESCR ||"" }];
@@ -155,9 +140,10 @@ class Database {
                         FRDS_INFO: inputData
                     };
                 break;
+                default :
             }
             
-            console.log(`[write1] tableName: ${tableName}, docName: ${docName} input: `, input, obj);
+            // console.log(`[write1] tableName: ${tableName}, docName: ${docName} input: `, input, obj);
 
             setDoc(doc(this.db, tableName, docName), obj).then(() => {
                 func && func();
@@ -190,9 +176,10 @@ class Database {
             case "BTL_DT" :
                 obj = input;
             break;
+            default :
         }
 
-        console.log(`[write2] tableName: ${tableName}, docName: ${docum} input: `, input, obj);
+        // console.log(`[write2] tableName: ${tableName}, docName: ${docum} input: `, input, obj);
       
         setDoc(doc(this.db, tableName, docum), obj).then(() => {
             func && func();

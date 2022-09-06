@@ -258,13 +258,13 @@ export const LoginButton = styled.button`
 export const GoogleButton = styled.button`
     width: 50px;
     height: 50px;
-    background-image: url("./images/btn-google.png");
+    /* background-image: url("./btn-google.png"); */
 `;
 export const KakaoButton = styled(GoogleButton)`
-    background-image: url("./images/btn-kakao.png");
+    /* background-image: url("./btn-kakao.png"); */
 `;
 export const NaverButton = styled(GoogleButton)`
-    background-image: url("./images/btn-naver.png");
+    /* background-image: url("./images/btn-naver.png"); */
 `;
 
 export const EyeOpenButton = styled.button`

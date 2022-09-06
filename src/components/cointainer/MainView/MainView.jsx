@@ -34,14 +34,14 @@ const MainView = ({...props}) => {
     }
 
     const saveStats = () => {
-        if(!props.mainCard.KEY) return
+        const REMAIN = Number(document.querySelector(".total-points").innerText);
+        if((props.mainCard.KEY > 0 && props.mainCard.REMAIN === 0) || REMAIN === props.mainCard.REMAIN) return
         const STR = Number(document.querySelector(".STR").innerText);
         const AGI = Number(document.querySelector(".AGI").innerText);
         const DEX = Number(document.querySelector(".DEX").innerText);
         const VIT = Number(document.querySelector(".VIT").innerText);
         const INT = Number(document.querySelector(".INT").innerText);
         const LUCK = Number(document.querySelector(".LUCK").innerText);
-        const REMAIN = Number(document.querySelector(".total-points").innerText);
         const STATS = { STR, AGI, DEX, VIT, INT, LUCK };
         const POWER = STR + AGI + DEX + VIT + INT + LUCK;
         const result = { ...props.mainCard, POWER, REMAIN, STATS }

@@ -8,6 +8,8 @@ import { faCircleXmark, faChevronDown, faArrowUp } from '@fortawesome/pro-light-
 import { gsap } from "gsap"
 import { kakaoLogin } from "../../service/kakaoLogin"
 import { firebaseLogin } from '../../service/firebaseLogin'
+import googleImg from "./btn-google.png";
+import kakaoImg from "./btn-kakao.png";
 
 library.add(faTrashCan, faMagnifyingGlassPlus, faEye, faEyeSlash, faFolderMagnifyingGlass, faCards, faPenToSquare, faFloppyDiskPen, faCircleXmark, faChevronDown, faPlus, faMinus, faArrowRotateLeft, faFloppyDiskCircleArrowRight, faCircleArrowUp, faMagnifyingGlass, faArrowUp);
 
@@ -20,14 +22,10 @@ export const ButtonScrollUp = () => {
 }
 
 export const ButtonUpload = ({...props}) => {
-  const handleClick = () => {
-    console.log("click");
-  }
-
   return(
     <>
       <input onChange={(e) => props.onChange(e)} type="file" name="" id="file" accept="image/*" required={true} multiple={false} hidden={true} />
-      <UploadButton onClick={handleClick}>
+      <UploadButton>
         <label htmlFor={props.dailyCnt && "file"}>파일선택<FontAwesomeIcon icon={faFolderMagnifyingGlass} /></label>
       </UploadButton>
     </>
@@ -73,7 +71,6 @@ export const ButtonSaveTitle = ({handleEditState, updateCard, names, mainCard })
     updateCard({ key: "JOB_KR", value: names["JOB_KR"] || mainCard.JOB_KR });
     updateCard({ key: "JOB_EN", value: names["JOB_EN"] || mainCard.JOB_EN });
     handleEditState();
-    console.log("ButtonSaveTitle:", { NICK: names["NICK"], JOB_KR: names["JOB_KR"], JOB_EN: names["JOB_EN"] });
   }
 
   return(
@@ -159,7 +156,7 @@ export const ButtonKeepCard = ({imgLoaded, mainCard, keepSelectedCard, upgradeCa
   );
 }
 
-export const ButtonStat = ({imgLoaded, remain}) => <StatButton imgLoaded={imgLoaded} remain={remain}><b>능</b><b>력</b><b>치</b>{ remain !== 0 && <FontAwesomeIcon icon={faSparkles} /> }</StatButton>
+export const ButtonStat = ({imgLoaded, remain}) => <StatButton imgLoaded={imgLoaded} remain={remain}><b>능</b><b>력</b><b>치</b>{ remain != 0 && <FontAwesomeIcon icon={faSparkles} /> }</StatButton>
 
 export const ButtonSkill = ({imgLoaded, disable}) => <SkillButton disable imgLoaded={imgLoaded}><b>스</b><b>킬</b><FontAwesomeIcon icon={faSparkles} /></SkillButton>
 
@@ -186,7 +183,10 @@ export const ButtonGoogle = ({login, setLogin, redirect}) => {
     }) : alert("이미 로그인이 되어있습니다.");
   }
   return(
-    <GoogleButton onClick={() => onClick()} />
+    <GoogleButton onClick={() => onClick()}>
+      <img src={googleImg} alt="" />
+    </GoogleButton>
+    
   );
 }
 
@@ -198,7 +198,9 @@ export const ButtonKakao = ({login, setLogin, redirect}) => {
     }) : alert("이미 로그인이 되어있습니다.");
   }
   return(
-      <KakaoButton onClick={() => onClick()} />
+      <KakaoButton onClick={() => onClick()}>
+        <img src={kakaoImg} />
+      </KakaoButton>
     );
 }
 export const ButtonNaver = () => {

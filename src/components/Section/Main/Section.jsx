@@ -42,7 +42,7 @@ const SectionMain = ({login, cards, setCards, mainCard, setMainCard, keepSelecte
         const jobKR = lists[random].KR;
         const jobEN = lists[random].EN;
 
-        if(result.age !== 0 && result.gender !== ""){
+        if(result.age != 0 && result.gender != ""){
             const resultCardCode = getCardCode(result);
             if(!resultCardCode.CODE){
                 alert("다른 이미지를 업로드해주세요.");

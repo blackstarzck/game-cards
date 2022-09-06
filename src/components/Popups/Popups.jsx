@@ -41,7 +41,7 @@ export const DescrPopup = ({statName, visible, popup, setPopup, item}) => {
     }, [popup]);
 
     useEffect(() => {
-        if(popup && (visible.target !== statName)) reverseFunc();
+        if(popup && (visible.target != statName)) reverseFunc();
     },[visible]);
 
     const reverseFunc = () => {
@@ -127,7 +127,7 @@ export const MainPopup = ({
                     copied.CARDS.splice(deleNumb, 1);
                     copied.CARDS.push(temp);
                 
-                    if(groupNo !== 0){
+                    if(groupNo != 0){
                         copied["GROUPS"][`NO${groupNo}`]["MEMBERS"].map((item, i) => {
                             if(item.KEY ===  mainPopup.data.KEY) copied["GROUPS"][`NO${groupNo}`]["MEMBERS"].splice(i, 1); 
                         });
@@ -139,7 +139,7 @@ export const MainPopup = ({
                     const write = await setCards(() => {
                         const updated = { ...cards };
                         updated["CARDS"] = copied.CARDS;
-                        if(groupNo !== 0){
+                        if(groupNo != 0){
                             updated["GROUPS"][`NO${groupNo}`]["GROUP_POWER"] = sum;
                             updated["GROUPS"][`NO${groupNo}`]["MEMBERS"] = copied["GROUPS"][`NO${groupNo}`]["MEMBERS"];
                         }
@@ -204,7 +204,6 @@ export const MainPopup = ({
                     let newDetail, myResult, frdResult, myAlarmType, frdAlarmType;
                     request || alert(`${mainPopup.data.id}의 대결신청정보가 없습니다.`);
                     request.DETAIL.map((item, i) => {
-                        console.log("item KEY: ", item.KEY);
                         if(item.KEY === mainPopup.data.key){
                             if(item.CONTENDER_GROUP_POWER > ready.CONTENDER_GROUP_POWER){
                                 myResult = "LOST";
@@ -236,7 +235,6 @@ export const MainPopup = ({
                                 RESULT : frdResult,
                                 TIME_STAMP : time()
                             }
-                            console.log("2-item: ", request.DETAIL[i]);
                             newDetail = request.DETAIL[i];
                         }
                     });

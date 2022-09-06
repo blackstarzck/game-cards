@@ -94,7 +94,6 @@ export const JobLists = ({ list, clickState, handleDropDown, handleNames }) => {
         handleDropDown(!clickState);
         handleNames({ key: "JOB_EN", value: en });
         handleNames({ key: "JOB_KR", value: kr });
-        console.log(kr, en)
     }
 
     const reverseFun = () => {

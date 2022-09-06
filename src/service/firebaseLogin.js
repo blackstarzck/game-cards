@@ -2,7 +2,7 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signO
 import Database from "./database";
 
 const auth = getAuth();
-const db = new Database;
+const db = new Database();
 
 export function firebaseLoginCheck(){
     return new Promise((resolve) => {
@@ -30,14 +30,8 @@ export function firebaseLogin(redirectFunc){
                 inOut: "IN",
                 email: result.user.email
             };
-            const userData = {
-                user_email: result.user.email,
-                user_id: result.user.email,
-                user_name: result.user.displayName,
-                auto: false
-            }
   
-            console.log("파이어베이스 유저정보: ", result);
+            // console.log("파이어베이스 유저정보: ", result);
             db.writeNewData("USERS", result.user.email, data, redirectFunc);
             resolve({ ...result, REGI_TYPE: "GOOGLE" });
 

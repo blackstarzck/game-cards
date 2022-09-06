@@ -29,7 +29,7 @@ export const useInterval = (callback, delay) => {
         const tick = () => {
             savedCallback.current();
         }
-        if(delay !== null){
+        if(delay != null){
             const timerId = setInterval(tick, delay);
             return () => clearInterval(timerId);
         }
