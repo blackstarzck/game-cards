@@ -8,6 +8,24 @@ export const Wrapper = styled.div`
         border-radius: 5px;
         position: relative;
         box-shadow: ${ props => props.theme.boxShadow.default };
+
+        @media screen and (max-width: 938px){
+            width: 100%;
+            .stat-wrapper .points { width: 60% }
+            .ability-btns { display: none; }
+        }
+        @media screen and (max-width: 775px){
+            .stat-wrapper { width: 100%; }
+            .view-wrapper { width: 100%; margin-bottom: 45px; }
+        }
+        @media screen and (max-width: 580px){
+            .body { flex-wrap: wrap; flex-direction: column-reverse; }
+            .btn-handlers button { width: calc((100% / 4) - 10px); font-size: 1rem; }
+        }
+        @media screen and (max-width: 410px){
+            .btn-handlers { flex-wrap: wrap; }
+            .btn-handlers button { width: 100%; margin-top: 10px; }
+        }
     }
     &.edit-wrapper, &.select-wrapper {
         /* display: flex; */
@@ -49,6 +67,9 @@ export const Wrapper = styled.div`
             background-color: ${ props => props.remain ? props.theme.colors.realWhite : props.theme.colors.inActiveInputBG };;
         }
     }
+    
+    &.view-wrapper { width: 232px; position: relative; }
+
     &.list-wrapper {
         padding: 15px 0 0;
 
@@ -70,7 +91,7 @@ export const Wrapper = styled.div`
             top: 0; right: -2px; bottom: 0; margin: auto;
         }
     }
-    &.view-wrapper { width: 232px; position: relative; }
+
     &.custom-wrapper { 
         width: 100%;
         height: 100%;

@@ -5,15 +5,20 @@ export const GroupSection = styled.section`
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
-    height: 330px;
+    flex-wrap: wrap;
     margin-top: 187px;
 
     .btn-prev, .btn-next, .group-no { color: ${ props => props.login ? props.theme.colors.commonBlack : props.theme.colors.inActiveButtonBg } }
+
+    @media screen and (max-width: 1163px){
+        article:first-child { width: calc(100% - 70px); margin-bottom: 110px; }
+        article:last-child { width: 100%; margin: 0 25px; }
+    }
 `;
 
 export const ViewContainerStyles = styled.article`
     width: 687px;
-    height: 100%;
+    height: 330px;
     display: flex;
     align-items: center;
 
@@ -45,6 +50,19 @@ export const ViewContainerStyles = styled.article`
 
         &:active { background-color: rgba(0,0,0, .5) }
     }
+
+    @media screen and (max-width: 640px){
+        width: 90% !important;
+        margin: 0 auto;
+        display: block;
+        height: inherit;
+
+        .btns-wrapper {
+            justify-content: center;
+            flex-direction: initial;
+        }
+        .btn-prev { margin-right: 25px; }
+    }
 `;
 
 export const ViewStyles = styled.div`
@@ -56,6 +74,10 @@ export const ViewStyles = styled.div`
     box-shadow: ${ props => props.theme.boxShadow.default };
     display: flex;
     align-items: center;
+
+    @media screen and (max-width: 640px){
+        height: 330px;
+    }
 
     .no-data {
         text-align: center;
@@ -137,7 +159,7 @@ export const CardStyles = styled.li`
 
 export const DetailContainerStyles = styled.article`
     width: 387px;
-    height: 100%;
+    height: 330px;
     padding: 22px 22px 18px;
     border-radius: 5px;
     background-color: ${ props => props.theme.colors.realWhite };
@@ -148,7 +170,6 @@ export const DetailContainerStyles = styled.article`
     position: relative;
 
     .pagenation {
-
         display: flex;
         position: absolute;
         top: -34px; left: 24px;
@@ -218,4 +239,11 @@ export const DetailContainerStyles = styled.article`
         display: flex;
         justify-content: space-between;
     }
+    @media screen and (max-width: 640px){
+        .pagenation {
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    }
+    
 `;

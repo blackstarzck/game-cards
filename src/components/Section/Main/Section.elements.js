@@ -10,6 +10,7 @@ export const MainSection = styled(DefaultSection)`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
     padding-top: 85px;
     margin-bottom: 150px;
 
@@ -26,7 +27,36 @@ export const MainSection = styled(DefaultSection)`
 `;
 
 export const FrdSearchSection = styled(DefaultSection)``;
-export const Container = styled.article``;
+export const Container = styled.article`
+
+    @media screen and (max-width: 938px){
+        &.left-container {
+            margin: 0 auto;
+            text-align: center;
+
+            button {
+                width: 100%;
+            }
+
+            .outer-wrapper {
+                width: 310px;
+                margin: 0 auto;
+            }
+            .inner-wrapper {
+                button:first-child {
+                    margin-right: 15px;
+                }
+            }
+        }
+        &.right-container {
+            width: 100%;
+            margin: 50px 10px;
+        }
+    }
+    @media screen and (max-width: 580px){
+
+    }
+`;
 
 // Wrapper
 export const Wrapper = styled.ul`

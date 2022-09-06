@@ -2,11 +2,25 @@ import styled, { css } from "styled-components";
 
 export const FrdListSection = styled.section`
     max-width: ${ props => props.theme.size.desktop };
-    height: 340px;
     margin: 147px auto 0;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+
+    @media screen and (max-width: 1200px){
+        margin: 0 25px;
+        article { width: 100%; margin-top: 110px; }
+    }
+    @media screen and (max-width: 610px){
+        article:first-child h3 { margin: 0 auto 15px; }
+        article:first-child .heading { display: none; }
+        article:first-child .input-wrapper { width: 100%; margin: 0 auto; }
+        article:first-child input { width: 100%; border-top-left-radius: 25px; border-bottom-left-radius: 25px; border: 1px solid #D9D9D9; border-right: 0; }
+
+        article:last-child .top { display: block; }
+        article:last-child h3 { text-align: center; margin-bottom: 15px; }
+        article:last-child .result-wrap { text-align: center; }
+    }
 
     h3.title {
         font-size: 34px;
@@ -53,8 +67,9 @@ export const Content = styled.article`
 `;
 
 export const FrdListStyles = styled(Content)`
-    /* width: 688px; */
-    width: calc((100% / 2) - 15px);
+    width: 585px;
+    /* width: calc((100% / 2) - 15px); */
+    height: 340px;
     position: relative;
 
     .input-wrapper {
@@ -428,8 +443,9 @@ export const MessageBoxStyles = styled.div`
 `;
 
 export const StatisticsStyles = styled(Content)`
-    /* width: 482px; */
-    width: calc((100% / 2) - 15px);
+    width: 585px;
+    /* width: calc((100% / 2) - 15px); */
+    height: 340px;
 
     .tbody {
         overflow: hidden;

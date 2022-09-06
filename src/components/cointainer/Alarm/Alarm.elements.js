@@ -14,6 +14,10 @@ export const AlarmStyles = styled.div`
     padding: 0 10px;
     z-index: 4;
 
+    @media screen and (max-width: 640px){
+
+    }
+
     &.new-alarm {
         .btn-alarm::after {
             content: "";

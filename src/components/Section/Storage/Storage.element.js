@@ -23,6 +23,9 @@ export const StorageSection = styled.section`
     @media screen and (max-width: 900px){
         .body { grid-template-columns: repeat(2, 1fr); padding: 0 10px; }
     }
+    @media screen and (max-width: 620px){
+        .top { display: none; }
+    }
     @media screen and (max-width: 600px){
         .body { grid-template-columns: repeat(1, 1fr); padding: 0 10px; }
     }
