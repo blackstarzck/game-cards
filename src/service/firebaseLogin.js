@@ -38,8 +38,6 @@ export function firebaseLogin(redirectFunc){
             }
   
             console.log("파이어베이스 유저정보: ", result);
-
-            db.writeNewData("USER_LOG", result.user.email, data);
             db.writeNewData("USERS", result.user.email, data, redirectFunc);
             resolve({ ...result, REGI_TYPE: "GOOGLE" });
 
@@ -54,7 +52,6 @@ export function firebaseLogOut(data){
         signOut(auth).then(() => {
                 // Sign-out successful.
                 // console.log("파이어베이스 로그아웃 data: ", data);
-                db.writeNewData("USER_LOG", data.id, data);
                 resolve(true);
             }).catch((error) => {
                 // An error happened.

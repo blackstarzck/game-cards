@@ -140,6 +140,7 @@ export const FrdListStyles = styled(Content)`
         display: flex;
         flex-direction: column;
         font-size: 1rem;
+        padding-bottom: 24px;
 
         .standby {
             text-align: center;
@@ -192,21 +193,27 @@ export const RowStyles = styled.ul`
         &.numb { font-family: "Montserrat", sans-serif; }
         &.frd-name {
             position: relative;
-            ${ props => props.receive && css`
+            ${ props => (props.receive  && props.online) && css`
                 cursor: pointer;
+                &::after {
+                    ${ props => props.receive && css`
+                        content: "";
+                        display: block;
+                        width: 20px;
+                        height: 100%;
+                        background: url("./icon/income-msg-2.png") no-repeat center / contain;
+                        position: absolute;
+                        top: -5px; right: -5px;
+                        animation: gelatine 0.5s infinite;
+                    `}
+                }
+                @keyframes gelatine {
+                    from, to { transform: scale(1, 1); }
+                    25% { transform: scale(0.9, 1.1); }
+                    50% { transform: scale(1.1, 0.9); }
+                    75% { transform: scale(0.95, 1.05); }
+                }
             `}
-            &::after {
-                ${ props => props.receive && css`
-                    content: "";
-                    display: block;
-                    width: 20px;
-                    height: 100%;
-                    border-radius: 50%;
-                    background: url("./icon/income-msg-2.png") no-repeat center / contain;
-                    position: absolute;
-                    top: -5px; right: -5px;
-                `}
-            }
         } 
         .selectBox {
             width: 100%;
@@ -418,6 +425,11 @@ export const StatisticsStyles = styled(Content)`
     /* width: 482px; */
     width: calc((100% / 2) - 15px);
 
+    .tbody {
+        overflow: hidden;
+        padding-bottom: 24px;
+    } 
+
     .victory {
         font-size: 22px;
         font-weight: 600;
@@ -481,6 +493,32 @@ export const StaticRowStyles = styled.ul`
         &.result-draw { font-weight: 700; color: #8A8A8A; }
 
         &.date { font-family: "Montserrat", sans-serif }
+        &.opponent {
+            position: relative;
+            span {
+                ${ props => props.comment && css`
+                cursor: pointer;
+
+                &::after {
+                    content: "";
+                    display: block;
+                    width: 20px;
+                    height: 100%;
+                    background: url("./icon/cmmt.png") no-repeat center / contain;
+                    position: absolute;
+                    top: -5px; right: 10px;
+                    animation: gelatine 0.5s infinite;
+
+                    @keyframes gelatine {
+                        from, to { transform: scale(1, 1); }
+                        25% { transform: scale(0.9, 1.1); }
+                        50% { transform: scale(1.1, 0.9); }
+                        75% { transform: scale(0.95, 1.05); }
+                    }
+                }
+            `}
+            }
+        }
 
         &:nth-child(1){ width: 110px; }
         &:nth-child(2){ width: 110px; }

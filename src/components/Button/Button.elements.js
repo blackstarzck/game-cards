@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const DefaultButton = styled.button`
     border-radius: 5px;
@@ -118,11 +118,17 @@ export const AddButton = styled.button`
     height: 24px;
     border: 1px solid ${ ({ theme }) => theme.colors.border02 };
     border-radius: 5px;
+    transition: all .2s ease;
 
     & svg, i {
         color: ${ ({ theme }) => theme.colors.lightBlue };
         width: 80%;
         height: 80%;
+    }
+    &:active {
+        background-color: ${ ({ theme }) => theme.colors.lightBlue };
+
+        svg { color: #ffffff }
     }
 `;
 
@@ -133,7 +139,7 @@ export const RemoveButton = styled(AddButton)`
 export const ResetButton = styled.button`
     width: 95px;
     height: 40px;
-    background-color: ${ props => props.imgLoaded ? props.theme.colors.realRed : props.theme.colors.inActiveButtonBg };
+    background-color: ${ props => props.remain ? props.theme.colors.realRed : props.theme.colors.inActiveButtonBg };
     border-radius: 25px;
     box-shadow: ${ ({ theme }) => theme.boxShadow.default };
     transition: .2s;
@@ -166,18 +172,6 @@ export const KeepButton = styled(ViewButton)`
     width: 110px;
 `;
 
-export const LevelUpButton = styled.button`
-    width: 25px;
-    height: 25px;
-    color: ${ props =>  props.imgLoaded ? props.theme.colors.realRed : props.theme.colors.inActiveButtonBg };
-    transition: .2s;
-
-    svg, i {
-        width: 100%;
-        height: 100%;
-    }
-`;
-
 export const StatButton = styled.button`
     width: 55px;
     height: 100px;
@@ -195,11 +189,25 @@ export const StatButton = styled.button`
     transition: .2s;
 
     b { display: block; width: 100%; text-align: center;}
-    svg, i {
-        position: absolute;
-        right: 0; top: 6px;
-        color: ${ ({ theme }) => theme.colors.realRed };
-    }
+
+
+        ${ props => props.remain && css`
+            svg {
+                position: absolute;
+                right: 0; top: 6px;
+                color: ${ ({ theme }) => theme.colors.realRed };
+                animation: hithere 1s ease infinite;
+            }
+            @keyframes hithere {
+                30% { transform: scale(1.2); }
+                40%, 60% { transform: rotate(-20deg) scale(1.2); }
+                50% { transform: rotate(20deg) scale(1.2); }
+                70% { transform: rotate(0deg) scale(1.2); }
+                100% { transform: scale(1); }
+            }
+        `}
+
+
 `;
 
 export const SkillButton = styled(StatButton)`
@@ -308,6 +316,29 @@ export const SelectCardButton = styled.button`
     color: ${ props => props.theme.colors.realWhite };
     border-radius: 25px;
     box-shadow: ${ props => props.theme.boxShadow.default };
+    position: relative;
+
+    ${ props => props.remain && css`
+        &::after {
+            content: "";
+            display: block;
+            width: 17px;
+            height: 100%;
+            background: url("./icon/alert.png") no-repeat center / contain;
+            position: absolute;
+            top: -24px; right: -12px;
+            animation: hithere 0.8s infinite;
+
+            @keyframes hithere {
+                30% { transform: scale(1.2); }
+                40%, 60% { transform: rotate(-20deg) scale(1.2); }
+                50% { transform: rotate(20deg) scale(1.2); }
+                70% { transform: rotate(0deg) scale(1.2); }
+                100% { transform: scale(1); }
+            }
+        }
+    `}
+
 `;
 
 export const BattleButton = styled.button`

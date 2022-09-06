@@ -186,10 +186,24 @@ export const DetailContainer = ({login, groups, swiper, cards, setReadyForBattle
     }
 
     useEffect(() => {
-        if(groups["NO1"].ACTIVE === "active"){ groupNo.current = 1; setStat(groups["NO1"]); swiper.slideTo(0); }
-        if(groups["NO2"].ACTIVE === "active"){ groupNo.current = 2; setStat(groups["NO2"]); swiper.slideTo(1); }
-        if(groups["NO3"].ACTIVE === "active"){ groupNo.current = 3; setStat(groups["NO3"]); swiper.slideTo(2); }
-        
+        let sortArray = [];
+        let activeGroup;
+        if(groups["NO1"].ACTIVE === "active"){ groupNo.current = 1; activeGroup = "NO1"; setStat(groups["NO1"]); swiper.slideTo(0); }
+        if(groups["NO2"].ACTIVE === "active"){ groupNo.current = 2; activeGroup = "NO2"; setStat(groups["NO2"]); swiper.slideTo(1); }
+        if(groups["NO3"].ACTIVE === "active"){ groupNo.current = 3; activeGroup = "NO3"; setStat(groups["NO3"]); swiper.slideTo(2); }
+
+        if(login.state){
+            sortArray.push({ name: "STR", stat: groups[`${activeGroup}`]?.STR });
+            sortArray.push({ name: "AGI", stat: groups[`${activeGroup}`]?.AGI });
+            sortArray.push({ name: "DEX", stat: groups[`${activeGroup}`]?.DEX });
+            sortArray.push({ name: "VIT", stat: groups[`${activeGroup}`]?.VIT });
+            sortArray.push({ name: "INT", stat: groups[`${activeGroup}`]?.INT });
+            sortArray.push({ name: "LUCK", stat: groups[`${activeGroup}`]?.LUCK });
+            
+            const strongStat = sortArray.sort((a, b) => { return a.stat > b.stat ? -1 : a.stat < b.stat ? 1 : 0; })[0].name;
+            document.querySelectorAll(".stat-points").forEach((item) => { item.classList.remove("active") });
+            document.querySelector(`.group-stat-${strongStat}`).classList.add("active");
+        }
 
     }, [groups, cards]);
 
@@ -208,16 +222,16 @@ export const DetailContainer = ({login, groups, swiper, cards, setReadyForBattle
             <div className="stats-box">
                 <ul>
                     <li className="stat-row">
-                        <div className="stat"><span className="stat-name">STR</span><span className="stat-points">{stat.STR || "-"}</span></div>
-                        <div className="stat"><span className="stat-name">VIT</span><span className="stat-points">{stat.VIT || "-"}</span></div>
+                        <div className="stat"><span className="stat-name">STR</span><span className="stat-points group-stat-STR">{stat.STR || "-"}</span></div>
+                        <div className="stat"><span className="stat-name">VIT</span><span className="stat-points group-stat-VIT">{stat.VIT || "-"}</span></div>
                     </li>
                     <li className="stat-row">
-                        <div className="stat"><span className="stat-name">AGI</span><span className="stat-points">{stat.AGI || "-"}</span></div>
-                            <div className="stat"><span className="stat-name">INT</span><span className="stat-points">{stat.INT || "-"}</span></div>
+                        <div className="stat"><span className="stat-name">AGI</span><span className="stat-points group-stat-AGI">{stat.AGI || "-"}</span></div>
+                            <div className="stat"><span className="stat-name">INT</span><span className="stat-points group-stat-INT">{stat.INT || "-"}</span></div>
                     </li>
                     <li className="stat-row">
-                        <div className="stat"><span className="stat-name">DEX</span><span className="stat-points">{stat.DEX || "-"}</span></div>
-                        <div className="stat"><span className="stat-name">LUCK</span><span className="stat-points">{stat.LUCK || "-"}</span></div>
+                        <div className="stat"><span className="stat-name">DEX</span><span className="stat-points group-stat-DEX">{stat.DEX || "-"}</span></div>
+                        <div className="stat"><span className="stat-name">LUCK</span><span className="stat-points group-stat-LUCK">{stat.LUCK || "-"}</span></div>
                     </li>
                 </ul>
             </div>

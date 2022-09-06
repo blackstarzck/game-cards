@@ -50,7 +50,6 @@ export function kakaoLogin(redirectFunc){
 
                         // console.log("카카오 유저 정보: ", result);
                         // step3
-                        db.writeNewData("USER_LOG", String(result.id), data);
                         db.writeNewData("USERS", String(result.id), data, redirectFunc);
                         resolve({ ...result, REGI_TYPE: "KAKAO" });
                     },
@@ -71,7 +70,6 @@ export function kakaoLogOut (data){
     return new Promise((resolve)=> {
         Kakao.Auth.logout(function() {
             // console.log("로그아웃 데이터: ", data)
-            db.writeNewData("USER_LOG", data.id, data);
             resolve(true);
         });
     });

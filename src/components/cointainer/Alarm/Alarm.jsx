@@ -25,8 +25,6 @@ const Alarm = ({login, mainPopup, setMainPopup, alarm, setAlarm}) => {
         const write = await setAlarm((alarm) => {
             const copied = { ...alarm };
             copied.data.map((item) => item.READ_STATE = "Y" );
-
-            console.log("copied: ", copied);
             db.writeNewDataV2("ALARM_TABLE", login.ID, copied);
             return copied;
         });
@@ -47,7 +45,6 @@ const Alarm = ({login, mainPopup, setMainPopup, alarm, setAlarm}) => {
     }
 
     useEffect(() => {
-        console.log("alarm: ", alarm);
         for(let i = 0; i < alarm.data.length; i++){
             if(alarm.data[i].READ_STATE === "N") setBullet(true);
         }

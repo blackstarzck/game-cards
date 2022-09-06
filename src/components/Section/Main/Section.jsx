@@ -10,7 +10,7 @@ import { randomName, setInitDatas } from '../../../data/data'
 
 const data = new Database();
 
-const SectionMain = ({login, cards, mainCard, setMainCard, keepSelectedCard}) => {
+const SectionMain = ({login, cards, setCards, mainCard, setMainCard, keepSelectedCard, upgradeCard, newCard, selectNewOrPrev}) => {
     const [ imgSrc, setImgSrc ] = useState("");
     const [ imgLoaded, setImgLoaded ] = useState(false);
     const [ expression, setExpression ] = useState({
@@ -21,10 +21,7 @@ const SectionMain = ({login, cards, mainCard, setMainCard, keepSelectedCard}) =>
             value: 0
         }
     });
-    const [ newCard, setNewCard ] = useState("NEW");
-          
-    const selectNewOrPrev = (select) => setNewCard(select);
-  
+
     const onChange = (e) => { // input change 이벤트
       const { value, name } = e.target;
       setMainCard({ ...mainCard, [name]: value });
@@ -148,15 +145,17 @@ const SectionMain = ({login, cards, mainCard, setMainCard, keepSelectedCard}) =>
     }
 
     return (
-        <MainSection>
+        <MainSection limit={cards.DAILY_CNT}>
             {/* <MainViewer mainCard={mainCard} /> */}
 
             {/* LEFT */}
             <Container className='left-container'>
+                <span className="daily-count"><b className="count">{cards.DAILY_CNT}</b> / 5</span>
                 <UploadButtons
                     imgSrc={imgSrc}
                     setImgSrc={setImgSrc}
                     newCard={newCard}
+                    cards={cards}
                     selectNewOrPrev={selectNewOrPrev}
                     getFaceResult={getFaceResult} />
                 <Wrapper className='descr-wrapper'>
@@ -174,10 +173,15 @@ const SectionMain = ({login, cards, mainCard, setMainCard, keepSelectedCard}) =>
                 <MainView
                     login={login}
                     keepSelectedCard={keepSelectedCard}
+                    upgradeCard={upgradeCard}
                     imgSrc={imgSrc}
                     imgLoaded={imgLoaded}
                     setImgLoaded={setImgLoaded}
+                    newCard={newCard}
                     mainCard={mainCard}
+                    setMainCard={setMainCard}
+                    cards={cards}
+                    setCards={setCards}
                     updateCard={updateCard}
                     onChange={onChange} />
             </Container>

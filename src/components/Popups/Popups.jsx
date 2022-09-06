@@ -5,14 +5,14 @@ import { ButtonYes, ButtonNo } from "../Button/Button";
 import Database from "../../service/database";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faQuoteLeft, faQuoteRight } from '@fortawesome/pro-solid-svg-icons'
+import { faQuoteLeft, faQuoteRight, faXmark } from '@fortawesome/pro-solid-svg-icons'
 import { time } from "../../util/util";
 
-library.add(faQuoteLeft, faQuoteRight);
+library.add(faQuoteLeft, faQuoteRight, faXmark);
 
 const db = new Database();
 
-export const DescrPopup = ({statName, visible, popup, setPopup, setCards}) => {
+export const DescrPopup = ({statName, visible, popup, setPopup, item}) => {
     const el = useRef(null);
     const tl = useRef(null);
 
@@ -41,9 +41,7 @@ export const DescrPopup = ({statName, visible, popup, setPopup, setCards}) => {
     }, [popup]);
 
     useEffect(() => {
-        if(popup && (visible.target !== statName)){
-            reverseFunc();
-        }
+        if(popup && (visible.target !== statName)) reverseFunc();
     },[visible]);
 
     const reverseFunc = () => {
@@ -66,9 +64,18 @@ export const DescrPopup = ({statName, visible, popup, setPopup, setCards}) => {
         LUCK: { name: "Luck", info: "동료 또는 상사에게 스타벅스 커피를 얻어먹을 확률에 영향을 줍니다." }
     }
 
+    if(statName){
+        return(
+            <PopupDescr ref={el}>
+                <p><b>{descrArray[statName].name}</b>는(은) {descrArray[statName].info}</p>
+            </PopupDescr>
+        );
+    }
+
     return(
         <PopupDescr ref={el}>
-            <p><b>{descrArray[statName].name}</b>는(은) {descrArray[statName].info}</p>
+            <p>{item.CONTENDER_NAME}: {item.CONTENDER_MSG}</p>
+            <p>{item.DEFENDER_NAME}: {item.DEFFENDER_MSG}</p>
         </PopupDescr>
     );
 }
@@ -225,7 +232,7 @@ export const MainPopup = ({
                                 DEFENDER_GROUP_MEMBERS : ready.CONTENDER_GROUP_MEMBERS,
                                 DEFENDER_ID : login.ID,
                                 DEFENDER_NAME : login.NAME,
-                                DEFFENDER_MSG : "",
+                                DEFFENDER_MSG : inputRef.current.value,
                                 RESULT : frdResult,
                                 TIME_STAMP : time()
                             }
@@ -301,6 +308,7 @@ export const MainPopup = ({
         setTimeout(() => {
             handleSelectBoxes({name: "FRD", state: false});
             setMainPopup({ state: false, type: "", data: "" }); // 초기화
+            if(mainPopup.type === "BTL_REQ_RECV") setVisible(false);
         }, 400);
     }
 
@@ -309,6 +317,7 @@ export const MainPopup = ({
     const subMsg2gRef = useRef(null);
     const el = useRef(null);
     const tl = useRef(null);
+    const inputRef = useRef(null);
 
     useEffect(() => {
         tl.current = gsap.timeline({ pause: true });
@@ -360,23 +369,43 @@ export const MainPopup = ({
         setTimeout(() => {
             el.current.style.visibility = "hidden";
             el.current.style.zIndex = -1;
-        }, 400)
+        }, 400);
+    }
+
+    const [ visible, setVisible ] = useState(false);
+    const handleMouseEnter = () => setVisible(true);
+    const closeMainPopup = () => {
+        reverseFun();
+        setTimeout(() => {
+            setMainPopup({ state: false, type: "", data: "" }); // 초기화
+            setVisible(false);
+        }, 400);
     }
 
     return(
         <>
             <DimmbedBg popup={mainPopup.state}/>
-            <PopupMain ref={el}>
+            <PopupMain
+                ref={el}
+                visible={visible}
+                type={mainPopup.type} >
+                <button onClick={closeMainPopup} className="btn-close"><FontAwesomeIcon icon="fa-solid fa-xmark" /></button>
                 <div  className="msg-area">
                     <div ref={subMsg1gRef} className="sub-msg"></div>
                     { (mainPopup.data.msg && (mainPopup.type === "BTL_REQ_SENT" || mainPopup.type === "BTL_REQ_RECV")) && <div className="quotes-up"><FontAwesomeIcon icon="fa-solid fa-quote-left" /></div> }
                     <div ref={mainMsgRef} className="main-msg"></div>
                     { (mainPopup.data.msg && (mainPopup.type === "BTL_REQ_SENT" || mainPopup.type === "BTL_REQ_RECV")) && <div className="quotes-dwn"><FontAwesomeIcon icon="fa-solid fa-quote-right" /></div> }
                     <div ref={subMsg2gRef} className="sub-msg"></div>
+
+                    { mainPopup.type === "BTL_REQ_RECV" && 
+                        <div className="input-wrapper"><input ref={inputRef} type="text" placeholder={`${mainPopup.data.id}님꼐 메시지를 보내보세요`}></input></div> }
                 </div>
                 <div className="btn-wrapper">
-                    <ButtonYes handleClick={() => handleClick("YES")}/>
-                    <ButtonNo handleClick={() => handleClick("NO")}/>
+                    <ButtonYes
+                        handleMouseEnter={handleMouseEnter}
+                        handleClick={() => handleClick("YES")} />
+                    <ButtonNo
+                        handleClick={() => handleClick("NO")} />
                 </div>
             </PopupMain>
         </>

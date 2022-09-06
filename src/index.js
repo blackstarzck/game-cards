@@ -7,9 +7,6 @@ import theme from './assets/styles/theme';
 import Database from './service/database';
 import { BrowserRouter } from 'react-router-dom';
 
-// const db = new Database();
-// db.getSingleData("USER_LOG", "chanki1004");
-
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

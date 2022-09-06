@@ -130,7 +130,7 @@ const Join = ({login, setLogin, goToHome}) => {
 
         setCookie("U_INFO", JSON.stringify(userData).replace(/[\{\}\[\]\;|\~`\"]/g, ""), 1);
         setLogin({ID: idRef.current.value, NAME: nmRef.current.value, EMAIL: emailRef.current.value, REGI_TYPE: "EMAIL", state: true});
-        db.writeNewDataV2("USER_LOG", idRef.current.value, input); // 1회성
+
         db.writeNewDataV2("USERS", idRef.current.value, input, goToHome); // 1회성
     }
 
@@ -168,8 +168,8 @@ const Join = ({login, setLogin, goToHome}) => {
                                     <td>
                                         <div className={styles.inputWrapper}>
                                         <InputForm validate="id" inputRef={idRef} setIdState={setIdState} idState={idState}/>
-                                            <span  className={styles.descr} ref={idText1Ref} >〮 6자 이상의 영문 혹은 영문과 숫자를 조합</span>
-                                            <span className={styles.descr} ref={idText2Ref} >〮 아이디 중복확인</span>
+                                            <span  className={styles.descr} ref={idText1Ref} > 6자 이상의 영문 혹은 영문과 숫자를 조합</span>
+                                            <span className={styles.descr} ref={idText2Ref} > 아이디 중복확인</span>
                                         </div>
                                     </td>
                                     <td><button type="button" className={styles.btnCheck} onClick={() => handleCheck("id")}>중복확인</button></td>
@@ -179,9 +179,9 @@ const Join = ({login, setLogin, goToHome}) => {
                                     <td>
                                         <div className={styles.inputWrapper}>
                                             <InputForm validate="pw" inputRef={pw1Ref} setPwState={setPwState} pwState={pwState} />
-                                            <span className={styles.descr} ref={pwText1Ref} >〮 8자 이상 입력</span>
-                                            <span className={styles.descr} ref={pwText2Ref} >〮 영문/숫자/특수문자(공백 제외)만 허용하며, 2개 이상 조합</span>
-                                            <span className={styles.descr} ref={pwText3Ref} >〮 동일한 숫자 3개 이상 연속 사용 불가</span>
+                                            <span className={styles.descr} ref={pwText1Ref} > 8자 이상 입력</span>
+                                            <span className={styles.descr} ref={pwText2Ref} > 영문/숫자/특수문자(공백 제외)만 허용하며, 2개 이상 조합</span>
+                                            <span className={styles.descr} ref={pwText3Ref} > 동일한 숫자 3개 이상 연속 사용 불가</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -190,7 +190,7 @@ const Join = ({login, setLogin, goToHome}) => {
                                     <td>
                                         <div className={styles.inputWrapper}>
                                             <InputForm validate="pw-cfrm" inputRef={pw2Ref} setPwState={setPwState} pwState={pwState} />
-                                            { (pwState.result !== "" && !pwState.dup) && <span className={`${styles.descr} ${styles.warning}`} ref={pwText4Ref} >〮 동일한 비밀번호를 입력해주세요</span> }
+                                            { (pwState.result !== "" && !pwState.dup) && <span className={`${styles.descr} ${styles.warning}`} ref={pwText4Ref} > 동일한 비밀번호를 입력해주세요</span> }
                                         </div>
                                     </td>
                                 </tr>
@@ -205,8 +205,8 @@ const Join = ({login, setLogin, goToHome}) => {
                                     <td>
                                         <div className={styles.inputWrapper}>
                                             <InputForm validate="email" inputRef={emailRef} emailState={emailState} setEmailState={setEmailState}/>
-                                            { emailState.reg || <span className={`${styles.descr} ${styles.warning}`} ref={email2TextRef} >〮 이메일 형식이 아닙니다.</span> }
-                                            <span className={styles.descr} ref={email1TextRef} >〮 이메일 중복확인</span>
+                                            { emailState.reg || <span className={`${styles.descr} ${styles.warning}`} ref={email2TextRef} > 이메일 형식이 아닙니다.</span> }
+                                            <span className={styles.descr} ref={email1TextRef} > 이메일 중복확인</span>
                                         </div>
                                     </td>
                                     <td><button type="button" className={styles.btnCheck} onClick={() => handleCheck("email")}>중복확인</button></td>

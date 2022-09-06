@@ -54,6 +54,13 @@ class Database {
         });
     }
 
+    newMessageCheck(key, updateFunc){
+        const dbRef = ref(this.realtimeDB, `/messages/${key}`);
+        onChildAdded(dbRef, (newMsg) => {
+            updateFunc(newMsg.val());
+        });
+    }
+
     async getDatas(tableName){
         const docRef = collection(this.db, tableName);
         const docSnapshot = await getDocs(docRef);
@@ -106,18 +113,6 @@ class Database {
                         USER_EMAIL: input.email || "",
                         USER_NAME: input.name,
                         data: inputData
-                    }
-                break;
-                case "USER_LOG" :
-                    inputData = result ? 
-                        [ ...result.LOG, { STATUS: input.inOut, TIME_STAMP: time() } ] :
-                        [ { STATUS: input.inOut, TIME_STAMP: time() } ];
-                    obj = {
-                        UID: "",
-                        REGI_TYPE: input.regi_type,
-                        USER_ID: String(input.id),
-                        USER_NAME: input.name,
-                        LOG: inputData
                     }
                 break;
                 case "USERS" :
@@ -175,13 +170,6 @@ class Database {
         let obj;
   
         switch(tableName){
-            case "USER_LOG" :
-                obj = {
-                    USER_ID: String(input.id),
-                    USER_NAME: input.name,
-                    LOG: input.log
-                };
-            break;
             case "USERS" :
                 obj = {
                     ACCOUNT_STATE : "Y",

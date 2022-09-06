@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, forwardRef } from 'react'
 import { ButtonStat, ButtonSkill, ButtonReset, ButtonSave, ButtonViewInfo, ButtonKeepCard, ButtonLevelUp, ButtonSaveTitle, ButtonStatAdd, ButtonStatRemove, ButtonEditTitle } from '../../Button/Button'
 import { InputNickName, SelectJob } from '../../Input/Input'
 import { TitleJob, TitleNickName } from '../../Texts/Texts'
@@ -8,6 +8,9 @@ import { faBookmark } from '@fortawesome/pro-solid-svg-icons'
 import { gsap } from "gsap"
 import { DescrPopup, Notice } from '../../Popups/Popups'
 import loadingSrc from '../../../assets/images/loading.png'
+import Database from '../../../service/database'
+
+const db = new Database();
 
 const MainView = ({...props}) => {
     const [ editState, setEditState ] = useState(true);
@@ -16,6 +19,45 @@ const MainView = ({...props}) => {
 
     const handleEditState = () => setEditState(!editState);
     const viewCardInfo = () => setView(!view);
+
+    const resetStats = () => {
+        document.querySelector(".STR").innerText = props.mainCard.STATS.STR;
+        document.querySelector(".AGI").innerText = props.mainCard.STATS.AGI;
+        document.querySelector(".DEX").innerText = props.mainCard.STATS.DEX;
+        document.querySelector(".VIT").innerText = props.mainCard.STATS.VIT;
+        document.querySelector(".INT").innerText = props.mainCard.STATS.INT;
+        document.querySelector(".LUCK").innerText = props.mainCard.STATS.LUCK;
+        document.querySelector(".total-points").innerText = props.mainCard.REMAIN;
+    }
+
+    const saveStats = () => {
+        const STR = Number(document.querySelector(".STR").innerText);
+        const AGI = Number(document.querySelector(".AGI").innerText);
+        const DEX = Number(document.querySelector(".DEX").innerText);
+        const VIT = Number(document.querySelector(".VIT").innerText);
+        const INT = Number(document.querySelector(".INT").innerText);
+        const LUCK = Number(document.querySelector(".LUCK").innerText);
+        const REMAIN = Number(document.querySelector(".total-points").innerText);
+        const STATS = { STR, AGI, DEX, VIT, INT, LUCK };
+        const POWER = STR + AGI + DEX + VIT + INT + LUCK;
+        const result = { ...props.mainCard, POWER, REMAIN, STATS }
+
+        console.log(STR, AGI, DEX, VIT, INT, LUCK, REMAIN, POWER);
+
+        props.setMainCard(result);
+        props.setCards((cards) => {
+            const updated = { ...props.cards };
+    
+            for(let i = 0; i < updated.CARDS.length; i++){
+              if(updated.CARDS[i].KEY === result.KEY){
+                updated.CARDS[i] = result;
+                break;
+              }
+            }
+            db.writeNewData("USER_CARDS", props.login.ID, updated);
+            return updated
+        });
+    }
 
     useEffect(() => {
         const img = new Image();
@@ -27,8 +69,8 @@ const MainView = ({...props}) => {
         <Wrapper className="main-view">
             {/* SWITCH */}
             <Wrapper className="ability-btns">
-                <ButtonStat imgLoaded={props.imgLoaded} />
-                <ButtonSkill disable imgLoaded={props.imgLoaded} />
+                <ButtonStat imgLoaded={props.imgLoaded} remain={props.mainCard.REMAIN}/>
+                {/* <ButtonSkill disable imgLoaded={props.imgLoaded} /> */}
             </Wrapper>
 
             {/* NAME EDIT */}
@@ -48,6 +90,7 @@ const MainView = ({...props}) => {
                 {/* STAT CTRL */}
                 <MainViewStatContainer
                     mainCard={props.mainCard}
+                    setMainCard={props.setMainCard}
                     imgLoaded={props.imgLoaded} />
 
                 {/* CARD VIEW */}
@@ -63,14 +106,14 @@ const MainView = ({...props}) => {
                         <CardImg>
                             { (props.imgSrc || props.mainCard.IMG_URL) ?
                                 ( props.imgLoaded ? 
-                                    <img src={ props.mainCard.IMG_URL} /> : <img src={loadingSrc} /> ) :
+                                    <img src={ props.mainCard.IMG_URL} /> : <img className="loading-img" src={loadingSrc} /> ) :
                                 <span>이미지를 업로드하세요</span> }
                         </CardImg>
                         
                         {/* RANK */}
                         {props.mainCard.IMG_URL && <Wrapper className="text-wrapper">
                             <span className="level"><b>Lv.</b>{props.mainCard.LEVEL}</span>
-                            <span className="pref-rank">선호순위 {props.mainCard.SELECTED || "-"}위</span>
+                            <span className="pref-rank">선호순위 {props.mainCard.SELECTED || " -"} 위</span>
                         </Wrapper>}
                     </Wrapper>
 
@@ -78,23 +121,25 @@ const MainView = ({...props}) => {
                     <MainViewStoryBox mainCard={props.mainCard} view={view}/>
 
                     {/* EXPERIENCE */}
-                    <Wrapper className="exp-wrapper" exp={props.mainCard.EXP}>
-                        <ButtonLevelUp imgLoaded={props.imgLoaded} />
+                    <Wrapper className="exp-wrapper" exp={props.mainCard.EXP_PER}>
                         <div className="outer">
-                            <div className="inner"></div>
+                            <div className={`inner ${ props.mainCard.EXP_PER && "active"}`}></div>
                         </div>
                     </Wrapper>
                 </Wrapper> 
             </Wrapper>
             <Wrapper className="btn-handlers">
-                <ButtonReset imgLoaded={props.imgLoaded} />
-                <ButtonSave imgLoaded={props.imgLoaded} />
+                <ButtonReset imgLoaded={props.imgLoaded} reset={resetStats} remain={props.mainCard.REMAIN} />
+                <ButtonSave imgLoaded={props.imgLoaded} save={saveStats} remain={props.mainCard.REMAIN} />
                 <ButtonViewInfo imgLoaded={props.imgLoaded} viewCardInfo={viewCardInfo}/>
                 <ButtonKeepCard
+                    cards={props.cards}
+                    newCard={props.newCard}
                     notice={notice}
                     setNotice={setNotice}
                     editState={editState}
                     keepSelectedCard={props.keepSelectedCard}
+                    upgradeCard={props.upgradeCard}
                     imgLoaded={props.imgLoaded}
                     mainCard={props.mainCard} />
             </Wrapper>
@@ -143,33 +188,61 @@ export const MainViewStoryBox = ({mainCard, view}) => {
     );
 }
 
-export const MainViewStatContainer = ({mainCard, imgLoaded}) => {
+export const MainViewStatContainer = ({mainCard, setMainCard, imgLoaded}) => {
     const keyArray = [ "STR", "AGI", "DEX", "VIT", "INT", "LUCK" ];
-    const [ visible, setVisible ] = useState({
-        target: "", toggle: false
-    });
+    const [ visible, setVisible ] = useState({ target: "", toggle: false });
+    const remainRef = useRef(null);
 
     return(
-        <Wrapper className="stat-wrapper">
-            <span className="total-points">{mainCard.REMAIN}</span>
+        <Wrapper className="stat-wrapper" remain={mainCard.REMAIN}>
+            <span ref={remainRef} className="total-points">{mainCard.REMAIN}</span>
             <Wrapper className="list-wrapper">
                 {keyArray.map((list, i) => <MainViewStat
+                    key={i}
                     imgLoaded={imgLoaded}
                     visible={visible}
                     setVisible={setVisible}
-                    key={i}
                     heading={list}
+                    ref={remainRef}
+                    mainCard={mainCard}
+                    setMainCard={setMainCard}
                     points={mainCard.STATS[list]} /> )}
             </Wrapper>
         </Wrapper>
     );
 }
 
-export const MainViewStat = ({imgLoaded, heading, points, visible, setVisible }) => {
+export const MainViewStat = forwardRef( ({imgLoaded, heading, points, visible, setVisible, mainCard, setMainCard}, ref) => {
     const [ popup, setPopup ] = useState(false);
+    const statRef = useRef(null);
+
     const handleVisible = () => {
         setVisible({...visible, target: heading});
         setPopup(!popup);
+    }
+
+    const increaseStat = () => {
+        let remain = Number(ref.current.innerText);
+        let stat = Number(statRef.current.innerText);
+
+        if(remain > 0){
+            remain = remain - 1;
+            ref.current.innerText = remain;
+
+            stat = stat + 1;
+            statRef.current.innerText = stat;
+        }
+    }
+
+    const decreaseStat = () => {
+        let remain = Number(ref.current.innerText);
+        let stat = Number(statRef.current.innerText);
+        if(stat > mainCard.STATS[`${heading}`]){
+            stat = stat - 1;
+            remain = remain + 1;
+            ref.current.innerText = remain;
+            statRef.current.innerText = stat;
+        }
     }
 
     return(
@@ -184,17 +257,19 @@ export const MainViewStat = ({imgLoaded, heading, points, visible, setVisible })
                     statName={heading}
                     visible={visible} />
             </StatHeading>
-            <StatPoints 
-                className="points" 
+            <StatPoints
+                ref={statRef}
+                remain={mainCard.REMAIN}
+                className={`points ${heading}`} 
                 imgLoaded={imgLoaded} >{points}
             </StatPoints>
             <Wrapper className="btn-wrapper">
-                <ButtonStatAdd />
-                <ButtonStatRemove />
+                <ButtonStatAdd increase={increaseStat} />
+                <ButtonStatRemove descrease={decreaseStat} />
             </Wrapper>
         </StatItem>
     );
-}
+});
 
 export const MainViewName = ({imgLoaded, mainCard, active, handleEditState}) => {
     return(

@@ -145,6 +145,7 @@ export const AlarmStyles = styled.div`
             
             .outer {
                 max-height: 320px;
+                .tbody { overflow: hidden; }
             }
         }
     }

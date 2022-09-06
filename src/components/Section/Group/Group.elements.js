@@ -192,7 +192,8 @@ export const DetailContainerStyles = styled.article`
         color: ${ props => props.login ? "#555555" : props.theme.colors.inActiveButtonBg }
     }
     .stat-points{
-        color: ${ props => props.login ? props.theme.colors.commonBlack : props.theme.colors.inActiveButtonBg }
+        color: ${ props => props.login ? props.theme.colors.commonBlack : props.theme.colors.inActiveButtonBg };
+        &.active{ color: #9E00FF }
     }
 
     .rank, .power {

@@ -50,7 +50,7 @@ export const PopupDescr = styled.div`
 
 export const PopupMain = styled.div`
     visibility: hidden;
-    min-width: 410px;
+    width: 410px;
     font-family: "Noto Sans KR", sans-serif;
     text-align: center;
     color: ${ ({theme}) => theme.colors.commonBlack };
@@ -63,6 +63,33 @@ export const PopupMain = styled.div`
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     word-break: keep-all;
+
+    .btn-close {
+        width: 40px; height: 40px;
+        position: absolute; top: 7px; right: 5px;
+        svg { width: 70%; height: 70%; }
+    }
+
+    ${ props => props.type === "BTL_REQ_RECV" && css`
+        .input-wrapper {
+            visibility: ${ props => props.visible ? "visible" : "hidden"};
+            height: ${ props => props.visible ? "40px" : 0 };
+            padding: 0 20px;
+            margin-top: 14px;
+            overflow: hidden;
+            transition: all .2s ease;
+
+            input[type=text] {
+                width: 100%;
+                height: 100%;
+                border: 1px solid ${ props => props.theme.colors.border };
+                font-size: 1rem;
+                text-indent: 14px;
+                border-radius: 5px;
+                &::placeholder { color: #D9D9D9; }
+            }
+        }
+    `}
 
     h4 {
         font-size: 22px;

@@ -125,3 +125,22 @@ export function time() {
     const result = `${year}.${month}.${day} ${hour}:${minutes}:${seconds}`
     return result;
 }
+
+export function randomLevelStat(){
+    const stat = [ 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ];
+    const pbt = [ 75, 75, 75, 75, 70, 70, 30, 30, 10, 5, 5, 5, 4, 3, 2, 1 ];
+    let sum = 0, factor = 0, random = Math.random();
+
+    for(let i = pbt.length - 1; i >= 0; i--) {
+        sum += pbt[i];
+    };
+
+    random *= sum;
+
+    for(let i = pbt.length - 1; i >= 0; i--) {
+        factor += pbt[i];
+        if(random <= factor) 
+        return stat[i];
+    };
+    return null;
+}

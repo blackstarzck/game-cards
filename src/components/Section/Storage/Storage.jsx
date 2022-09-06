@@ -4,7 +4,7 @@ import Card from '../../cointainer/Card/Card'
 import { SearchInput } from '../../Input/Input'
 import { FilterContainer, FilterWrapper, StorageSection } from './Storage.element'
 
-const SectionStorage = ({login, cards, setCards, setReady, mainPopup, setMainPopup}) => {
+const SectionStorage = ({login, cards, setCards, setReady, mainPopup, setMainPopup, mainCard, setMainCard, selectNewOrPrev}) => {
     return (
         <StorageSection className="storage-section">
             <div className="top">
@@ -16,11 +16,14 @@ const SectionStorage = ({login, cards, setCards, setReady, mainPopup, setMainPop
             </div>
             <ul className="body">
                 { cards.CARDS.map((item) => <Card 
+                    key={item.KEY}
                     login={login}
                     info={item}
                     cards={cards}
                     setCards={setCards}
-                    key={item.KEY}
+                    mainCard={mainCard}
+                    setMainCard={setMainCard}
+                    selectNewOrPrev={selectNewOrPrev}
                     setReady={setReady}
                     mainPopup={mainPopup}
                     setMainPopup ={setMainPopup} /> ) }

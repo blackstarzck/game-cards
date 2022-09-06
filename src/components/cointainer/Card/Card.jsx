@@ -12,7 +12,7 @@ import { setInitDatas } from '../../../data/data'
 
 const db = new Database();
 
-const Card = ({login, info, cards, setCards, setReady, deleteSelectedCard, mainPopup, setMainPopup}) => {
+const Card = ({login, info, cards, setCards, setReady, deleteSelectedCard, mainPopup, setMainPopup, mainCard, setMainCard, selectNewOrPrev}) => {
     const [ detailVisible, setDetailVisible ] = useState(false);
     const [ groupVisible, setGroupVisible ] = useState(false);
 
@@ -97,7 +97,8 @@ const Card = ({login, info, cards, setCards, setReady, deleteSelectedCard, mainP
             { (login.state && load.state && info.CODE) && 
                 <ButtonContainer
                     info={info}
-                    mainPopup={mainPopup}
+                    setMainCard={setMainCard}
+                    selectNewOrPrev={selectNewOrPrev}
                     setMainPopup ={setMainPopup}
                     detailVisible={detailVisible}
                     showCardDetail={showCardDetail}
@@ -216,6 +217,23 @@ export const CardDetails = ({info, detailVisible}) => {
         detailVisible ? tl.current.play() : reverseFun();
     },[detailVisible]);
 
+    useEffect(() => {
+        if(info.CODE){
+            let sortArray = [];
+            console.log("info:", info);
+            sortArray.push({ name: "STR", stat: info.STATS.STR });
+            sortArray.push({ name: "AGI", stat: info.STATS.AGI });
+            sortArray.push({ name: "DEX", stat: info.STATS.DEX });
+            sortArray.push({ name: "VIT", stat: info.STATS.VIT });
+            sortArray.push({ name: "INT", stat: info.STATS.INT });
+            sortArray.push({ name: "LUCK", stat: info.STATS.LUCK });
+            const strongStat = sortArray.sort((a, b) => { return a.stat > b.stat ? -1 : a.stat < b.stat ? 1 : 0; })[0].name;
+            document.querySelectorAll(`.card-${info.KEY} .point`).forEach(item => item.classList.remove("active") );
+            document.querySelector(`.card-${info.KEY} .point-${strongStat}`).classList.add("active");
+            console.log("strongStat: ", strongStat);
+        }
+    }, [info]);
+
     const reverseFun = () => {
         tl.current.reverse();
         setTimeout(() => {
@@ -225,17 +243,17 @@ export const CardDetails = ({info, detailVisible}) => {
     }
 
     return(
-        <div ref={el} className="card-details-wrapper">
+        <div ref={el} className={`card-details-wrapper card-${info.KEY}`}>
             <div className="inner">
                 <div className="top">
                     <div className="left">
                         <ul>
-                            <li className="row"><span>STR</span><span>{info.STATS.STR}</span></li>
-                            <li className="row"><span>AGI</span><span>{info.STATS.AGI}</span></li>
-                            <li className="row"><span>DEX</span><span>{info.STATS.DEX}</span></li>
-                            <li className="row"><span>VIT</span><span>{info.STATS.VIT}</span></li>
-                            <li className="row"><span>INT</span><span>{info.STATS.INT}</span></li>
-                            <li className="row"><span>LUCK</span><span>{info.STATS.LUCK}</span></li>
+                            <li className="row"><span>STR</span><span className="point point-STR">{info.STATS.STR}</span></li>
+                            <li className="row"><span>AGI</span><span className="point point-AGI">{info.STATS.AGI}</span></li>
+                            <li className="row"><span>DEX</span><span className="point point-DEX">{info.STATS.DEX}</span></li>
+                            <li className="row"><span>VIT</span><span className="point point-VIT">{info.STATS.VIT}</span></li>
+                            <li className="row"><span>INT</span><span className="point point-INT">{info.STATS.INT}</span></li>
+                            <li className="row"><span>LUCK</span><span className="point point-LUCK">{info.STATS.LUCK}</span></li>
                         </ul>
                     </div>
                     <div className="right">
@@ -274,17 +292,21 @@ export const CardText = ({login, info, load}) => {
     );
 }
 
-export const ButtonContainer = ({info, detailVisible, showCardDetail, mainPopup, setMainPopup}) => {
-
-    const handleClick = () => {
+export const ButtonContainer = ({info, detailVisible, showCardDetail, setMainPopup, setMainCard, selectNewOrPrev}) => {
+    const handleMoveToMainView = () => {
+        window.scrollTo(0, 0);
+        setMainCard(info);
+        selectNewOrPrev("PREV");
+    }
+    const handleDelete = () => {
         setMainPopup({ state: true, type: "DELETE_CARD", data: info });
     }
 
     return(
         <ButtonWrapper>
             <ButtonCardInfo detailVisible={detailVisible} onClick={showCardDetail} />
-            <ButtonSelectCard />
-            <ButtonCardDelete handleClick={handleClick} />
+            <ButtonSelectCard handleClick={handleMoveToMainView} remain={info.REMAIN}/>
+            <ButtonCardDelete handleClick={handleDelete} />
         </ButtonWrapper>
     );
 }

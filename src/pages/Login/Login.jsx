@@ -61,10 +61,7 @@ const Login = ({login, setLogin, goToHome}) => {
             autoLogin && setCookie("U_INFO", str, 1);
             handleSessionItem("SET", "U_INFO", str);
             
-            db.writeNewData("USER_LOG", user.USER_ID, reqData, goToHome);
-
-            console.log("userData: ", userData);
-            console.log("cookie: ", document.cookie);
+            goToHome();
         }
     }
 

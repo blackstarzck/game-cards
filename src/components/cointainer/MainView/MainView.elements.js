@@ -31,27 +31,26 @@ export const Wrapper = styled.div`
     }
     &.stat-wrapper {
         width: calc(100% - (232px + 5px));
+        padding: 0 11px;
         text-align: right;
 
         .total-points {
-            display: inline-block;
-            width: 54px;
+            display: block;
+            width: 100%;
             height: 25px;
+            line-height: 20px;
             font-size: 18px;
             font-weight: 700;
             text-align: center;
             border-radius: 5px;
             margin-right: 11px;
-            color: ${ ({ theme }) => theme.colors.inActiveInputTxt };
-            border: ${ ({ theme }) => theme.colors.inActive };
-            background-color: ${ ({ theme }) => theme.colors.inActiveInputBG };;
-            /* color: ${ ({ theme }) => theme.colors.inActive }; // active
-            border: ${ ({ theme }) => theme.colors.inActive }; // active
-            background-color: ${ ({ theme }) => theme.colors.realWhite }; // active */
+            color: ${ props => props.remain ? props.theme.colors.lightRed : props.theme.colors.inActiveInputTxt };
+            border: 1px solid ${ props => props.remain ? props.theme.colors.border : props.theme.colors.inActive };
+            background-color: ${ props => props.remain ? props.theme.colors.realWhite : props.theme.colors.inActiveInputBG };;
         }
     }
     &.list-wrapper {
-        padding: 15px 11px 0;
+        padding: 15px 0 0;
 
         li:not(:last-child) { margin-bottom: 15px; }
 
@@ -115,7 +114,7 @@ export const Wrapper = styled.div`
         align-items: center;
 
         .outer {
-            width: 194px;
+            width: 100%;
             /* height: 8px; */
             border: 1px solid #DEDEDE;
             border-radius: 15px;
@@ -123,11 +122,15 @@ export const Wrapper = styled.div`
             padding: 3px;
             
             .inner {
-                width: ${ prop => prop.EXP ? `${prop.EXP}%` : 0 };
+                width: 0%;
                 height: 10px;
                 background-color: ${ ({theme}) => theme.colors.lightBlue };
                 border-radius: 15px;
-                transition: all .2s ease;
+                transition: all 1s ease;
+
+                &.active {
+                    width: ${ props => props.exp ? `${props.exp}%` : "0%" };
+                }
             }
         }
     }
@@ -179,12 +182,12 @@ export const StatPoints = styled.span`
     text-align: center;
     letter-spacing: -1px;
     width: 56px;
-    height: 22px;
-    line-height: 22px;
+    height: 24px;
+    line-height: 20px;
     border-radius: 5px;
-    border: 1px solid ${ ({ theme }) => theme.colors.border02 };
+    border: 1px solid ${ props => props.theme.colors.border02 };
     color: ${ props => props.imgLoaded ? props.theme.colors.commonBlack2 : props.theme.colors.inActiveInputTxt };
-    background-color: ${ ({ theme }) => theme.colors.inActiveInputBG };
+    background-color: ${ props => props.remain ? props.theme.colors.realWhite : props.theme.colors.inActiveInputBG };
     transition: .2s;
 `;
 
@@ -220,15 +223,16 @@ export const CardImg = styled.div`
     height: 262px;
 
     img {
-        opacity: 0;
         max-height: 100%;
-        animation: show 1s ease;
-        animation-fill-mode: forwards;
+        &.loading-img {
+            animation: loading 1.5s ease infinite;
+            @keyframes loading {
+                0% { transform: rotate(0) }
+                100% { transform: rotate(360deg) }
+            }
+        }
     };
     .stand-by { font-size: 14px; color: ${ ({theme}) => theme.colors.commonBlack } };
 
-    @keyframes show {
-        0% { opacity: 0 }
-        100% { opacity: 1}
-    }
+
 `;

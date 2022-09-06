@@ -84,7 +84,7 @@ const UploadButtons = ({...props}) => {
 
     return (
         <Wrapper className="outer-wrapper">
-            <ButtonUpload onChange={onChange} />
+            <ButtonUpload dailyCnt={props.cards.DAILY_CNT} onChange={onChange} />
             <Wrapper className="inner-wrapper">
                 <ButtonRecruit  newCard={props.newCard} selectNewOrPrev={props.selectNewOrPrev} />
                 <ButtonGetPrev newCard={props.newCard} selectNewOrPrev={props.selectNewOrPrev} />

@@ -13,8 +13,15 @@ export const MainSection = styled(DefaultSection)`
     padding-top: 85px;
     margin-bottom: 150px;
 
-    & .left-container, .right-container {
-        /* width: calc(100% / 2); */
+    .daily-count {
+        display: block;
+        font-family: "Montserrat", sans-serif;
+        margin-bottom: 10px;
+        .count {
+            font-size: 36px;
+            font-weight: 700;
+            color: ${ props => props.limit === 0 ? props.theme.colors.realRed : props.theme.colors.commonBlack }
+        }
     }
 `;
 

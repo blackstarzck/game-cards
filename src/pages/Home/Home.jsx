@@ -11,7 +11,7 @@ import SectionMain from '../../components/Section/Main/Section';
 import SectionStorage from '../../components/Section/Storage/Storage';
 import { setInitDatas } from '../../data/data';
 import Database from '../../service/database';
-import { setCookie, time } from '../../util/util';
+import { randomLevelStat, setCookie, time } from '../../util/util';
 
 const db = new Database();
 
@@ -24,7 +24,11 @@ const Home = ({login, frd, setFrd, cards, setCards, alarm, setAlarm}) => {
   const [ mainPopup, setMainPopup ] = useState({ // 매인팝업의 상태유무
     state: false, type: "", data: ""
   });
+  const [ newCard, setNewCard ] = useState("NEW");
   // const mainPopup = useRef(false);
+          
+  const selectNewOrPrev = (select) => setNewCard(select);
+
   const navigate = useNavigate();
 
   const handlePopup = (evt) => {
@@ -57,25 +61,26 @@ const Home = ({login, frd, setFrd, cards, setCards, alarm, setAlarm}) => {
   const keepSelectedCard = async (result) => {
     const POWER = mainCard.STATS.STR + mainCard.STATS.AGI + mainCard.STATS.DEX + mainCard.STATS.VIT + mainCard.STATS.INT + mainCard.STATS.LUCK;
     let cnt = 0;
+
     if(login.state){
       cards.CARDS.map((card) => { if(card.CODE) cnt++; });
+      if(cards.DAILY_CNT === 0){
+        alert("오늘은 더이상 이미지를 업로드할 수 없습니다.");
+        return;
+      }
 
       if(cnt < 8){
         setCards((cards) => {
           const updated = { ...cards };
-          console.log(1, updated.CARDS[0].STATS);
-
           updated["DAILY_CNT"] = updated.DAILY_CNT - 1;
 
           for(let i = 0; i < updated.CARDS.length; i++){
             if(updated.CARDS[i].CODE === ""){
-              console.log(`${i} 번째에 삽입!`, result.STATS);
               updated.CARDS[i] = { ...updated.CARDS[i], ...result, POWER }
               break;
             }
           }
           db.writeNewData("USER_CARDS", login.ID, updated);
-          console.log("2. updated: ", updated.CARDS[0].STATS);
           return updated
         });
 
@@ -90,6 +95,48 @@ const Home = ({login, frd, setFrd, cards, setCards, alarm, setAlarm}) => {
       setCookie("PREV_INFO", str, 1);
       alert("로그인 후 보관하실 수 있습니다.\n로그인 페이지로 이동합니다.");
       navigate("/login", { replace: true });
+    }
+  }
+
+  const upgradeCard = (card) => {
+    const copied = { ...card }
+
+    if(copied.KEY && copied.DAILY_CNT !== 0){
+      const income = 5;
+      const limit = 10 + (copied.LEVEL * 2);
+      let EXP_PER = Math.round(((copied.EXP + income) / limit) * 100);
+      let EXP = copied.EXP + income;
+      let RESULT, LEVEL, REMAIN;
+      
+      if(EXP > limit){
+        LEVEL = copied.LEVEL + 1;
+        REMAIN = copied.REMAIN + randomLevelStat();
+        EXP_PER = Math.round(((EXP - limit) / limit) * 100);
+        RESULT = { ...copied, EXP: (EXP - limit), EXP_PER, LEVEL, REMAIN };
+
+        upgradeCard(RESULT);
+        setMainCard(RESULT);
+        console.log(`1 LEVEL: ${RESULT.LEVEL}, EXP: ${RESULT.EXP} (${ Math.round((RESULT.EXP / limit) * 100)}%) LIMIT: ${limit} REMAIN: ${REMAIN}`);
+      }else{
+        RESULT = { ...copied, EXP, EXP_PER };
+
+        setMainCard(RESULT);
+        console.log(`2 LEVEL: ${RESULT.LEVEL}, EXP: ${RESULT.EXP} (${ Math.round((RESULT.EXP / limit) * 100)}%) LIMIT: ${limit} REMAIN: ${RESULT.REMAIN}`);
+      }
+
+      setCards((cards) => {
+        const updated = { ...cards };
+        updated["DAILY_CNT"] = updated.DAILY_CNT - 1;
+
+        for(let i = 0; i < updated.CARDS.length; i++){
+          if(updated.CARDS[i].KEY === RESULT.KEY){
+            updated.CARDS[i] = RESULT;
+            break;
+          }
+        }
+        db.writeNewData("USER_CARDS", login.ID, updated);
+        return updated
+      });
     }
   }
 
@@ -167,10 +214,14 @@ const Home = ({login, frd, setFrd, cards, setCards, alarm, setAlarm}) => {
   return (
     <HomePage onClick={handlePopup}>
       <SectionMain
+        newCard={newCard}
+        selectNewOrPrev={selectNewOrPrev}
         cards={cards}
+        setCards={setCards}
         mainCard={mainCard}
         setMainCard={setMainCard}
         keepSelectedCard={keepSelectedCard}
+        upgradeCard={upgradeCard}
         login={login} />
       <SectionFrdSearch 
         login={login}
@@ -199,6 +250,9 @@ const Home = ({login, frd, setFrd, cards, setCards, alarm, setAlarm}) => {
         login={login}
         cards={cards}
         setCards={setCards}
+        mainCard={mainCard}
+        setMainCard={setMainCard}
+        selectNewOrPrev={selectNewOrPrev}
         ready={ready}
         setReady={setReady}
         mainPopup={mainPopup}

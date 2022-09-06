@@ -8,6 +8,7 @@ import Database from '../../../service/database'
 import { gsap } from "gsap"
 import { loadFaceDetectionModel } from 'face-api.js'
 import { setInitDatas } from '../../../data/data'
+import { DescrPopup } from '../../Popups/Popups'
 
 const db = new Database();
 
@@ -73,7 +74,6 @@ const FrdList = memo(({login, frd, setFrd, requestBattle, ready}) => {
 
     const onlineCheck = () => {
         if(!login.ID) return;
-        console.log("작동?")
         const copied = { ...frd };
         copied?.FRDS_INFO?.map((item) => {
             db.frdOnlineCheck(item.FRD_ID, status => {
@@ -86,11 +86,9 @@ const FrdList = memo(({login, frd, setFrd, requestBattle, ready}) => {
     }
 
     useEffect(() => {
-        console.log("frd: ", frd);
         const copied = { ...frd };
         copied?.FRDS_INFO?.map((item) => {
             db.frdOnlineCheck(item.FRD_ID, status => {
-                console.log("??");
                 if(status === true) item.LOGIN = true;
                 if(status === false) item.LOGIN = false;
                 setFrd({ ...frd, ...copied });
@@ -114,7 +112,9 @@ const FrdList = memo(({login, frd, setFrd, requestBattle, ready}) => {
                 <div className="input-wrapper">
                     <div className="heading">코멘트 발송</div>
                     <input ref={cmmtRef}  onChange={handleChage} type="text" placeholder="친구에게 메시지를 보내보세요."/>
-                    <button className="btn-txt-clear"><FontAwesomeIcon icon={faCircleXmark} /></button>
+                    <button className="btn-txt-clear">
+                        {/* <FontAwesomeIcon icon={faCircleXmark} /> */}
+                    </button>
                 </div>
             </div>
 
@@ -135,13 +135,13 @@ const FrdList = memo(({login, frd, setFrd, requestBattle, ready}) => {
                                 key={i}
                                 requestBattle={requestBattle}
                                 myBattleState={myBattleState}
+                                msgSetting={msgSetting}
                                 setMsgSetting={setMsgSetting}
                                 chatBox={chatBox}
                                 setChatBox={setChatBox}
                                 ready={ready}
                                 friend={friend}
-                                online={friend.LOGIN ? true : false} 
-                                receive={true} /> ) :
+                                online={friend.LOGIN ? true : false} /> ) :
                             <span className="standby">친구를 등록하고 친구와 내기를 해보세요!</span>
                         }
                     </div>
@@ -157,10 +157,11 @@ const FrdList = memo(({login, frd, setFrd, requestBattle, ready}) => {
     );
 });
 
-const ChatBox = memo(({friend, setMsgSetting, visiblie, chatBox, setChatBox}) => {
+const ChatBox = memo(({friend, setMsgSetting, visiblie, chatBox, setChatBox, setIncomeMsg}) => {
     const handleClick = () => {
         setChatBox(!chatBox);
         setMsgSetting({ key: friend.MSG_KEY, frined: friend.FRD_NAME });
+        setIncomeMsg(false);
     }
     return(
         <ChatBoxStyles onClick={() => handleClick()} visiblie={visiblie}>채팅하기<FontAwesomeIcon icon={faMessages}/></ChatBoxStyles>
@@ -177,9 +178,10 @@ const SelectBox = memo(({login, pos, setPos, selectItems}) => {
     );
 });
 
-const FrdRow = memo(({login, friend, online, receive,chatBox, setChatBox, myBattleState, requestBattle, ready, setMsgSetting}) => {
+const FrdRow = memo(({login, friend, online, chatBox, setChatBox, myBattleState, requestBattle, ready, msgSetting, setMsgSetting}) => {
     const [ visiblie, setVisible ] = useState(false);
     const [ request, setRequest ] = useState({ BET_DESCR: "커피내기", DEFENDER_ID: friend.FRD_ID, DEFENDER_NAME: friend.FRD_NAME });
+    const [ incomeMsg, setIncomeMsg ] = useState(false);
     const selectRef = useRef(null);
 
     const handleChatbox = (e) => setVisible(!visiblie);
@@ -194,21 +196,23 @@ const FrdRow = memo(({login, friend, online, receive,chatBox, setChatBox, myBatt
         requestBattle({ ...myBattleState, ...request });
     }
 
-    // useEffect(() => {
-    //     console.log("friend: ", friend.FRD_ID);
-    //     const sync = db.messageCheck(friend.FRD_ID, message => {
-
-    //     });
-    //     return () => sync();
-    // }, [frd]);
+    useEffect(() => {
+        const sync = async () => {
+            const get = await db.newMessageCheck(friend.MSG_KEY, newMsg => {
+                if(newMsg.sender !== login.ID) setIncomeMsg(true);
+            });
+        }
+        login.state && sync();
+    }, [login]);
     
     return(
-        <RowStyles online={online} receive={receive} >
+        <RowStyles online={online} receive={incomeMsg} >
             <li className="td"><div className="onOff"></div></li>
             <li className="td frd-name" onClick={handleChatbox}>
                 {friend.FRD_NAME}
                 { online &&
                     <ChatBox
+                        setIncomeMsg={setIncomeMsg}
                         friend={friend}
                         setMsgSetting={setMsgSetting}
                         visiblie={visiblie}
@@ -271,7 +275,6 @@ const MessageBox = memo(({login, chatBox, setChatBox, msgSetting, setMsgSetting,
     }
 
     useEffect(() => {
-        console.log("msgSetting: ", msgSetting);
         setMsgLog(msgLog = []);
         const tempArray = [];
         const sync = msgSetting.key && db.messageLogInit(msgSetting.key, log => {
@@ -279,7 +282,6 @@ const MessageBox = memo(({login, chatBox, setChatBox, msgSetting, setMsgSetting,
                 tempArray.push(msg.val());
             });
         });
-        console.log(1);
         setMsgLog(msgLog = tempArray);
     }, [msgSetting]);
 
@@ -375,11 +377,12 @@ const Statistics = memo(({login, frd, battleDetail, setBattleDetail}) => {
                     item.RESULT_NAME = "무승부";
                 }
             });
-            console.log("copied: ", copied);
             setStatics({ ...copied });
         }
         login.state && init();
     }, [login, battleDetail]);
+
+    const [ visible, setVisible ] = useState(false);
 
     return(
         <StatisticsStyles>
@@ -402,8 +405,14 @@ const Statistics = memo(({login, frd, battleDetail, setBattleDetail}) => {
                 </div>
                 <div className="outer">
                     <div className="tbody">
-                        { login.state && statics.DETAIL.map((item, i) => item.RESULT && <StaticRow login={login} key={i} item={item} /> ) }
-                        
+                        { login.state &&
+                            statics.DETAIL.map((item, i) => item.RESULT &&
+                                <StaticRow
+                                    visible={visible}
+                                    setVisible={setVisible}
+                                    login={login}
+                                    key={i}
+                                    item={item} /> ) }
                     </div>
                 </div>
                 {/* <SelectBox
@@ -417,17 +426,27 @@ const Statistics = memo(({login, frd, battleDetail, setBattleDetail}) => {
     );
 });
 
-const StaticRow = memo(({login, item}) => {
-    const handleClick = () => {
-
-    }
+const StaticRow = memo(({login, item, visible, setVisible}) => {
+    const [ popup, setPopup ] = useState(false);
     
+    const handleVisible = () => {
+        setVisible(!visible);
+        setPopup(!popup);
+    }
+
     return(
-        <StaticRowStyles>
+        <StaticRowStyles comment={item.DEFFENDER_MSG}>
             <li className="td date">{item.TIME_STAMP.split(" ")[0].replace(/\./g, "-")}</li>
-            <li className="td" onClick={handleClick}>
+            <li className="td opponent">
+                <span onClick={ () => item.DEFFENDER_MSG && handleVisible()}>
                 { (item.CONTENDER_NAME !== login.NAME) && item.CONTENDER_NAME }
                 { (item.DEFENDER_NAME !== login.NAME) && item.DEFENDER_NAME }
+                </span>
+                <DescrPopup
+                    item={item}
+                    popup={popup}
+                    setPopup={setPopup}
+                    visible={visible} />
             </li>
             <li className={`td ${item.RESULT_CLASS}`}>{item.RESULT_NAME}</li>
             <li className="td">{item.BET_DESCR}</li>

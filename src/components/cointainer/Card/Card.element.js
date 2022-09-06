@@ -113,6 +113,8 @@ export const ViewStyle = styled.div`
         position: absolute;
         left: 0; top: 0;
         border-radius: 5px;
+
+        .point.active { color: #AF2CFF }
         
         .inner {
             width: 100%;

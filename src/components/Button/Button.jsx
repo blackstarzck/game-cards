@@ -20,11 +20,15 @@ export const ButtonScrollUp = () => {
 }
 
 export const ButtonUpload = ({...props}) => {
+  const handleClick = () => {
+    console.log("click");
+  }
+
   return(
     <>
       <input onChange={(e) => props.onChange(e)} type="file" name="" id="file" accept="image/*" required={true} multiple={false} hidden={true} />
-      <UploadButton>
-        <label htmlFor="file">파일선택<FontAwesomeIcon icon={faFolderMagnifyingGlass} /></label>
+      <UploadButton onClick={handleClick}>
+        <label htmlFor={props.dailyCnt && "file"}>파일선택<FontAwesomeIcon icon={faFolderMagnifyingGlass} /></label>
       </UploadButton>
     </>
   );
@@ -109,17 +113,13 @@ export const ButtonArrowDown = ({...props}) => {
   );
 }
 
-export const ButtonStatAdd = () => <AddButton ><FontAwesomeIcon icon={faPlus} /></AddButton>
+export const ButtonStatAdd = ({increase}) => <AddButton onClick={increase} ><FontAwesomeIcon icon={faPlus} /></AddButton>
 
-export const ButtonStatRemove = () => <RemoveButton ><FontAwesomeIcon icon={faMinus} /></RemoveButton>
+export const ButtonStatRemove = ({descrease}) => <RemoveButton onClick={descrease} ><FontAwesomeIcon icon={faMinus} /></RemoveButton>
 
-export const ButtonReset = ({imgLoaded}) => {
-  return(
-    <ResetButton imgLoaded={imgLoaded}><FontAwesomeIcon icon={faArrowRotateLeft} /></ResetButton>
-  );
-}
+export const ButtonReset = ({imgLoaded, reset, remain}) => <ResetButton onClick={reset} imgLoaded={imgLoaded} remain={remain}><FontAwesomeIcon icon={faArrowRotateLeft} /></ResetButton>
 
-export const ButtonSave = ({imgLoaded}) => <SaveButton imgLoaded={imgLoaded}><FontAwesomeIcon icon={faFloppyDiskCircleArrowRight} /></SaveButton>
+export const ButtonSave = ({imgLoaded, save, remain}) => <SaveButton onClick={save} imgLoaded={imgLoaded} remain={remain}><FontAwesomeIcon icon={faFloppyDiskCircleArrowRight} /></SaveButton>
 
 export const ButtonViewInfo = ({imgLoaded, viewCardInfo}) => {
   return(
@@ -127,24 +127,39 @@ export const ButtonViewInfo = ({imgLoaded, viewCardInfo}) => {
   );
 }
 
-export const ButtonKeepCard = ({imgLoaded, mainCard, keepSelectedCard, notice, setNotice}) => {
+export const ButtonKeepCard = ({imgLoaded, mainCard, keepSelectedCard, upgradeCard, notice, setNotice, cards, newCard}) => {
   const handleClick = () => {
-    const select = imgLoaded && keepSelectedCard(mainCard);
-    select && setNotice(!notice);
-    select && console.log("저장된 카드: ", mainCard);
+    if(newCard === "NEW" && imgLoaded){
+      if(cards.DAILY_CNT === 0){
+        alert("오늘은 더이상 이미지를 업로드할 수 없습니다.");
+        return;
+      }
+      if(mainCard.KEY){
+        alert("이미 보관중인 카드입니다.");
+        return;
+      }
+
+      keepSelectedCard(mainCard);
+      setNotice(!notice);
+    }
+    if(newCard === "PREV" && imgLoaded){
+      if(cards.DAILY_CNT === 0){
+        alert("오늘은 더이상 이미지를 업로드할 수 없습니다.");
+        return;
+      }
+      if(!mainCard.KEY){
+        alert("레벨업을 위해서는 카드를 우선 보관해야합니다.");
+        return;
+      }
+      upgradeCard(mainCard);
+    }
   }
   return(
-    <KeepButton imgLoaded={imgLoaded} onClick={handleClick}>보관하기</KeepButton>
+    <KeepButton imgLoaded={imgLoaded} onClick={handleClick}>{(newCard === "NEW") ? "보관하기" : "레벨업"}</KeepButton>
   );
 }
 
-export const ButtonLevelUp = ({imgLoaded}) => {
-  return(
-    <LevelUpButton imgLoaded={imgLoaded}><FontAwesomeIcon icon={faCircleArrowUp} /></LevelUpButton>
-  );
-}
-
-export const ButtonStat = ({imgLoaded}) => <StatButton imgLoaded={imgLoaded}><b>능</b><b>력</b><b>치</b><FontAwesomeIcon icon={faSparkles} /></StatButton>
+export const ButtonStat = ({imgLoaded, remain}) => <StatButton imgLoaded={imgLoaded} remain={remain}><b>능</b><b>력</b><b>치</b>{ remain !== 0 && <FontAwesomeIcon icon={faSparkles} /> }</StatButton>
 
 export const ButtonSkill = ({imgLoaded, disable}) => <SkillButton disable imgLoaded={imgLoaded}><b>스</b><b>킬</b><FontAwesomeIcon icon={faSparkles} /></SkillButton>
 
@@ -154,7 +169,7 @@ export const ButtonSearch = ({login, searchFunc}) => {
   );
 }
 
-export const ButtonYes = ({handleClick}) => <YesButton onClick={() => handleClick(false)}>네</YesButton>;
+export const ButtonYes = ({handleClick, handleMouseEnter}) => <YesButton onMouseEnter={handleMouseEnter} onClick={() => handleClick(false)}>네</YesButton>;
 export const ButtonNo = ({handleClick}) => <NoButton onClick={() => handleClick(false)}>아니오</NoButton>;
 
 export const ButtonLogin = ({emailLogin}) => {
@@ -231,9 +246,9 @@ export const ButtonCardDelete = ({handleClick}) => {
   );
 }
 
-export const ButtonSelectCard = () => {
+export const ButtonSelectCard = ({handleClick, remain}) => {
   return(
-    <SelectCardButton>Lv UP</SelectCardButton>
+    <SelectCardButton onClick={handleClick} remain={remain}>{remain ? remain : "Lv UP"}</SelectCardButton>
   );
 }
 
