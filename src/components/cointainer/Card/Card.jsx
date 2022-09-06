@@ -291,7 +291,8 @@ export const CardText = ({login, info, load}) => {
 
 export const ButtonContainer = ({info, detailVisible, showCardDetail, setMainPopup, setMainCard, selectNewOrPrev}) => {
     const handleMoveToMainView = () => {
-        window.scrollTo(0, 0);
+        let moveTo = document.querySelector(".main-view").offsetTop;
+        window.scrollTo(0, moveTo);
         setMainCard(info);
         selectNewOrPrev("PREV");
     }

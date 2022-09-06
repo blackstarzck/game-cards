@@ -13,6 +13,7 @@ export const Wrapper = styled.div`
             width: 100%;
             .stat-wrapper .points { width: 60% }
             .ability-btns { display: none; }
+            .btn-handlers button { width: calc((100% / 4) - 10px); margin-top: 10px; }
         }
         @media screen and (max-width: 775px){
             .stat-wrapper { width: 100%; }
