@@ -79,12 +79,12 @@ const Alarm = ({login, mainPopup, setMainPopup, alarm, setAlarm}) => {
                 <div className="lists-wrapper">
                     <div className="outer">
                         <ul className="inner">
-                            { alarm?.data?.map((item, i) =>
+                            { alarm?.data.length > 0 ? alarm?.data?.map((item, i) =>
                                 <AlarmList
                                     mainPopup={mainPopup}
                                     setMainPopup={setMainPopup}
                                     key={i}
-                                    alarm={item} /> ) }
+                                    alarm={item} /> ) : "알림내역이 없습니다." }
                         </ul>
                     </div>
                 </div>

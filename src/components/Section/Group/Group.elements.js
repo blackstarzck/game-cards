@@ -30,14 +30,20 @@ export const ViewContainerStyles = styled.article`
         border-radius: 50%;
         background-color: #ffffff;
         margin-bottom: 24px;
+        transition: all .2s ease;
         svg { width: 50%; height: 50%;}
+
+        &:active { background-color: rgba(0,0,0, .5) }
     }
     .btn-next {
         width: 50px;
         height: 50px; 
         border-radius: 50%;
         background-color: #ffffff;
+        transition: all .2s ease;
         svg { width: 50%; height: 50%; }
+
+        &:active { background-color: rgba(0,0,0, .5) }
     }
 `;
 

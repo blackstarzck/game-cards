@@ -15,12 +15,15 @@ const db = new Database();
 const MainView = ({...props}) => {
     const [ editState, setEditState ] = useState(true);
     const [ view, setView] = useState(false);
-    const [ notice, setNotice ] = useState(false);
+    const [ notice, setNotice ] = useState({
+        type: "", state: false
+    });
 
     const handleEditState = () => setEditState(!editState);
     const viewCardInfo = () => setView(!view);
 
     const resetStats = () => {
+        if(!props.mainCard.KEY) return
         document.querySelector(".STR").innerText = props.mainCard.STATS.STR;
         document.querySelector(".AGI").innerText = props.mainCard.STATS.AGI;
         document.querySelector(".DEX").innerText = props.mainCard.STATS.DEX;
@@ -31,6 +34,7 @@ const MainView = ({...props}) => {
     }
 
     const saveStats = () => {
+        if(!props.mainCard.KEY) return
         const STR = Number(document.querySelector(".STR").innerText);
         const AGI = Number(document.querySelector(".AGI").innerText);
         const DEX = Number(document.querySelector(".DEX").innerText);
@@ -42,7 +46,7 @@ const MainView = ({...props}) => {
         const POWER = STR + AGI + DEX + VIT + INT + LUCK;
         const result = { ...props.mainCard, POWER, REMAIN, STATS }
 
-        console.log(STR, AGI, DEX, VIT, INT, LUCK, REMAIN, POWER);
+        setNotice({ type: "saved", state: true });
 
         props.setMainCard(result);
         props.setCards((cards) => {
@@ -135,7 +139,7 @@ const MainView = ({...props}) => {
                 <ButtonKeepCard
                     cards={props.cards}
                     newCard={props.newCard}
-                    notice={notice}
+                    notice={notice.state}
                     setNotice={setNotice}
                     editState={editState}
                     keepSelectedCard={props.keepSelectedCard}
@@ -144,8 +148,9 @@ const MainView = ({...props}) => {
                     mainCard={props.mainCard} />
             </Wrapper>
             <Notice
-                target={"main-view"}
-                notice={notice} setNotice={setNotice}
+                type={notice.type}
+                notice={notice.state}
+                setNotice={setNotice}
                 mainCard={props.mainCard} />
         </Wrapper>
     )
@@ -274,10 +279,11 @@ export const MainViewStat = forwardRef( ({imgLoaded, heading, points, visible, s
 export const MainViewName = ({imgLoaded, mainCard, active, handleEditState}) => {
     return(
         <Wrapper className='edit-wrapper' active={active}>
-            <ButtonEditTitle
+            { !mainCard.KEY && <ButtonEditTitle
                 active={active} 
                 imgLoaded={imgLoaded} 
-                handleEditState={handleEditState} />
+                handleEditState={handleEditState} /> }
+
             <Wrapper className='input-wrapper'>
                 <TitleNickName imgLoaded={imgLoaded}>{ imgLoaded ? mainCard.NICK : "-" }</TitleNickName>
                 <TitleJob imgLoaded={imgLoaded}>{ imgLoaded ? mainCard.JOB_EN : "-" }</TitleJob>

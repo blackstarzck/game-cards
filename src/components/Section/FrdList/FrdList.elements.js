@@ -129,9 +129,15 @@ export const FrdListStyles = styled(Content)`
             &:nth-child(6){ width: 92px; } */
 
             .btn-refresh {
-                width: 100%;
-                height: 100%;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                transition: all .2s ease;
                 svg { width: 50%; height: 50%; }
+
+                &:active {
+                    background-color: rgba(0,0,0, .2);
+                }
             }
         }
     }

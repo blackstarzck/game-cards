@@ -140,7 +140,7 @@ export const ButtonKeepCard = ({imgLoaded, mainCard, keepSelectedCard, upgradeCa
       }
 
       keepSelectedCard(mainCard);
-      setNotice(!notice);
+      setNotice({ type: "keep", state: true });
     }
     if(newCard === "PREV" && imgLoaded){
       if(cards.DAILY_CNT === 0){

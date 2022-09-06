@@ -414,7 +414,7 @@ export const MainPopup = ({
 
 export const DimmbedBg = ({popup}) => <Background active={popup} className={`dimmed-bg`}></Background>;
 
-export const Notice = ({notice, setNotice, mainCard}) => {
+export const Notice = ({type, notice, setNotice, mainCard}) => {
     const init = 4;
     const [ count, setCount ] = useState(init);
     const noticeRef = useRef();
@@ -446,6 +446,16 @@ export const Notice = ({notice, setNotice, mainCard}) => {
         }
     }, [notice]);
 
+    if(type === "saved"){
+        return(
+            <NoticeStyle ref={noticeRef} notice={notice} onClick={handleClose}>
+                <div className="inner-box">
+                    <span className="main-text">능력치를 저장했습니다.</span>
+                    <span className="timer">{count}</span>
+                </div>
+            </NoticeStyle>
+        );
+    }
 
     return(
         <NoticeStyle ref={noticeRef} notice={notice} onClick={handleClose}>

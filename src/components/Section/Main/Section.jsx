@@ -163,8 +163,8 @@ const SectionMain = ({login, cards, setCards, mainCard, setMainCard, keepSelecte
                     <DescriptionLI>※ 하루에 최대 5개만 업로드할 수 있십니다.</DescriptionLI>
                     <DescriptionLI>※ 계정당 보관 가능한 카드는 총 8개 입니다.</DescriptionLI>
                     <DescriptionLI>※ 로그인 후 카드를 보관하실 수 있습니다.</DescriptionLI>
-                    <DescriptionLI>※ 업로드한 이미지로 다른 카드를 업그레이드할 수 있습니다.</DescriptionLI>
                     <DescriptionLI>※ 능력치는 랜덤으로 부여되고 최대 수치는 각각 5입니다.</DescriptionLI>
+                    <DescriptionLI>※ 레벨업 후 얻게되는 능력 포인트는 확률에 따라 5 ~ 20 사이입니다.</DescriptionLI>
                 </Wrapper>
             </Container>
 
